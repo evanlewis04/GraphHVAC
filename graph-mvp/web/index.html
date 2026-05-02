@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Graph — HVAC Operations Intelligence</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header>
+        <h1>Graph</h1>
+        <p class="tag">Living wiki for HVAC distribution operations</p>
+    </header>
+
+    <main>
+        <section id="messages" aria-live="polite"></section>
+
+        <form id="chat-form">
+            <input
+                id="question"
+                name="question"
+                type="text"
+                autocomplete="off"
+                placeholder="Ask about exposure, suppliers, customers, refrigerants..."
+                required
+            />
+            <button type="submit">Ask</button>
+        </form>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

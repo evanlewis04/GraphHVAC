@@ -1,0 +1,23 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Generated data — keep the directory layout, drop the contents
+data/staging.duckdb
+data/audit.sqlite
+data/raw/*
+!data/raw/.gitkeep
+data/wiki/skus/*.md
+data/wiki/suppliers/*.md
+data/wiki/customers/*.md
+data/wiki/warehouses/*.md
+data/wiki/refrigerants/*.md
+data/wiki/concepts/*.md
+
+# Obsidian local state
+data/wiki/.obsidian/

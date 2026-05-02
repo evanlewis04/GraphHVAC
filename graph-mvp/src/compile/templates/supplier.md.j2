@@ -1,0 +1,24 @@
+---
+type: supplier
+id: {{ supplier.id }}
+---
+
+# {{ supplier.name }}
+
+**Type:** {{ supplier.type }}
+**Primary contact:** {{ supplier.contact or "unknown" }}
+
+## Categories supplied
+{% for cat in categories %}- {{ cat }}
+{% endfor %}
+
+## Top SKUs we source from them
+{% for sku in top_skus %}- [[skus/{{ sku.id }}]] — {{ sku.name }}
+{% endfor %}
+
+## Concentration
+{{ llm_concentration_summary }}
+
+## Sources
+- DuckDB: `SELECT * FROM suppliers WHERE id = '{{ supplier.id }}'`
+- DuckDB: `SELECT sku_id, SUM(qty) FROM orders WHERE supplier_id = '{{ supplier.id }}' GROUP BY sku_id ORDER BY 2 DESC LIMIT 25`
