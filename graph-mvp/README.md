@@ -22,6 +22,11 @@ cp .env.example .env
 python scripts/generate_synthetic_data.py
 python scripts/run_full_pipeline.py
 
+# Optional: have Claude write narrative + substitute lists for the first
+# 100 SKU pages (cached in data/narrative_cache.sqlite, so re-runs are free)
+python scripts/run_full_pipeline.py --enrich-sku-limit 100
+# ...or pass -1 to enrich every SKU.
+
 # 4. Browse the wiki in Obsidian
 #    Open the vault at: data/wiki/
 

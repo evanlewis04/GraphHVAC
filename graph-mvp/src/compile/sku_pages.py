@@ -11,9 +11,12 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
+from typing import Callable
 
 import duckdb
 from tqdm import tqdm
+
+from src.compile.narrative import Narrative
 
 
 def _slug(name: str) -> str:
@@ -32,7 +35,35 @@ def _refrigerant_note(refrigerant) -> str:
     return f"Tied to **[[refrigerants/{_slug(refrigerant)}]]**."
 
 
-def _render_sku_page(sku: dict, supplier_name: str, inventory: list[dict], top_customers: list[dict]) -> str:
+def _description_section(sku: dict, supplier_name: str, narrative: Narrative | None) -> str:
+    if narrative and narrative.description:
+        return narrative.description.strip()
+    return f"{sku['name']}. Sourced primarily from {supplier_name}."
+
+
+def _refrigerant_section(sku: dict, narrative: Narrative | None) -> str:
+    base = _refrigerant_note(sku.get("refrigerant"))
+    if narrative and narrative.regulatory_notes:
+        return f"{base}\n\n{narrative.regulatory_notes.strip()}"
+    return base
+
+
+def _substitutes_section(narrative: Narrative | None) -> str:
+    if not narrative or not narrative.substitutes:
+        return "_No suggested substitutes._"
+    return "\n".join(
+        f"- [[skus/{s['sku_id']}]] — {s['rationale']}"
+        for s in narrative.substitutes
+    )
+
+
+def _render_sku_page(
+    sku: dict,
+    supplier_name: str,
+    inventory: list[dict],
+    top_customers: list[dict],
+    narrative: Narrative | None = None,
+) -> str:
     inventory_lines = "\n".join(
         f"- [[warehouses/{r['warehouse_id']}]]: **{r['qty_on_hand']}** on hand "
         f"(reorder at {r['reorder_point']})"
@@ -45,6 +76,7 @@ def _render_sku_page(sku: dict, supplier_name: str, inventory: list[dict], top_c
     ) or "- _No order history._"
 
     margin = (sku["list_price"] - sku["unit_cost"]) / sku["list_price"] * 100 if sku["list_price"] else 0
+    enriched_flag = "true" if narrative else "false"
 
     return f"""---
 type: sku
@@ -53,6 +85,7 @@ manufacturer: {sku['manufacturer']}
 category: {sku['category']}
 sub_type: {sku['sub_type']}
 refrigerant: {sku.get('refrigerant') if isinstance(sku.get('refrigerant'), str) else ''}
+llm_enriched: {enriched_flag}
 ---
 
 # {sku['id']} — {sku['name']}
@@ -63,10 +96,13 @@ refrigerant: {sku.get('refrigerant') if isinstance(sku.get('refrigerant'), str) 
 **Unit cost:** ${sku['unit_cost']:.2f} | **List:** ${sku['list_price']:.2f} | **Margin:** {margin:.0f}%
 
 ## Description
-{sku['name']}. Sourced primarily from {supplier_name}.
+{_description_section(sku, supplier_name, narrative)}
 
 ## Refrigerant exposure
-{_refrigerant_note(sku.get('refrigerant'))}
+{_refrigerant_section(sku, narrative)}
+
+## Substitutes
+{_substitutes_section(narrative)}
 
 ## Warehouse availability
 {inventory_lines}
@@ -81,7 +117,40 @@ refrigerant: {sku.get('refrigerant') if isinstance(sku.get('refrigerant'), str) 
 """
 
 
-def generate_all(conn: duckdb.DuckDBPyConnection, wiki_dir: Path) -> int:
+def _candidate_substitutes(
+    conn: duckdb.DuckDBPyConnection, sku: dict, limit: int = 12
+) -> list[dict]:
+    """Pull SKUs in the same category, biased toward the same sub-type and
+    a different manufacturer (so the model has real alternatives to pick from)."""
+    rows = conn.execute(
+        """
+        SELECT id, name, manufacturer, sub_type
+        FROM skus
+        WHERE category = ? AND id != ?
+        ORDER BY (sub_type = ?) DESC, (manufacturer != ?) DESC, RANDOM()
+        LIMIT ?
+        """,
+        [sku["category"], sku["id"], sku["sub_type"], sku["manufacturer"], limit],
+    ).fetchdf().to_dict("records")
+    return rows
+
+
+# An "enricher" turns (sku, candidates) -> Narrative or None on failure.
+Enricher = Callable[[dict, list[dict]], Narrative | None]
+
+
+def generate_all(
+    conn: duckdb.DuckDBPyConnection,
+    wiki_dir: Path,
+    enricher: Enricher | None = None,
+    enrich_limit: int | None = None,
+) -> int:
+    """Generate every SKU page.
+
+    If ``enricher`` is given, the first ``enrich_limit`` SKUs (or all of
+    them if ``enrich_limit`` is None) get LLM-written narrative.
+    Remaining SKUs use the deterministic template fallback.
+    """
     out_dir = wiki_dir / "skus"
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -92,7 +161,8 @@ def generate_all(conn: duckdb.DuckDBPyConnection, wiki_dir: Path) -> int:
     }
 
     count = 0
-    for sku in tqdm(skus, desc="SKU pages", unit="page"):
+    enriched = 0
+    for idx, sku in enumerate(tqdm(skus, desc="SKU pages", unit="page")):
         inventory = conn.execute(
             "SELECT warehouse_id, qty_on_hand, reorder_point "
             "FROM inventory WHERE sku_id = ? ORDER BY warehouse_id",
@@ -106,9 +176,24 @@ def generate_all(conn: duckdb.DuckDBPyConnection, wiki_dir: Path) -> int:
             """,
             [sku["id"]],
         ).fetchdf().to_dict("records")
+
+        narrative: Narrative | None = None
+        if enricher and (enrich_limit is None or idx < enrich_limit):
+            candidates = _candidate_substitutes(conn, sku)
+            try:
+                narrative = enricher(sku, candidates)
+                if narrative is not None:
+                    enriched += 1
+            except Exception:  # never block the pipeline on a single bad call
+                narrative = None
+
         page = _render_sku_page(
-            sku, suppliers.get(sku["primary_supplier_id"], "?"), inventory, top_customers
+            sku, suppliers.get(sku["primary_supplier_id"], "?"),
+            inventory, top_customers, narrative=narrative,
         )
         (out_dir / f"{sku['id']}.md").write_text(page, encoding="utf-8")
         count += 1
+
+    if enricher:
+        print(f"  enriched {enriched}/{count} SKU pages with LLM narrative")
     return count

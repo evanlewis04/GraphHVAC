@@ -23,7 +23,11 @@ def main() -> None:
     questions = sys.argv[1:] or DEMO_QUESTIONS
     for q in questions:
         print(f"\n{'=' * 80}\nQ: {q}\n{'=' * 80}")
-        result = run_agent(q)
+        try:
+            result = run_agent(q)
+        except RuntimeError as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            sys.exit(1)
         print(f"\nA ({result.iterations} iter, trace {result.trace_id}):\n{result.answer}")
         trace = fetch_trace(result.trace_id)
         tool_calls = [s for s in trace if s["kind"] == "tool_call"]
