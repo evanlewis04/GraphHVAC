@@ -12,7 +12,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from src.api import audit, chat
+from src.api import audit, briefs, chat
 
 WEB_DIR = Path(__file__).resolve().parents[2] / "web"
 
@@ -21,6 +21,7 @@ def create_app() -> FastAPI:
     app = FastAPI(title="Graph MVP", version="0.1.0")
     app.include_router(chat.router)
     app.include_router(audit.router)
+    app.include_router(briefs.router)
     if WEB_DIR.exists():
         app.mount("/", StaticFiles(directory=WEB_DIR, html=True), name="web")
     return app

@@ -124,6 +124,99 @@ body {
     font-feature-settings: "tnum";
 }
 
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.topbar-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 120ms, background 120ms;
+}
+
+.topbar-btn:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent);
+}
+
+.brief-list { list-style: none; margin: 0; padding: 0; }
+.brief-list li {
+    border-bottom: 1px solid var(--border);
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+.brief-list li:last-child { border-bottom: 0; }
+.brief-list button {
+    background: transparent;
+    border: 0;
+    color: var(--accent);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    padding: 0;
+}
+.brief-list button:hover { text-decoration: underline; }
+
+.brief-rendered {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+}
+.brief-rendered h1 { font-size: 18px; font-weight: 600; margin: 0 0 12px; }
+.brief-rendered h2 { font-size: 15px; font-weight: 600; margin: 16px 0 6px; }
+.brief-rendered h3 { font-size: 14px; font-weight: 600; margin: 12px 0 6px; }
+.brief-rendered p, .brief-rendered ul, .brief-rendered ol { margin: 6px 0 12px; }
+.brief-rendered ul, .brief-rendered ol { padding-left: 22px; }
+.brief-rendered li { margin: 3px 0; }
+.brief-rendered code {
+    font-family: var(--font-mono); font-size: 12.5px;
+    background: var(--surface-muted); padding: 1px 6px; border-radius: 4px;
+    border: 1px solid var(--border);
+}
+.brief-rendered pre {
+    background: var(--surface-muted); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 10px 12px; overflow-x: auto;
+}
+.brief-rendered table {
+    border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 13px;
+}
+.brief-rendered th, .brief-rendered td {
+    border: 1px solid var(--border); padding: 6px 10px; text-align: left;
+}
+.brief-rendered th { background: var(--surface-muted); font-weight: 600; }
+.brief-rendered .frontmatter {
+    color: var(--text-faint); font-family: var(--font-mono); font-size: 11px;
+    margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+.brief-empty {
+    color: var(--text-muted);
+    font-size: 14px;
+    padding: 16px;
+    background: var(--surface-muted);
+    border-radius: var(--radius-sm);
+    border: 1px dashed var(--border);
+}
+.brief-empty code {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    background: var(--bg);
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+}
+
 /* ----- App layout ----- */
 .app {
     flex: 1;
@@ -381,6 +474,76 @@ body {
     align-items: center;
     gap: 10px;
     font-size: 14px;
+}
+
+/* Streaming progress (in-place build of the assistant message) */
+.msg-assistant.streaming .msg-progress {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    box-shadow: var(--shadow-sm);
+}
+
+.progress-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.progress-text {
+    font-feature-settings: "tnum";
+}
+
+.progress-steps {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.progress-step {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 4px 0;
+    font-size: 13px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    animation: stepIn 220ms ease;
+}
+
+.progress-step:first-child {
+    border-top-color: transparent;
+    padding-top: 8px;
+}
+
+.step-label {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    flex-shrink: 0;
+    min-width: 140px;
+}
+
+.step-detail {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+@keyframes stepIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 .thinking-dots {

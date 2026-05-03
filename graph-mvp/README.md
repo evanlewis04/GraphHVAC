@@ -32,7 +32,12 @@ python scripts/run_full_pipeline.py --enrich-sku-limit 100
 
 # 5. Start the chat UI
 uvicorn src.api.main:app --reload
-# open web/index.html
+# open http://127.0.0.1:8000
+
+# 6. Optional: generate today's executive brief (requires API key)
+python scripts/generate_brief.py
+# Brief lands at data/briefs/<today>.md and is viewable via the
+# "Daily brief" button in the UI.
 ```
 
 ## Layout

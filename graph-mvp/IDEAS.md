@@ -15,19 +15,17 @@ Sizes are rough engineering days for one good engineer.
 
 ## Tier 1 — High-leverage, MVP-sized (1–3 days each)
 
-### A. Streaming chat responses (1–2 days) — *demo win*
-Currently `/chat` is a synchronous POST; the UI shows "thinking…" for
-8–25 seconds before the answer appears. Stream the agent loop with SSE
-so the user sees the model reasoning + tool calls land in real time.
-Massively improves perceived latency. Requires a small backend change
-(SSE on `/chat`) and frontend update (incremental rendering).
+### A. Streaming chat responses (1–2 days) — *demo win* — **DONE**
+The agent loop is now a generator that yields events; `POST /chat/stream`
+emits them as SSE. The UI renders each tool call as it lands so the user
+sees what the agent is doing instead of staring at a spinner. Shipped
+with full audit-trail parity.
 
-### B. Daily executive brief (2–3 days) — *demo win + sales lever*
-A scheduled agent run that generates a 10-bullet daily brief: top
-exposure changes, supplier alerts, refrigerant news, customer-concentration
-shifts. Email or Slack delivery. This is the single most quotable demo
-artifact — "this is what lands in the operating partner's inbox at 7am."
-Reuses the existing agent loop + a cron + a small Slack/email sender.
+### B. Daily executive brief (2–3 days) — *demo win + sales lever* — **PARTIALLY DONE**
+The generator + `data/briefs/YYYY-MM-DD.md` writer + `/briefs` endpoints
++ brief viewer drawer in the UI are built. Run with
+`python scripts/generate_brief.py`. Email/Slack delivery is still pending
+— pair this with #L below when wiring up Slack.
 
 ### C. Cost & latency dashboard (1 day) — *trust*
 The audit log already records token usage and timing. Aggregate it into
@@ -49,10 +47,9 @@ calls this out as the cost-control move at customer 3-5; building the
 shim now means the `router.pick_model()` slot is wired without changing
 the rest of the loop.
 
-### F. Vendored marked.js + offline mode (½ day) — *trust*
-Right now the chat UI loads `marked` from a CDN. For demos in PE offices
-behind proxies (very common), inline the markdown renderer. Half a day
-of work, eliminates a class of demo-day failures.
+### F. Vendored marked.js + offline mode (½ day) — *trust* — **DONE**
+The chat UI now uses an inline 80-line markdown renderer (no CDN, no
+vendored bundle, zero external deps). Works in any network environment.
 
 ---
 
@@ -145,17 +142,21 @@ Ontology adaptation. Big lift, big TAM unlock.
 
 ## My recommendations, if you want a starting list
 
-For the next two weeks, in order:
+**Done in this session:** A (streaming), F (offline markdown), B (brief
+generator + viewer; email/Slack delivery still pending).
 
-1. **A. Streaming chat** — biggest demo lift per hour of work
-2. **F. Vendor marked.js** — half a day, removes a footgun
-3. **B. Daily brief** — the artifact you can leave behind after a meeting
-4. **D. PDF export** — pairs with B for the "send this to the CEO" use case
+Next, in order:
 
-Then before customer #2:
+1. **D. PDF export** — pairs with B for the "send this to the CEO" use case
+2. **L. Slack integration** — completes B by actually delivering the brief
+3. **C. Cost & latency dashboard** — leverages the audit-trail data we already record
+4. **K. Health-check agent** — concrete demonstration of the "self-maintaining" pitch
 
-5. **H. Auth** + **G. Multi-tenant** (these are tied; do together)
-6. **C. Cost dashboard** — once you have multiple tenants, you'll need it
+Before customer #2:
 
-Would also do **F + small Obsidian theme polish** before any HARDI demo
-specifically — those are 1-day items that punch above their weight.
+5. **H. Auth** + **G. Multi-tenant** (tied; do together)
+6. **I. Real ERP connector** (DDI first) — required to leave CSV-upload land
+7. **J. Incremental wiki updates** — needed once a real customer has 50K+ SKUs
+
+Would also do small Obsidian theme polish (#O) before any HARDI demo
+specifically — a 1-day item that punches above its weight.

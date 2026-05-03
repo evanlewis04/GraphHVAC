@@ -1,8 +1,9 @@
 /* Graph chat client.
  *
- * - POST /chat to invoke the agent loop
+ * - Streams the agent loop via SSE (POST /chat/stream)
+ * - Falls back to non-streaming POST /chat if the stream fails
  * - GET /audit/{trace_id} for the audit drawer (lazy)
- * - Markdown rendering via marked (CDN); plain-text fallback if it failed to load
+ * - Self-contained markdown renderer (no external deps)
  * - Auto-growing textarea, Enter to send, Shift+Enter for newline
  * - Drawer for the audit trace with formatted per-step display
  */
@@ -25,15 +26,103 @@
 
     let inFlight = false;
 
-    /* ---- Markdown rendering ---- */
+    /* ---- Minimal markdown renderer (no external dep) ----
+     *
+     * Handles what the agent typically produces: headings, bold/italic,
+     * inline + fenced code, links, bullet/numbered lists, GitHub-style
+     * pipe tables, paragraphs. Stays under 80 lines. Escapes HTML by
+     * default so we never inject raw markup.
+     */
+    const escapeHTML = (s) => String(s).replace(/[&<>"']/g, (c) => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+    }[c]));
+
+    const renderInline = (text) => {
+        let s = escapeHTML(text);
+        s = s.replace(/`([^`]+)`/g, (_, c) => `<code>${c}</code>`);
+        s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+        s = s.replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>");
+        s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, t, h) =>
+            `<a href="${h}" target="_blank" rel="noopener">${t}</a>`);
+        return s;
+    };
+
+    const renderTable = (lines) => {
+        // lines: [header, separator, ...rows]
+        const cells = (line) => line.replace(/^\||\|$/g, "").split("|").map(c => c.trim());
+        const headers = cells(lines[0]);
+        const body = lines.slice(2).map(cells);
+        const th = headers.map(h => `<th>${renderInline(h)}</th>`).join("");
+        const trs = body.map(row =>
+            `<tr>${row.map(c => `<td>${renderInline(c)}</td>`).join("")}</tr>`).join("");
+        return `<table><thead><tr>${th}</tr></thead><tbody>${trs}</tbody></table>`;
+    };
+
     const renderMarkdown = (text) => {
-        if (typeof window.marked === "object" && typeof marked.parse === "function") {
-            return marked.parse(text, { breaks: true, gfm: true });
+        const lines = text.replace(/\r\n/g, "\n").split("\n");
+        const out = [];
+        let i = 0;
+        while (i < lines.length) {
+            const line = lines[i];
+            // fenced code
+            if (/^```/.test(line)) {
+                const buf = [];
+                i++;
+                while (i < lines.length && !/^```/.test(lines[i])) buf.push(lines[i++]);
+                i++; // skip closing fence
+                out.push(`<pre><code>${escapeHTML(buf.join("\n"))}</code></pre>`);
+                continue;
+            }
+            // heading
+            const h = line.match(/^(#{1,3})\s+(.*)$/);
+            if (h) {
+                out.push(`<h${h[1].length}>${renderInline(h[2])}</h${h[1].length}>`);
+                i++; continue;
+            }
+            // table: header line + separator line of |---|---|
+            if (/^\|.*\|/.test(line) && i + 1 < lines.length && /^\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)+\|?$/.test(lines[i + 1])) {
+                const tlines = [line, lines[i + 1]];
+                let j = i + 2;
+                while (j < lines.length && /^\|.*\|/.test(lines[j])) tlines.push(lines[j++]);
+                out.push(renderTable(tlines));
+                i = j; continue;
+            }
+            // unordered list
+            if (/^\s*[-*]\s+/.test(line)) {
+                const items = [];
+                while (i < lines.length && /^\s*[-*]\s+/.test(lines[i])) {
+                    items.push(lines[i].replace(/^\s*[-*]\s+/, ""));
+                    i++;
+                }
+                out.push(`<ul>${items.map(it => `<li>${renderInline(it)}</li>`).join("")}</ul>`);
+                continue;
+            }
+            // ordered list
+            if (/^\s*\d+\.\s+/.test(line)) {
+                const items = [];
+                while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) {
+                    items.push(lines[i].replace(/^\s*\d+\.\s+/, ""));
+                    i++;
+                }
+                out.push(`<ol>${items.map(it => `<li>${renderInline(it)}</li>`).join("")}</ol>`);
+                continue;
+            }
+            // blank line
+            if (line.trim() === "") { i++; continue; }
+            // paragraph (collect consecutive non-block lines)
+            const buf = [line];
+            i++;
+            while (i < lines.length
+                   && lines[i].trim() !== ""
+                   && !/^```/.test(lines[i])
+                   && !/^#{1,3}\s/.test(lines[i])
+                   && !/^\s*[-*]\s/.test(lines[i])
+                   && !/^\s*\d+\.\s/.test(lines[i])) {
+                buf.push(lines[i++]);
+            }
+            out.push(`<p>${renderInline(buf.join(" "))}</p>`);
         }
-        // Fallback: escape and preserve newlines
-        const div = document.createElement("div");
-        div.textContent = text;
-        return div.innerHTML.replace(/\n/g, "<br>");
+        return out.join("\n");
     };
 
     /* ---- Auto-grow textarea ---- */
@@ -64,27 +153,14 @@
         appendUserMessage(question);
         input.value = "";
         autosize();
-        const thinkingNode = appendThinkingMessage();
         inFlight = true;
         sendBtn.disabled = true;
 
+        const renderer = createStreamingRenderer();
         try {
-            const res = await fetch("/chat", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ question }),
-            });
-            thinkingNode.remove();
-            if (!res.ok) {
-                const err = await res.json().catch(() => ({ detail: res.statusText }));
-                appendError(err.detail || `Request failed (${res.status})`);
-                return;
-            }
-            const data = await res.json();
-            appendAssistantMessage(data.answer, data.trace_id, data.iterations);
+            await streamChat(question, renderer);
         } catch (err) {
-            thinkingNode.remove();
-            appendError(`Network error: ${err.message}`);
+            renderer.fail(err.message || String(err));
         } finally {
             inFlight = false;
             sendBtn.disabled = false;
@@ -99,7 +175,150 @@
         }
     });
 
-    /* ---- Message rendering ---- */
+    /* ---- Stream POST /chat/stream and feed events to a renderer ---- */
+    const streamChat = async (question, renderer) => {
+        const res = await fetch("/chat/stream", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
+            body: JSON.stringify({ question }),
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({ detail: res.statusText }));
+            renderer.fail(err.detail || `Request failed (${res.status})`);
+            return;
+        }
+        // Some hosts don't expose ReadableStream — fall back to JSON.
+        if (!res.body) {
+            const data = await res.json();
+            renderer.complete(data.answer, data.trace_id, data.iterations);
+            return;
+        }
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        while (true) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            // SSE events are separated by blank lines.
+            let idx;
+            while ((idx = buffer.indexOf("\n\n")) >= 0) {
+                const raw = buffer.slice(0, idx);
+                buffer = buffer.slice(idx + 2);
+                const dataLine = raw.split("\n").find((l) => l.startsWith("data:"));
+                if (!dataLine) continue;
+                let payload;
+                try {
+                    payload = JSON.parse(dataLine.slice(5).trim());
+                } catch {
+                    continue;
+                }
+                renderer.event(payload);
+            }
+        }
+    };
+
+    /* ---- Streaming renderer: builds the assistant message in-place ---- */
+    const createStreamingRenderer = () => {
+        const wrap = document.createElement("div");
+        wrap.className = "msg msg-assistant streaming";
+        wrap.innerHTML = `
+            <span class="msg-role">Graph</span>
+            <div class="msg-progress">
+                <div class="progress-row">
+                    <span class="thinking-dots"><span></span><span></span><span></span></span>
+                    <span class="progress-text">Thinking…</span>
+                </div>
+                <ul class="progress-steps"></ul>
+            </div>
+            <div class="msg-body" hidden></div>
+            <div class="msg-meta" hidden>
+                <button class="show-sources" type="button">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18h6"></path><path d="M10 22h4"></path>
+                        <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path>
+                    </svg>
+                    Show sources
+                </button>
+                <span class="iter-badge"></span>
+            </div>
+        `;
+        const progress = wrap.querySelector(".msg-progress");
+        const progressText = wrap.querySelector(".progress-text");
+        const stepsList = wrap.querySelector(".progress-steps");
+        const body = wrap.querySelector(".msg-body");
+        const meta = wrap.querySelector(".msg-meta");
+        const sourcesBtn = wrap.querySelector(".show-sources");
+        const iterBadge = wrap.querySelector(".iter-badge");
+
+        messages.appendChild(wrap);
+        scrollToBottom();
+
+        let traceId = null;
+
+        const appendStep = (label, detail) => {
+            const li = document.createElement("li");
+            li.className = "progress-step";
+            li.innerHTML = `<span class="step-label">${escapeHTML(label)}</span>` +
+                           (detail ? `<span class="step-detail">${escapeHTML(detail)}</span>` : "");
+            stepsList.appendChild(li);
+            scrollToBottom();
+        };
+
+        return {
+            event(ev) {
+                switch (ev.kind) {
+                    case "started":
+                        traceId = ev.trace_id;
+                        progressText.textContent = "Reading the wiki and querying your data…";
+                        break;
+                    case "tool_call": {
+                        const summary = ev.name === "run_sql"
+                            ? `${(ev.input.query || "").slice(0, 80).replace(/\s+/g, " ")}…`
+                            : ev.name === "read_wiki_page" ? ev.input.path
+                            : ev.name === "search_wiki"    ? `"${ev.input.query}"`
+                            : ev.name === "list_wiki_directory" ? ev.input.directory || "/"
+                            : "";
+                        appendStep(ev.name, summary);
+                        break;
+                    }
+                    case "iteration":
+                        progressText.textContent = `Step ${ev.iteration}…`;
+                        break;
+                    case "final":
+                        wrap.classList.remove("streaming");
+                        progress.remove();
+                        body.hidden = false;
+                        meta.hidden = false;
+                        body.innerHTML = renderMarkdown(ev.answer || "(no answer)");
+                        iterBadge.textContent = `${ev.iterations} step${ev.iterations === 1 ? "" : "s"} · trace ${(ev.trace_id || traceId || "").slice(-8)}`;
+                        sourcesBtn.addEventListener("click", () => openSources(ev.trace_id || traceId));
+                        scrollToBottom();
+                        break;
+                    case "error":
+                        this.fail(ev.message || "Unknown error");
+                        break;
+                    default:
+                        break;
+                }
+            },
+            complete(answer, tid, iterations) {
+                this.event({ kind: "final", answer, trace_id: tid, iterations });
+            },
+            fail(message) {
+                wrap.classList.remove("streaming");
+                wrap.classList.remove("msg-assistant");
+                wrap.classList.add("msg-error");
+                progress.remove();
+                body.hidden = false;
+                meta.hidden = true;
+                body.textContent = message;
+                scrollToBottom();
+            },
+        };
+    };
+
+    /* ---- Message helpers ---- */
     const scrollToBottom = () => {
         conversation.scrollTop = conversation.scrollHeight;
     };
@@ -107,62 +326,83 @@
     const appendUserMessage = (text) => {
         const wrap = document.createElement("div");
         wrap.className = "msg msg-user";
-        wrap.innerHTML = `
-            <span class="msg-role">You</span>
-            <div class="msg-body"></div>
-        `;
+        wrap.innerHTML = `<span class="msg-role">You</span><div class="msg-body"></div>`;
         wrap.querySelector(".msg-body").textContent = text;
         messages.appendChild(wrap);
         scrollToBottom();
     };
 
-    const appendThinkingMessage = () => {
-        const wrap = document.createElement("div");
-        wrap.className = "msg msg-thinking";
-        wrap.innerHTML = `
-            <span class="msg-role">Graph</span>
-            <div class="msg-body">
-                <span class="thinking-dots"><span></span><span></span><span></span></span>
-                <span>Reading the wiki and querying your data…</span>
-            </div>
-        `;
-        messages.appendChild(wrap);
-        scrollToBottom();
-        return wrap;
+    /* ---- Briefs drawer ---- */
+    const briefsDrawer = document.getElementById("briefs-panel");
+    const briefsBody = document.getElementById("briefs-body");
+    const briefsTitle = document.getElementById("briefs-title");
+    const briefsClose = document.getElementById("briefs-close");
+    const openBriefsBtn = document.getElementById("open-briefs");
+
+    const closeBriefs = () => {
+        briefsDrawer.classList.remove("open");
+        drawerScrim.classList.remove("visible");
+        briefsDrawer.setAttribute("aria-hidden", "true");
     };
 
-    const appendAssistantMessage = (answer, traceId, iterations) => {
-        const wrap = document.createElement("div");
-        wrap.className = "msg msg-assistant";
-        wrap.innerHTML = `
-            <span class="msg-role">Graph</span>
-            <div class="msg-body"></div>
-            <div class="msg-meta">
-                <button class="show-sources" type="button">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M9 18h6"></path>
-                        <path d="M10 22h4"></path>
-                        <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path>
-                    </svg>
-                    Show sources
-                </button>
-                <span class="iter-badge">${iterations} step${iterations === 1 ? "" : "s"} · trace ${traceId.slice(-8)}</span>
-            </div>
-        `;
-        wrap.querySelector(".msg-body").innerHTML = renderMarkdown(answer);
-        wrap.querySelector(".show-sources").addEventListener("click", () => openSources(traceId));
-        messages.appendChild(wrap);
-        scrollToBottom();
+    const openBriefs = async () => {
+        briefsTitle.textContent = "Daily brief";
+        briefsBody.innerHTML = "<p class=\"brief-rendered\">Loading…</p>";
+        briefsDrawer.classList.add("open");
+        drawerScrim.classList.add("visible");
+        briefsDrawer.setAttribute("aria-hidden", "false");
+        try {
+            const res = await fetch("/briefs");
+            const briefs = await res.json();
+            if (!Array.isArray(briefs) || briefs.length === 0) {
+                briefsBody.innerHTML = `
+                    <p class="brief-empty">
+                        No briefs yet. Generate one with:
+                        <br><br>
+                        <code>python scripts/generate_brief.py</code>
+                    </p>
+                `;
+                return;
+            }
+            // Show the most recent brief by default; list the rest below.
+            const latest = briefs[0];
+            const r = await fetch(`/briefs/${latest.date}`);
+            const data = await r.json();
+            renderBrief(data);
+
+            if (briefs.length > 1) {
+                const list = document.createElement("ul");
+                list.className = "brief-list";
+                list.style.marginTop = "24px";
+                briefs.slice(1).forEach((b) => {
+                    const li = document.createElement("li");
+                    li.innerHTML = `<span>${b.date}</span><button data-date="${b.date}">View</button>`;
+                    li.querySelector("button").addEventListener("click", async () => {
+                        const r = await fetch(`/briefs/${b.date}`);
+                        renderBrief(await r.json());
+                    });
+                    list.appendChild(li);
+                });
+                briefsBody.appendChild(list);
+            }
+        } catch (err) {
+            briefsBody.innerHTML = `<p class="brief-empty">Couldn't load briefs: ${err.message}</p>`;
+        }
     };
 
-    const appendError = (text) => {
-        const wrap = document.createElement("div");
-        wrap.className = "msg msg-error";
-        wrap.innerHTML = `<span class="msg-role">Error</span><div class="msg-body"></div>`;
-        wrap.querySelector(".msg-body").textContent = text;
-        messages.appendChild(wrap);
-        scrollToBottom();
+    const renderBrief = (data) => {
+        const text = data.body || "";
+        const fmMatch = text.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+        const frontmatter = fmMatch ? fmMatch[1] : "";
+        const body = fmMatch ? fmMatch[2] : text;
+        const fm = frontmatter
+            ? `<div class="frontmatter">${escapeHTML(frontmatter)}</div>` : "";
+        briefsTitle.textContent = `Brief — ${data.date}`;
+        briefsBody.innerHTML = `<div class="brief-rendered">${fm}${renderMarkdown(body)}</div>`;
     };
+
+    openBriefsBtn.addEventListener("click", openBriefs);
+    briefsClose.addEventListener("click", closeBriefs);
 
     /* ---- Sources drawer ---- */
     const closeDrawer = () => {
@@ -172,13 +412,19 @@
         drawerScrim.setAttribute("aria-hidden", "true");
     };
 
+    const closeAnyDrawer = () => {
+        if (drawer.classList.contains("open")) closeDrawer();
+        if (briefsDrawer.classList.contains("open")) closeBriefs();
+    };
+
     drawerClose.addEventListener("click", closeDrawer);
-    drawerScrim.addEventListener("click", closeDrawer);
+    drawerScrim.addEventListener("click", closeAnyDrawer);
     document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && drawer.classList.contains("open")) closeDrawer();
+        if (e.key === "Escape") closeAnyDrawer();
     });
 
     const openSources = async (traceId) => {
+        if (!traceId) return;
         drawerTitle.textContent = "Loading…";
         drawerBody.innerHTML = "";
         drawer.classList.add("open");
@@ -198,11 +444,6 @@
             drawerBody.innerHTML = `<p style="color:var(--danger);padding:24px 0;">Network error: ${err.message}</p>`;
         }
     };
-
-    const escapeHTML = (s) =>
-        String(s).replace(/[&<>"']/g, (c) => ({
-            "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
-        }[c]));
 
     const formatPayload = (kind, payload) => {
         const truncate = (s, n) => (s.length > n ? `${s.slice(0, n)}\n… (${s.length - n} more chars)` : s);
@@ -268,7 +509,6 @@
             </div>
         `).join("");
 
-        // Add a small footer with trace id for copy/paste
         const footer = document.createElement("p");
         footer.style.cssText = "margin-top:24px;font-size:11px;color:var(--text-faint);font-family:var(--font-mono);";
         footer.textContent = `trace_id: ${traceId}`;
