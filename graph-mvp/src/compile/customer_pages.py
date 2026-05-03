@@ -44,38 +44,76 @@ region: {customer['region']}
 """
 
 
+def _prefetch_top_skus(conn: duckdb.DuckDBPyConnection, k: int = 10) -> dict[str, list[dict]]:
+    rows = conn.execute(
+        f"""
+        WITH agg AS (
+            SELECT customer_id, sku_id,
+                   SUM(qty)            AS units,
+                   SUM(extended_price) AS revenue
+            FROM orders
+            GROUP BY customer_id, sku_id
+        ),
+        ranked AS (
+            SELECT *, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY revenue DESC) AS rn
+            FROM agg
+        )
+        SELECT customer_id, sku_id, units, revenue
+        FROM ranked WHERE rn <= {k}
+        ORDER BY customer_id, rn
+        """
+    ).fetchall()
+    out: dict[str, list[dict]] = {}
+    for cust_id, sku_id, units, revenue in rows:
+        out.setdefault(cust_id, []).append(
+            {"sku_id": sku_id, "units": units, "revenue": revenue}
+        )
+    return out
+
+
+def _prefetch_refrigerant_mix(conn: duckdb.DuckDBPyConnection) -> dict[str, list[dict]]:
+    rows = conn.execute(
+        """
+        SELECT o.customer_id, s.refrigerant, SUM(o.extended_price) AS revenue
+        FROM orders o JOIN skus s ON o.sku_id = s.id
+        WHERE s.refrigerant IS NOT NULL
+        GROUP BY 1, 2
+        ORDER BY 1, revenue DESC
+        """
+    ).fetchall()
+    out: dict[str, list[dict]] = {}
+    for cust_id, rfg, rev in rows:
+        out.setdefault(cust_id, []).append({"refrigerant": rfg, "revenue": rev})
+    return out
+
+
+def _prefetch_summary(conn: duckdb.DuckDBPyConnection) -> dict[str, dict]:
+    rows = conn.execute(
+        """
+        SELECT customer_id,
+               COUNT(DISTINCT order_id)            AS orders,
+               COALESCE(SUM(extended_price), 0.0)  AS revenue
+        FROM orders
+        GROUP BY customer_id
+        """
+    ).fetchall()
+    return {cid: {"orders": orders, "revenue": revenue} for cid, orders, revenue in rows}
+
+
 def generate_all(conn: duckdb.DuckDBPyConnection, wiki_dir: Path) -> int:
     out_dir = wiki_dir / "customers"
     out_dir.mkdir(parents=True, exist_ok=True)
 
     customers = conn.execute("SELECT * FROM customers").fetchdf().to_dict("records")
+    top_skus_by_cust = _prefetch_top_skus(conn)
+    rfg_mix_by_cust = _prefetch_refrigerant_mix(conn)
+    summary_by_cust = _prefetch_summary(conn)
+
     count = 0
     for cust in tqdm(customers, desc="customer pages", unit="page"):
-        top_skus = conn.execute(
-            """
-            SELECT sku_id, SUM(qty) AS units, SUM(extended_price) AS revenue
-            FROM orders WHERE customer_id = ?
-            GROUP BY 1 ORDER BY revenue DESC LIMIT 10
-            """,
-            [cust["id"]],
-        ).fetchdf().to_dict("records")
-        refrigerant_mix = conn.execute(
-            """
-            SELECT s.refrigerant, SUM(o.extended_price) AS revenue
-            FROM orders o JOIN skus s ON o.sku_id = s.id
-            WHERE o.customer_id = ? AND s.refrigerant IS NOT NULL
-            GROUP BY 1 ORDER BY 2 DESC
-            """,
-            [cust["id"]],
-        ).fetchdf().to_dict("records")
-        summary_row = conn.execute(
-            """
-            SELECT COUNT(DISTINCT order_id) AS orders, COALESCE(SUM(extended_price), 0) AS revenue
-            FROM orders WHERE customer_id = ?
-            """,
-            [cust["id"]],
-        ).fetchone()
-        summary = {"orders": summary_row[0], "revenue": summary_row[1]}
+        top_skus = top_skus_by_cust.get(cust["id"], [])
+        refrigerant_mix = rfg_mix_by_cust.get(cust["id"], [])
+        summary = summary_by_cust.get(cust["id"], {"orders": 0, "revenue": 0.0})
         page = _render(cust, top_skus, refrigerant_mix, summary)
         (out_dir / f"{cust['id']}.md").write_text(page, encoding="utf-8")
         count += 1

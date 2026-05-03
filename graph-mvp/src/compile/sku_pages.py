@@ -139,6 +139,79 @@ def _candidate_substitutes(
 Enricher = Callable[[dict, list[dict]], Narrative | None]
 
 
+def _prefetch_inventory(conn: duckdb.DuckDBPyConnection) -> dict[str, list[dict]]:
+    """One query, group rows in Python — faster than 5,000 per-SKU queries."""
+    rows = conn.execute(
+        "SELECT sku_id, warehouse_id, qty_on_hand, reorder_point "
+        "FROM inventory ORDER BY sku_id, warehouse_id"
+    ).fetchall()
+    out: dict[str, list[dict]] = {}
+    for sku_id, wh, qty, rp in rows:
+        out.setdefault(sku_id, []).append(
+            {"warehouse_id": wh, "qty_on_hand": qty, "reorder_point": rp}
+        )
+    return out
+
+
+def _prefetch_top_customers(conn: duckdb.DuckDBPyConnection, k: int = 5) -> dict[str, list[dict]]:
+    """Top-K customers per SKU by revenue. Uses a window function so the
+    grouping happens in DuckDB (one scan of orders), not in Python."""
+    rows = conn.execute(
+        f"""
+        WITH agg AS (
+            SELECT sku_id, customer_id,
+                   SUM(qty)            AS units,
+                   SUM(extended_price) AS revenue
+            FROM orders
+            GROUP BY sku_id, customer_id
+        ),
+        ranked AS (
+            SELECT *, ROW_NUMBER() OVER (PARTITION BY sku_id ORDER BY revenue DESC) AS rn
+            FROM agg
+        )
+        SELECT sku_id, customer_id, units, revenue
+        FROM ranked WHERE rn <= {k}
+        ORDER BY sku_id, rn
+        """
+    ).fetchall()
+    out: dict[str, list[dict]] = {}
+    for sku_id, cust_id, units, revenue in rows:
+        out.setdefault(sku_id, []).append(
+            {"customer_id": cust_id, "units": units, "revenue": revenue}
+        )
+    return out
+
+
+def _prefetch_substitute_candidates(
+    conn: duckdb.DuckDBPyConnection, k: int = 12
+) -> dict[str, list[dict]]:
+    """For every SKU, return up to ``k`` candidate substitute rows in the
+    same category. We keep all candidates from the same category in
+    memory once and slice per-SKU at render time — far cheaper than
+    one randomized query per SKU."""
+    rows = conn.execute(
+        "SELECT id, name, manufacturer, sub_type, category FROM skus"
+    ).fetchall()
+    by_category: dict[str, list[dict]] = {}
+    for sid, name, mfr, sub, cat in rows:
+        by_category.setdefault(cat, []).append(
+            {"id": sid, "name": name, "manufacturer": mfr, "sub_type": sub}
+        )
+    return by_category
+
+
+def _candidates_for(sku: dict, by_category: dict[str, list[dict]], k: int = 12) -> list[dict]:
+    pool = [c for c in by_category.get(sku["category"], []) if c["id"] != sku["id"]]
+    # Same sub-type first, then different-manufacturer, then any remaining; cap at k.
+    pool.sort(
+        key=lambda c: (
+            0 if c["sub_type"] == sku["sub_type"] else 1,
+            0 if c["manufacturer"] != sku["manufacturer"] else 1,
+        )
+    )
+    return pool[:k]
+
+
 def generate_all(
     conn: duckdb.DuckDBPyConnection,
     wiki_dir: Path,
@@ -159,27 +232,19 @@ def generate_all(
         r["id"]: r["name"]
         for r in conn.execute("SELECT id, name FROM suppliers").fetchdf().to_dict("records")
     }
+    inventory_by_sku = _prefetch_inventory(conn)
+    top_customers_by_sku = _prefetch_top_customers(conn, k=5)
+    candidates_by_category = _prefetch_substitute_candidates(conn)
 
     count = 0
     enriched = 0
     for idx, sku in enumerate(tqdm(skus, desc="SKU pages", unit="page")):
-        inventory = conn.execute(
-            "SELECT warehouse_id, qty_on_hand, reorder_point "
-            "FROM inventory WHERE sku_id = ? ORDER BY warehouse_id",
-            [sku["id"]],
-        ).fetchdf().to_dict("records")
-        top_customers = conn.execute(
-            """
-            SELECT customer_id, SUM(qty) AS units, SUM(extended_price) AS revenue
-            FROM orders WHERE sku_id = ?
-            GROUP BY 1 ORDER BY revenue DESC LIMIT 5
-            """,
-            [sku["id"]],
-        ).fetchdf().to_dict("records")
+        inventory = inventory_by_sku.get(sku["id"], [])
+        top_customers = top_customers_by_sku.get(sku["id"], [])
 
         narrative: Narrative | None = None
         if enricher and (enrich_limit is None or idx < enrich_limit):
-            candidates = _candidate_substitutes(conn, sku)
+            candidates = _candidates_for(sku, candidates_by_category)
             try:
                 narrative = enricher(sku, candidates)
                 if narrative is not None:
