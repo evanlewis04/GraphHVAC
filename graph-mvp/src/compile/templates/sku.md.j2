@@ -1,0 +1,30 @@
+---
+type: sku
+id: {{ sku.id }}
+manufacturer: {{ sku.manufacturer }}
+category: {{ sku.category }}
+---
+
+# {{ sku.id }} — {{ sku.name }}
+
+**Manufacturer:** [[manufacturers/{{ sku.manufacturer | slug }}]]
+**Supplier:** [[suppliers/{{ sku.supplier_id }}]]
+**Category:** {{ sku.category }}
+
+## Description
+{{ llm_description }}
+
+## Substitutes
+{% for sub in substitutes %}- [[skus/{{ sub.id }}]] — {{ sub.note }}
+{% endfor %}
+
+## Availability
+{% for w in warehouse_stock %}- [[warehouses/{{ w.id }}]]: {{ w.qty }} on hand
+{% endfor %}
+
+## Notes
+{{ llm_notes }}
+
+## Sources
+- DuckDB: `SELECT * FROM skus WHERE id = '{{ sku.id }}'`
+- DuckDB: `SELECT * FROM inventory WHERE sku_id = '{{ sku.id }}'`

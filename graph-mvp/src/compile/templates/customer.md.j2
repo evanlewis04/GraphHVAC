@@ -1,0 +1,23 @@
+---
+type: customer
+id: {{ customer.id }}
+---
+
+# {{ customer.name }}
+
+**Segment:** {{ customer.segment }}
+**Region:** {{ customer.region }}
+
+## Top SKUs purchased
+{% for sku in top_skus %}- [[skus/{{ sku.id }}]] — {{ sku.qty_2y }} units last 2y
+{% endfor %}
+
+## Refrigerant exposure
+{{ llm_refrigerant_summary }}
+
+## Notes
+{{ llm_notes }}
+
+## Sources
+- DuckDB: `SELECT * FROM customers WHERE id = '{{ customer.id }}'`
+- DuckDB: `SELECT sku_id, SUM(qty) FROM orders WHERE customer_id = '{{ customer.id }}' GROUP BY sku_id ORDER BY 2 DESC`
