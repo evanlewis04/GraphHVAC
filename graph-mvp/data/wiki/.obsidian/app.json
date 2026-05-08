@@ -1,0 +1,10 @@
+{
+  "showLineNumber": true,
+  "showFrontmatter": true,
+  "alwaysUpdateLinks": false,
+  "useMarkdownLinks": false,
+  "newLinkFormat": "shortest",
+  "attachmentFolderPath": "./",
+  "vimMode": false,
+  "promptDelete": true
+}

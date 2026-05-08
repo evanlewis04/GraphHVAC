@@ -20,5 +20,8 @@ data/wiki/warehouses/*.md
 data/wiki/refrigerants/*.md
 data/wiki/concepts/*.md
 
-# Obsidian local state
-data/wiki/.obsidian/
+# Obsidian local state — ignore everything except the committed defaults
+data/wiki/.obsidian/*
+!data/wiki/.obsidian/graph.json
+!data/wiki/.obsidian/app.json
+!data/wiki/.obsidian/appearance.json

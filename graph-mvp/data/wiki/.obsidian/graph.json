@@ -1,0 +1,29 @@
+{
+  "collapse-filter": false,
+  "search": "",
+  "showTags": false,
+  "showAttachments": false,
+  "hideUnresolved": false,
+  "showOrphans": true,
+  "collapse-color-groups": false,
+  "colorGroups": [
+    { "query": "path:skus/",         "color": { "a": 1, "rgb": 4620980 } },
+    { "query": "path:customers/",    "color": { "a": 1, "rgb": 5025616 } },
+    { "query": "path:suppliers/",    "color": { "a": 1, "rgb": 16750592 } },
+    { "query": "path:warehouses/",   "color": { "a": 1, "rgb": 12216520 } },
+    { "query": "path:refrigerants/", "color": { "a": 1, "rgb": 15684432 } },
+    { "query": "path:concepts/",     "color": { "a": 1, "rgb": 2541274 } }
+  ],
+  "collapse-display": false,
+  "showArrow": false,
+  "textFadeMultiplier": -3,
+  "nodeSizeMultiplier": 1.0,
+  "lineSizeMultiplier": 0.5,
+  "collapse-forces": false,
+  "centerStrength": 0.4,
+  "repelStrength": 12,
+  "linkStrength": 0.6,
+  "linkDistance": 220,
+  "scale": 0.6,
+  "close": true
+}
