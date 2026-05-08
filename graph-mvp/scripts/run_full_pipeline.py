@@ -40,6 +40,11 @@ def main() -> None:
     t2 = time.time()
     print(f"Wiki compile: {t2 - t1:.1f}s")
     print(f"Pages written: {counts}")
+
+    # Seed Obsidian config (idempotent; never overwrites user tweaks).
+    from src.compile.obsidian import setup_obsidian
+    setup_obsidian(quiet=True)
+
     print(f"Wiki at: {settings.wiki_dir}")
 
 
