@@ -20,8 +20,7 @@ data/wiki/warehouses/*.md
 data/wiki/refrigerants/*.md
 data/wiki/concepts/*.md
 
-# Obsidian local state — ignore everything except the committed defaults
-data/wiki/.obsidian/*
-!data/wiki/.obsidian/graph.json
-!data/wiki/.obsidian/app.json
-!data/wiki/.obsidian/appearance.json
+# Obsidian local state — ignored entirely; canonical defaults live in
+# data/obsidian-defaults/ and are seeded into here by
+# scripts/setup_obsidian.py (only on first run; never overwritten).
+data/wiki/.obsidian/
