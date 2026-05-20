@@ -1,0 +1,8 @@
+source_id: spec-re-michel-2025-q1-contactors
+type: csv
+bucket: specs
+title: Re Michel 2025 Q1 Contactors
+issuer: Distributor
+category: Contactor
+doc_date: '2025-01-15'
+license: synthetic-internal

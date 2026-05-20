@@ -1,0 +1,9 @@
+source_id: spec-rheem-2025-r-454b-condensers
+type: csv
+bucket: specs
+title: Rheem 2025 R 454B Condensers
+issuer: Rheem
+manufacturer: Rheem
+category: Condenser
+doc_date: '2025-01-15'
+license: synthetic-internal

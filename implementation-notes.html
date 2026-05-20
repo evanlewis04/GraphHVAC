@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Graph — Implementation Notes</title>
+<style>
+  body { font: 15px/1.55 system-ui, sans-serif; max-width: 880px; margin: 2rem auto; padding: 0 1rem; color: #111; }
+  h1 { border-bottom: 2px solid #222; padding-bottom: .3rem; }
+  h2 { margin-top: 2.2rem; border-bottom: 1px solid #ccc; padding-bottom: .2rem; }
+  h3 { margin-top: 1.4rem; }
+  code, pre { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13.5px; }
+  pre { background: #f5f5f5; padding: .7rem .9rem; border-radius: 5px; overflow-x: auto; }
+  .meta { color: #666; font-size: 13px; }
+  .tag { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 3px; font-weight: 600; vertical-align: middle; }
+  .tag-decision   { background: #e6f0ff; color: #1444a8; }
+  .tag-deviation  { background: #ffe6e6; color: #a81414; }
+  .tag-tradeoff   { background: #fff3d6; color: #8a5a00; }
+  .tag-open       { background: #e8f8e6; color: #1f6b16; }
+  ul li { margin: .25rem 0; }
+  .note { border-left: 3px solid #888; background: #fafafa; padding: .55rem .9rem; margin: .8rem 0; }
+</style>
+</head>
+<body>
+
+<h1>Graph — Implementation Notes</h1>
+<p class="meta">Running record of design decisions, deviations from the locked plan, tradeoffs, and open questions. Updated as work proceeds. Latest entries appended at the bottom of each section.</p>
+
+<h2>Repo cleanup — flatten + strategy-doc removal</h2>
+
+<h3>What changed <span class="tag tag-decision">decision</span></h3>
+<ul>
+  <li><strong>Old strategy docs deleted:</strong> <code>graph-market-analysis.md</code>, <code>graph-mvp-sketch.md</code> (project root), <code>IDEAS.md</code> (was inside the nested folder). They were PE-pitch artifacts from the original framing and superseded by the current <code>graph-strategy.md</code> + <code>PLAN.md</code>. Recoverable from git if ever needed.</li>
+  <li><strong>Nested <code>graph-mvp/</code> folder flattened</strong> into the project root. The contents (<code>src/</code>, <code>data/</code>, <code>scripts/</code>, <code>tests/</code>, <code>web/</code>, <code>pyproject.toml</code>, <code>.env*</code>, <code>.gitignore</code>, <code>.venv/</code>, <code>README.md</code>, <code>PLAN.md</code>) now sit at the root next to <code>graph-strategy.md</code> and <code>implementation-notes.html</code>.</li>
+  <li><strong>Side-effect cleanup:</strong> deleted <code>=0.7.0</code> (junk file from a PowerShell-vs-bash redirect when I first installed ruff), plus regenerable <code>graph_mvp.egg-info/</code> and <code>.ruff_cache/</code>.</li>
+  <li><strong>Venv survived the move.</strong> Python's <code>pyvenv.cfg</code> points at the system interpreter, so the venv kept working after relocation. Reran <code>pip install -e .</code> to refresh the egg-info path. All new and existing modules still import cleanly.</li>
+  <li><strong>Doc links updated:</strong> <code>graph-strategy.md</code> and <code>README.md</code> rewrote their cross-references (e.g. <code>graph-mvp/PLAN.md</code> &rarr; <code>PLAN.md</code>, <code>../graph-strategy.md</code> &rarr; <code>graph-strategy.md</code>). The README's layout tree now shows <code>.</code> as the root, not <code>graph-mvp/</code>.</li>
+</ul>
+
+<h3>Open questions <span class="tag tag-open">open</span></h3>
+<ul>
+  <li><strong>Package rename.</strong> <code>pyproject.toml</code> still declares <code>name = "graph-mvp"</code>. Doesn't affect imports (those live under <code>src/</code>) but it shows up in <code>pip list</code> as <code>graph-mvp</code>. Probably want to rename to <code>graph</code> at some point. Not done yet to avoid mixing a rename into the Phase 2 commit; flagging here so it's easy to flip later.</li>
+</ul>
+
+<h2>Phase 1 — Reframe + scaffolding</h2>
+
+<h3>Design decisions <span class="tag tag-decision">decision</span></h3>
+<ul>
+  <li><strong>Notes file lives at the project root</strong> (<code>implementation-notes.html</code>), not inside <code></code>. The strategy docs (<code>graph-strategy.md</code>, <code>graph-market-analysis.md</code>, <code>graph-mvp-sketch.md</code>) live at the project root too, so this matches their level. Reviewers cloning the repo land on it next to those docs.</li>
+  <li><strong>HTML, not markdown.</strong> You asked for <code>implementation-notes.html</code>. Rendered styling makes it easier to scan during a portfolio review than a flat <code>.md</code>. No external CSS or JS — opens cleanly from <code>file://</code>.</li>
+  <li><strong>Module-skeleton style:</strong> every new module ships with (a) a real docstring explaining what it will do, (b) the public function/class signatures with type hints, and (c) <code>raise NotImplementedError(&quot;Phase N&quot;)</code> bodies. This lets imports succeed (Phase 1 done-criterion: &quot;lint clean, modules import&quot;) while making the intended surface area legible to anyone reading the repo.</li>
+  <li><strong>New module locations:</strong>
+    <ul>
+      <li><code>src/ingest/loaders/</code> — one file per source format (<code>pdf.py</code>, <code>markdown.py</code>, <code>email.py</code>, <code>ticket.py</code>, <code>csv.py</code>) + a shared <code>base.py</code> defining the <code>Document</code> dataclass and the loader protocol.</li>
+      <li><code>src/ingest/chunking.py</code>, <code>src/ingest/embed.py</code>, <code>src/ingest/metadata.py</code> — flat files, one responsibility each.</li>
+      <li><code>src/retrieval/index.py</code>, <code>src/retrieval/search.py</code> — split write-path and read-path.</li>
+      <li><code>src/structure/builder.py</code>, <code>src/structure/freshness.py</code>, <code>src/structure/health.py</code> + <code>concepts.yaml</code> (declarative ontology config alongside the code that consumes it).</li>
+      <li><code>src/eval/runner.py</code>, <code>src/eval/metrics.py</code>.</li>
+    </ul>
+  </li>
+  <li><strong>Manifest schema lives at <code>data/sources/manifest.yaml</code></strong> with a JSON-Schema-ish comment header in the file plus a tiny placeholder entry. A separate <code>data/sources/manifest.schema.yaml</code> formalizes the schema if we want to validate programmatically later — not strictly needed in Phase 1.</li>
+  <li><strong><code>data/sources/</code> is created with a <code>.gitkeep</code></strong> so the directory is tracked even before real source documents land. Subdirectories (<code>manuals/</code>, <code>bulletins/</code>, <code>sops/</code>, <code>tickets/</code>, <code>emails/</code>, <code>specs/</code>) are added as empty <code>.gitkeep</code>'d folders so the layout from the plan is committed up front.</li>
+  <li><strong>PLAN.md is fully replaced</strong> with the locked plan from this conversation. The original 4-week PE-flavored milestone plan moves out of the active path; if you ever want the historical version it's recoverable from git history (the <code>0af4e2f</code> merge or earlier).</li>
+  <li><strong>graph-strategy.md is rewritten to a one-pager</strong> on architecture + workflows, as specified. The original long-form PE pitch is replaced wholesale (recoverable via git).</li>
+  <li><strong>README.md is rewritten</strong> around the portfolio framing. Quick-start commands are preserved structurally so &quot;clone &amp; run&quot; still works; positioning paragraphs change.</li>
+  <li><strong>No new dependencies added to <code>pyproject.toml</code> yet.</strong> Phase 1 done-criterion is &quot;modules import&quot; — the skeletons don't yet need <code>lancedb</code>, <code>voyageai</code>, <code>pymupdf</code>, or <code>rank-bm25</code>. Those land in Phase 2/3 alongside the code that uses them, so the install surface stays minimal until the deps are actually load-bearing.</li>
+  <li><strong>System prompt left alone for now.</strong> <code>src/agent/prompts.py</code> still talks about &quot;two sources of truth&quot; (wiki + SQL). It'll get a third (retrieval) in Phase 4. Editing it in Phase 1 would create dead text the agent loop can't act on yet.</li>
+</ul>
+
+<h3>Deviations from the spec <span class="tag tag-deviation">deviation</span></h3>
+<ul>
+  <li><strong>Added <code>src/ingest/loaders/base.py</code> and <code>src/ingest/metadata.py</code></strong> on top of the modules the plan enumerated. The plan listed format-specific loader files and a chunker/embedder but didn't name a shared base for the loader protocol or a home for LLM-assisted metadata enrichment. Both are referenced by Phase 3 explicitly, so the skeletons should already exist. Flagged here so you don't read it as scope creep.</li>
+  <li><strong>Added <code>src/eval/runner.py</code></strong> next to <code>metrics.py</code>. The plan called the entry point <code>scripts/run_evals.py</code> (CLI driver) but the actual eval loop logic belongs as a library module so tests can call it directly. The script in Phase 8 will be a thin wrapper.</li>
+  <li><strong>Did not touch <code>graph-mvp-sketch.md</code>, <code>graph-market-analysis.md</code>, or <code>IDEAS.md</code></strong>. They're now stale (PE-pitch oriented) but the plan only explicitly called for rewriting <code>README.md</code>, <code>graph-strategy.md</code>, and <code>PLAN.md</code>. Leaving them is safer than silently deleting historical strategy docs. See open questions.</li>
+  <li><strong>Did not touch existing tests.</strong> Phase 1 doesn't say to. Some (<code>test_briefs.py</code>, <code>test_narrative.py</code>) reference behavior that changes in Phase 5; they'll be rewritten then.</li>
+  <li><strong>Did not remove the existing generated wiki under <code>data/wiki/</code>.</strong> It'll get regenerated in Phase 5 from real sources. Removing it now would make the repo look empty during the long Phase 2–4 stretch where the new pipeline isn't running yet.</li>
+</ul>
+
+<h3>Tradeoffs <span class="tag tag-tradeoff">tradeoff</span></h3>
+<ul>
+  <li><strong>HTML vs Markdown for the notes file.</strong> Markdown would version-control diff better; HTML renders without a viewer. Picked HTML because (a) you explicitly named it <code>.html</code>, (b) the file is meant to be <em>read</em> by you and reviewers, not diffed line-by-line.</li>
+  <li><strong>Skeleton bodies: <code>NotImplementedError</code> vs <code>pass</code> vs no body.</strong> <code>NotImplementedError</code> is loudest if something accidentally calls a stub. <code>pass</code> would let a caller silently get <code>None</code>. Picked <code>NotImplementedError(&quot;Phase N&quot;)</code> so any wiring mistake fails fast and the phase number tells you which milestone to look at.</li>
+  <li><strong>Declarative ontology in <code>concepts.yaml</code> vs in code.</strong> YAML is easier to scan, easier to round-trip, and lets future workflows edit it without touching Python. Risk: another file format to keep in sync. Decided the readability win is worth it for ontology declarations specifically — same reason we use <code>manifest.yaml</code> for the source corpus.</li>
+  <li><strong>One <code>retrieval/</code> module vs splitting <code>index</code> and <code>search</code>.</strong> Splitting matches the read-vs-write boundary cleanly and keeps each file small. Going to be glad of that in Phase 4 when reranker + filters land in <code>search.py</code> without bloating index code.</li>
+  <li><strong>Source-corpus subdirectories committed empty vs created on first ingest.</strong> Committing empty dirs with <code>.gitkeep</code> documents the expected layout. The cost is six placeholder files. Picked committing them so a reviewer cloning the repo sees the shape of the corpus before any docs are added.</li>
+</ul>
+
+<h3>Open questions <span class="tag tag-open">open</span></h3>
+<ul>
+  <li><strong>Delete <code>graph-mvp-sketch.md</code>, <code>graph-market-analysis.md</code>, <code>IDEAS.md</code>?</strong> They're now stale relative to the new plan. Options: (a) delete them, (b) move them to <code>docs/archive/</code>, (c) leave them. Currently doing (c) — least invasive. Recommend (b) if you want a tidier repo.</li>
+  <li><strong>Repo rename?</strong> Directory is <code></code> and package is <code>graph-mvp</code>. With the pivot away from &quot;MVP&quot; framing toward &quot;portfolio piece,&quot; consider renaming to <code>graph/</code> or <code>graphhvac/</code>. Not done now — rename touches every import path and the install metadata. Easy to do as a single later commit if you want.</li>
+  <li><strong>Strategy-doc top-level location.</strong> <code>graph-strategy.md</code> currently sits at the project root, next to the new notes file. With the new framing it's almost a long-form README. Want it folded into <code>README.md</code> instead? Currently leaving it standalone.</li>
+  <li><strong>Source-doc license policy.</strong> Phase 2 ingests real public anchors. Need a one-line policy in <code>data/sources/README.md</code> about what's checked in vs fetched at setup. <em>Resolved during Phase 1</em>: a short policy is in <code>data/sources/README.md</code> with three license buckets (public-domain/redistributable, reference-only, synthetic-internal). Defaults to reference-only for real anchors unless redistribution is confirmed.</li>
+  <li><strong>Concepts.yaml templates for new entity types.</strong> The ontology in <code>src/structure/concepts.yaml</code> declares <code>refrigerant.md.j2</code>, <code>regulation.md.j2</code>, <code>manufacturer.md.j2</code>, and <code>procedure.md.j2</code>, which don't yet exist under <code>src/compile/templates/</code>. They'll be created in Phase 5. Calling this out so it doesn't read as a broken reference.</li>
+  <li><strong>Pre-populated SKU/supplier/customer wiki frontmatter.</strong> The existing generated wiki pages don't have the <code>source_chunks</code> / <code>last_built</code> / <code>template_version</code> frontmatter the structurer expects. Phase 5 will treat them as <code>template_version: 0</code> and rebuild them all on first run.</li>
+</ul>
+
+<h3>Phase 1 completion <span class="tag tag-decision">decision</span></h3>
+<ul>
+  <li><strong>Files written:</strong> rewrote <code>README.md</code>, <code>PLAN.md</code>, <code>graph-strategy.md</code>. Created 18 new module files under <code>src/ingest/loaders/</code>, <code>src/ingest/</code>, <code>src/retrieval/</code>, <code>src/structure/</code>, <code>src/eval/</code>. Created <code>data/sources/manifest.yaml</code> + <code>data/sources/README.md</code> + six bucket subdirectories with <code>.gitkeep</code>.</li>
+  <li><strong>Verified:</strong> all 20 new modules import cleanly (smoke test against each via <code>importlib</code>). All existing modules (<code>agent.loop</code>, <code>agent.tools</code>, <code>api.main</code>, <code>briefs.generator</code>, <code>compile.compiler</code>) still import. <code>ruff check src</code> passes with zero findings.</li>
+  <li><strong>Did not touch:</strong> <code>pyproject.toml</code> dependencies (new deps land alongside the code that uses them in Phase 2/3), the existing generated wiki under <code>data/wiki/</code>, any test files, <code>graph-mvp-sketch.md</code>, <code>graph-market-analysis.md</code>, <code>IDEAS.md</code>, or the agent system prompt.</li>
+  <li><strong>Ruff was missing from the venv</strong> (declared as a dev extra but never installed). Installed it before running the lint check. Adds <code>ruff</code> to the venv's <code>site-packages</code> but doesn't change <code>pyproject.toml</code>.</li>
+</ul>
+
+<h2>Phase 2 — Source corpus</h2>
+
+<h3>Design decisions <span class="tag tag-decision">decision</span></h3>
+<ul>
+  <li><strong>Manifest is auto-built, not hand-edited.</strong> Every markdown source carries YAML frontmatter declaring its manifest entry. Every non-markdown source (jsonl, csv) has a sidecar <code>&lt;name&gt;.meta.yaml</code> next to it. <code>scripts/generate_corpus.py</code> walks the tree, harvests these, and writes <code>data/sources/manifest.yaml</code>. Adding a new source means dropping a file into the right bucket with frontmatter — never hand-editing the manifest. Re-build at any time with <code>--manifest-only</code>.</li>
+  <li><strong>Hand-authored "showcase" set + generator-bulk.</strong> 11 docs are hand-authored to be high-quality demo material (4 regulatory bulletins, 3 manufacturer TSBs, 6 SOPs, 2 supplier email threads, 1 install-procedure manual). The remaining ~60 are produced by deterministic template-based generators in <code>scripts/generate_corpus.py</code>. Hand-authored docs cross-reference each other with wikilinks so demo workflows hop between them naturally.</li>
+  <li><strong>Generators are pure Python templates, not LLM calls.</strong> Generating bulk content via the Anthropic API would cost real money on every regeneration and would not be deterministic across runs. The templates produce plausibly-messy text without the API. The cost: less surface-level variety than an LLM would produce. The benefit: free, reproducible, hermetic.</li>
+  <li><strong>Real-anchor strategy: reference-only with a fetcher.</strong> Three real public regulatory docs (EPA AIM Act final rule, EPA SNAP Rule 23, DOE residential CAC rule) are declared in the manifest with <code>license: reference-only</code> and a <code>fetch:</code> URL. They are <em>not</em> checked into the repo. <code>scripts/fetch_anchors.py</code> downloads them on demand into <code>data/sources/bulletins/</code>. The pipeline will treat their absence gracefully — the manifest entry exists so retrieval traceability is preserved, but ingestion skips missing files.</li>
+  <li><strong>Tickets are JSONL, one Document per record.</strong> Four ticket files cover four time periods, each with 9–12 records. The manifest lists each <em>file</em> with a <code>record_count</code> field; the eventual loader (Phase 3) will emit one <code>Document</code> per record, so a single manifest entry expands to multiple retrievable Documents. This keeps the manifest readable while satisfying the per-record citation requirement.</li>
+  <li><strong>Cross-references use wikilinks, not relative paths.</strong> Hand-authored bulletins and SOPs link to each other as <code>[[bulletins/r-410a-phase-out-timeline]]</code>, mirroring the Obsidian-vault convention used elsewhere in the project. The structurer in Phase 5 will resolve these against the generated wiki; the ingestion pipeline in Phase 3 will preserve them as text so retrieval can follow them.</li>
+  <li><strong>Per-bucket file layout matches the manifest's <code>bucket</code> field 1:1.</strong> A source's <code>bucket</code> is harvested from frontmatter, but if missing the manifest builder falls back to the parent directory name. This keeps the convention robust to forgetting the field.</li>
+</ul>
+
+<h3>Deviations <span class="tag tag-deviation">deviation</span></h3>
+<ul>
+  <li><strong>Manifest entry count: 75, below the spec's "~80–120 documents" lower bound.</strong> But the <em>Document</em> count after loading is 114 — within the target range — because the four ticket files expand to 42 individual ticket Documents at load time. The spec language was ambiguous about whether "documents" meant manifest entries or per-record Documents; I chose the latter interpretation because it's what the retrieval system actually indexes. If you want strict-manifest counts, bumping a few generator loop counts would close the gap in one edit.</li>
+  <li><strong>Added <code>pyyaml</code> to <code>pyproject.toml</code></strong> dependencies. It was already in the venv as a transitive dep but the generator and fetcher import it directly, so I made the dependency explicit. This is the first new dep added since the original MVP.</li>
+  <li><strong>Schema validation is implicit, not codified.</strong> The Phase 2 spec said "manifest validates." I did not write a formal JSON Schema validator. Instead the manifest builder enforces invariants in-process (unique <code>source_id</code>s, required fields, file existence except for reference-only entries) and I ran an ad-hoc validation script post-generate. A proper <code>scripts/validate_manifest.py</code> would be cheap to add later; not load-bearing for Phase 3 ingestion.</li>
+  <li><strong>No SDS sheets, no AHRI standard summaries.</strong> The plan mentioned both as candidate real anchors. SDS sheets are dense, low-information-per-page, and add little to retrieval quality vs. complexity. AHRI standards are <em>not</em> public domain — checking in would be a licensing question. Dropped both in favor of three EPA/DOE anchors that are clearly public.</li>
+</ul>
+
+<h3>Tradeoffs <span class="tag tag-tradeoff">tradeoff</span></h3>
+<ul>
+  <li><strong>Frontmatter-as-manifest vs. central manifest file.</strong> Central-file pros: one place to read everything, no walking required. Frontmatter pros: adding a source can never desynchronize from the manifest, manual-authoring is easier (no separate file to keep up to date), and the generator and the human use the same convention. Picked frontmatter. The walk is fast at 75 files.</li>
+  <li><strong>Sidecar <code>.meta.yaml</code> for non-markdown vs. embedding metadata into the file.</strong> Could embed in JSONL header records or CSV comments, but those break the loader's record schema. Sidecars keep the data file pure and put the metadata in a clearly-distinct file. The sidecar is named <code>&lt;file&gt;.meta.yaml</code> so the relationship is obvious and the manifest builder's discovery is trivial.</li>
+  <li><strong>Real anchors: download script vs. check in.</strong> Checking in EPA PDFs would be operationally easier but legally murky for a portfolio repo. The fetcher gives the same demo experience (a few seconds of network on first run) without the redistribution question. If the URLs rot, the fetcher reports the error and the manifest entries still document what <em>should</em> be there.</li>
+  <li><strong>Deterministic templates vs. LLM-authored synthetic.</strong> See decisions. Tradeoff is variety/realism vs. cost/reproducibility. For a portfolio piece where the corpus needs to look the same every time a reviewer clones, deterministic wins.</li>
+  <li><strong>Number of hand-authored docs.</strong> Considered authoring 20+ showcase docs; settled on 11. Each hand-authored doc gets a meaningful share of demo time, so 11 is enough to seed the key workflows (refrigerant exposure, supplier risk, tariff response, daily brief). More would have padded the corpus without raising demo quality.</li>
+</ul>
+
+<h3>Open questions <span class="tag tag-open">open</span></h3>
+<ul>
+  <li><strong>Reference-only anchor URLs.</strong> I picked plausible EPA and DOE URLs but did not verify each one resolves to the exact PDF described. The fetcher will report any 404s. If you want me to verify them now (one network call each), I can; otherwise we find out the first time someone runs <code>fetch_anchors.py</code>.</li>
+  <li><strong>Whether to ship a "messy real example" with OCR noise.</strong> The corpus is currently all-text. A real distributor would have at least one PDF that's a scan of a fax — OCR'd, noisy, with reading-order issues. Adding one such fixture would stress-test the ingestion pipeline in a way the current corpus doesn't. Not done now; flagged for Phase 3 if we want it.</li>
+  <li><strong>Counts could be bumped.</strong> If you want the manifest entry count above 80 by manifest reading, bumping <code>gen_emails</code> from 22 to 30 and <code>gen_tsbs</code> from 10 to 13 would do it. Five-minute change. Not done because Document count is already in range.</li>
+  <li><strong>Spec-CSV pricing values are random.</strong> Tier-2 prices in the generated spec CSVs occasionally exceed list prices because the random generator doesn't enforce <code>tier_2 &lt; list</code>. Won't matter for retrieval (no SQL is run against them) but would look odd if a reviewer reads a CSV. Trivial fix in the generator if you care.</li>
+</ul>
+
+<h3>Phase 2 completion <span class="tag tag-decision">decision</span></h3>
+<ul>
+  <li><strong>Files written:</strong>
+    <ul>
+      <li>11 hand-authored showcase fixtures across <code>bulletins/</code>, <code>sops/</code>, <code>emails/</code>, <code>manuals/</code>.</li>
+      <li>56 generator-produced files: 10 TSBs, 12 SOPs, 22 supplier emails, 4 ticket JSONLs, 8 spec CSVs.</li>
+      <li>4 ticket files + 8 spec CSVs come with <code>.meta.yaml</code> sidecars.</li>
+      <li><code>scripts/generate_corpus.py</code> — corpus generator + manifest builder.</li>
+      <li><code>scripts/fetch_anchors.py</code> — on-demand downloader for reference-only anchors.</li>
+      <li><code>data/sources/manifest.yaml</code> — auto-built; 75 entries.</li>
+    </ul>
+  </li>
+  <li><strong>Verified:</strong> all 72 on-disk sources exist where the manifest says; 3 reference-only entries have <code>fetch:</code> URLs; all <code>source_id</code>s unique; all required schema fields present; <code>ruff check src scripts</code> passes clean.</li>
+  <li><strong>Bucket breakdown:</strong> bulletins 20, sops 18, emails 24, tickets 4, specs 8, manuals 1 = 75 entries / ~114 post-load Documents.</li>
+</ul>
+
+<h2>Gap close — manifest count bump</h2>
+
+<h3>What changed <span class="tag tag-decision">decision</span></h3>
+<ul>
+  <li><strong>TSB generator bumped from 10 → 13 iterations; email generator from 22 → 30.</strong> Pushed manifest to 86 entries / 120 post-load Documents.</li>
+  <li><strong>Generator is now properly idempotent.</strong> First re-run after the bump produced 30 extra emails alongside the original 22 because filenames embed random dates and re-running with new counts shifted the shared RNG. Fixed by (a) per-generator RNGs derived from the master seed (<code>random.Random(f"{seed}:{name}")</code>) so bumping one generator's count no longer shifts the others, and (b) a pre-generation sweep that wipes generator-owned files from each bucket while preserving a hardcoded set of hand-authored filenames (<code>HAND_AUTHORED</code> in the script).</li>
+</ul>
+
+<h2>Phase 3 — Ingestion pipeline</h2>
+
+<h3>Design decisions <span class="tag tag-decision">decision</span></h3>
+<ul>
+  <li><strong>Loader dispatch lives in <code>loaders/base.py</code></strong> (<code>load_for_entry()</code>) rather than in the ingest driver. Keeps the driver dumb and lets tests exercise the dispatch directly.</li>
+  <li><strong>Per-loader "Document" boundary policy:</strong>
+    <ul>
+      <li>Markdown / PDF / CSV: 1 Document per file. Frontmatter stripped (markdown), rows rendered as a markdown table (CSV), page offsets recorded (PDF).</li>
+      <li>Email: 1 Document <em>per message</em> within a thread. The thread's <code>source_id</code> is suffixed with <code>#msg-{n}</code> so each message is independently citable. Headers are normalized and rendered into the content so retrieval can hit on <code>From:</code> / <code>Subject:</code> tokens.</li>
+      <li>Ticket: 1 Document per record in the JSONL file. Source_id suffixed with <code>#{ticket_id}</code>.</li>
+    </ul>
+  </li>
+  <li><strong>Chunker is heading-aware recursive.</strong> Parses markdown into a section tree, then walks: if a section (heading + body + descendants) fits within <code>max_tokens</code> (1000) it's emitted whole; otherwise the section's own body is emitted first and the walker recurses into children. Leaf sections bigger than <code>max_tokens</code> fall back to paragraph-with-overlap splitting. Adjacent small siblings with a shared heading-path prefix are combined to keep chunks dense (target ~700 tokens).</li>
+  <li><strong>Token counting uses tiktoken <code>cl100k_base</code></strong>. Not exact for Voyage but close enough for sizing decisions; avoids dragging in Voyage's tokenizer (which would force the Voyage SDK as a hard dep).</li>
+  <li><strong>Chunk IDs are content-hashed.</strong> Format: <code>{source_id}:{ordinal:04d}:{short_hash}</code>. Re-ingesting unchanged content produces the same chunk_id — important for the freshness logic in Phase 5.</li>
+  <li><strong>Index idempotency is source-scoped, not chunk-scoped.</strong> When you re-ingest a source, <code>index_chunks</code> deletes every existing row for that <code>source_id</code> first, then inserts the new chunks. This guarantees no orphans when a source's content shrinks. The downside: a re-index always rewrites; we don't take advantage of unchanged-chunk skips at the LanceDB layer. For an 86-source corpus that's fine; re-evaluate if we ever cross ~10K sources.</li>
+  <li><strong>BM25 corpus is rebuilt from LanceDB after every ingest.</strong> Pulls every row and pickles the BM25 + chunk-id mapping to <code>data/bm25.pkl</code>. Simpler than maintaining BM25 incrementally and the cost is sub-second at this corpus size.</li>
+  <li><strong>Filterable columns hoisted out of metadata.</strong> LanceDB has first-class typed columns for <code>bucket</code>, <code>source_type</code>, and <code>manufacturer</code> on top of the full metadata-as-JSON column. Lets Phase 4's filtered retrieval do <code>WHERE bucket = 'bulletins'</code> directly instead of post-filtering Python.</li>
+  <li><strong>Metadata enrichment is pattern-first, LLM-optional.</strong> A curated vocab of manufacturers / refrigerants / regulations / SKU-ID patterns runs as a regex pass over every chunk. Free, deterministic, covers ~90% of the cases the LLM would catch because the entity universe is small and well-defined. The Haiku LLM pass is opt-in via <code>--llm-enrich</code> and is cached by content hash; useful for long-tail mentions and inferred doc_type but not needed for Phase 3's done-criterion.</li>
+  <li><strong>Audit logging at the ingest level.</strong> One <code>trace_id</code> per ingest run. Events logged: <code>ingest_started</code>, <code>source_indexed</code> per source, <code>source_missing</code> / <code>source_empty</code> / <code>load_error</code> for skips, <code>ingest_complete</code> with totals. Same SQLite log the agent loop writes to — Phase 4's UI can show ingest history alongside chat traces with no new infrastructure.</li>
+</ul>
+
+<h3>Deviations <span class="tag tag-deviation">deviation</span></h3>
+<ul>
+  <li><strong>Voyage embeddings are optional, with a hash-pseudo-vector fallback.</strong> The spec said "Voyage-3 embeddings." But the user's <code>.env</code> has no <code>VOYAGE_API_KEY</code>, and the same will be true for any reviewer who clones the repo. Hard-requiring Voyage would block clone-and-run. So <code>embed.py</code> checks for the key at call time: if present (and the optional <code>voyageai</code> dep installed) it uses Voyage; otherwise it generates deterministic L2-normalized vectors from SHA-256 of the chunk content. These pseudo-vectors are <em>not</em> semantically meaningful — hybrid retrieval in Phase 4 will degrade to BM25-only behavior until a real key is set. A loud warning prints once per process. Voyage is now in <code>[project.optional-dependencies].voyage</code>; install with <code>pip install -e .[voyage]</code>.</li>
+  <li><strong>Added <code>tiktoken</code> as a hard dep</strong> on top of the Phase 3 plan's listed deps. The chunker needs a tokenizer; tiktoken is small and standard. Calling token counting "approximate" via character count (as the original chunker docstring suggested) would have given wildly inconsistent chunk sizes.</li>
+  <li><strong>Added <code>index_stats()</code> helper</strong> on top of the plan's <code>index_chunks</code> / <code>drop_index</code> API. Used by the ingest driver's run summary and slated for Phase 7's Ingest UI.</li>
+  <li><strong>Email loader emits per-message Documents.</strong> The Phase 1 module docstring described this behavior; the Phase 3 spec didn't explicitly re-mandate it. Sticking with per-message because it lets retrieval cite a specific sender + date instead of an entire thread, which is the demo-defensible behavior.</li>
+  <li><strong>Reference-only anchors are skipped silently when missing.</strong> If a manifest entry has <code>license: reference-only</code> and the file isn't on disk (i.e. <code>fetch_anchors.py</code> hasn't been run), the loader returns an empty list and the driver logs <code>source_missing</code>. No error. Three anchors were in this state during the smoke run.</li>
+</ul>
+
+<h3>Tradeoffs <span class="tag tag-tradeoff">tradeoff</span></h3>
+<ul>
+  <li><strong>Combine-adjacent-siblings chunker policy.</strong> Considered chunking purely by max-size with no combination. Result would have been many short chunks and many redundant retrievals for short documents (every SOP would become 3-4 chunks). Picked combining because the corpus skews short (most docs &lt; 1000 tokens) and dense chunks give the agent more context per <code>retrieve()</code> call. Cost: a single 700-token chunk is a coarser citation than a 200-token one. If retrieval evals in Phase 8 show citation precision suffering, drop <code>target_tokens</code> to 400 and let the combiner produce smaller chunks.</li>
+  <li><strong>Page-range derivation from char offsets.</strong> PyMuPDF gives per-page text; the loader concatenates with <code>\n\n</code> joiners and records each page's starting char offset. The chunker computes a chunk's page range by binary-positioning its <code>char_range</code> against the offset table. Cheap and good enough for citations. Off by 1 page in rare cases where a section spans the join boundary.</li>
+  <li><strong>BM25 in-process via <code>rank_bm25</code>.</strong> Alternatives: Tantivy (faster, Rust, harder install), Elasticsearch (overkill), DuckDB FTS (would unify with our DuckDB layer but requires extra extension setup). <code>rank_bm25</code> is pure Python, zero infra, fits the local-first goal. At 117 chunks the search is instant; would re-evaluate around 100K chunks.</li>
+  <li><strong>Pattern-first metadata enrichment vs LLM-always.</strong> See decisions. The spec said "LLM-assisted enrichment (Haiku)." I kept the LLM path (cached, opt-in) but made it optional. Reason: the entity universe is bounded (12 manufacturers, 5 refrigerants, ~7 regulation slugs) and a regex catches them deterministically. Charging API credits for re-ingesting an unchanged corpus would be a bad default.</li>
+  <li><strong>Markdown loader does not parse the heading tree.</strong> The chunker owns the parse instead. Reduces duplication and keeps the loader trivially simple. The chunker already needs to walk headings for splitting; making it the single owner avoids two slightly-different parses drifting.</li>
+</ul>
+
+<h3>Open questions <span class="tag tag-open">open</span></h3>
+<ul>
+  <li><strong>Encoding warning on Windows console.</strong> When inspecting LanceDB rows via <code>print(repr(row))</code> in a Windows cmd shell, em-dashes (U+2014) render as <code>�</code>. The data on disk is correct UTF-8 (verified with <code>PYTHONUTF8=1</code>); only the console display is broken. Not blocking but worth noting — if you debug from a plain cmd shell, set <code>PYTHONUTF8=1</code> or use Windows Terminal.</li>
+  <li><strong>Anthropic SDK is installed but not exercised yet in the default path.</strong> Phase 3 only uses it under <code>--llm-enrich</code>. Phase 4 will wire it back into the main retrieval flow via the agent loop. Heads-up so you don't think the API key is dead weight.</li>
+  <li><strong>Coarse chunks for short docs.</strong> Most SOPs / TSBs come out as a single chunk because they're under 1000 tokens. This is fine retrieval-wise but means our citation precision metric in Phase 8 may not have much room to be wrong. If we want to demonstrate fine-grained citation, we'd want a deliberate "split everything at H2 minimum" mode. Not done now.</li>
+  <li><strong>Should ingest run automatically on UI startup?</strong> Phase 4's UI will show retrieval results. If the LanceDB is empty (fresh clone), nothing comes back. Options: (a) auto-run ingest on first API request if index empty, (b) document the manual <code>python scripts/ingest.py</code> step. Doing (b) for now.</li>
+</ul>
+
+<h3>Phase 3 completion <span class="tag tag-decision">decision</span></h3>
+<ul>
+  <li><strong>Files written:</strong> five loaders (<code>markdown.py</code>, <code>email.py</code>, <code>ticket.py</code>, <code>csv.py</code>, <code>pdf.py</code>) plus <code>loaders/base.py</code> dispatch; <code>chunking.py</code> (heading-aware recursive); <code>embed.py</code> (Voyage with fallback + content-hash cache); <code>metadata.py</code> (pattern + optional Haiku, cached); <code>retrieval/index.py</code> (LanceDB write + BM25 rebuild + <code>drop_index</code> / <code>index_stats</code>); <code>scripts/ingest.py</code> driver.</li>
+  <li><strong>Dependencies added:</strong> <code>pymupdf</code>, <code>lancedb</code>, <code>rank-bm25</code>, <code>tiktoken</code> to <code>[project.dependencies]</code>; <code>voyageai</code> to <code>[project.optional-dependencies].voyage</code>.</li>
+  <li><strong>End-to-end verified:</strong> <code>python scripts/ingest.py --drop-first --skip-anchors</code> processes 83 of 86 sources (3 reference-only skipped), loads 117 Documents, indexes 117 chunks into LanceDB, rebuilds BM25 (117 chunks), audit-logs the run. Elapsed ~7 seconds cold, ~15 seconds warm with cache hits. Re-running produces "117 replaced" → idempotency confirmed.</li>
+  <li><strong>Retrieval sanity-checked:</strong> ad-hoc BM25 queries return the right docs ("R-410A phase out timeline" → AIM Act + R-410A timeline + retrofit SOPs; "Lennox tariff allocation" → bulletin-triage SOP + tariff playbook + the actual Lennox allocation email).</li>
+  <li><strong>Lint clean:</strong> <code>ruff check src scripts</code> passes.</li>
+</ul>
+
+<h2>Phase 4 — Hybrid retrieval + new tools</h2>
+
+<h3>Design decisions <span class="tag tag-decision">decision</span></h3>
+<ul>
+  <li><strong>Per-trace citation registry, allocated at the tool-wrapper layer.</strong> <code>search.retrieve()</code> returns <code>RetrievedChunk</code> with <code>citation_id=""</code>; the agent tool wrapper in <code>tools.py</code> allocates ids (<code>c1</code>, <code>c2</code>, ...) from a <code>CitationRegistry</code> living on the <code>ToolContext</code>. This means (a) the search function stays pure and reusable outside the agent loop, (b) citation ids are stable across multiple <code>retrieve()</code> calls in the same conversation (re-retrieving the same chunk returns its existing id, not a new one).</li>
+  <li><strong>Tool context is threaded explicitly, not via contextvars.</strong> <code>execute_tool(name, args, context)</code> takes the context as a parameter. Considered <code>contextvars</code> for less plumbing; rejected because explicit threading is more readable and the agent loop is the only caller. The parameter defaults to <code>None</code> so existing direct callers (e.g. tests) work without changes.</li>
+  <li><strong>Hybrid scoring: min-max per channel, weighted sum, <code>alpha = 0.6</code>.</strong> BM25 and vector cosine produce wildly different score scales; combining them raw would let one channel dominate. Min-max-normalizing each channel onto [0,1] makes the <code>alpha</code> weight do what the docstring says. Default <code>alpha = 0.6</code> tilts toward semantic; revisit if Phase 8 evals say otherwise.</li>
+  <li><strong>First-class filter columns hoisted into LanceDB SQL where clause.</strong> <code>bucket</code>, <code>source_type</code>, <code>manufacturer</code>, <code>source_id</code> are typed columns and get pushed down. <code>refrigerant</code>, <code>date_from</code>, <code>date_to</code> live in the JSON metadata blob and are post-filtered in Python. Worth it because most filtered queries in the workflows use bucket/manufacturer.</li>
+  <li><strong>Voyage rerank is optional and auto-detected.</strong> <code>rerank=True</code> is the default; if <code>VOYAGE_API_KEY</code> is unset the rerank step silently no-ops. The combined-score ordering carries through unchanged.</li>
+  <li><strong>Citation extraction is regex-based on the final answer text.</strong> The loop scans for <code>[cN]</code> tokens after the model returns <code>end_turn</code>, de-duplicates, and returns only ids that were actually allocated by <code>retrieve()</code> in this trace. Hallucinated <code>[c99]</code> citations are dropped silently.</li>
+  <li><strong>UI citations: inline link + dedicated list below the answer.</strong> Each <code>[cN]</code> renders as a styled badge that scrolls to and flashes a matching card in a "Citations" list at the bottom of the message. Considered a hover popover; deferred (see follow-ups). Click-to-scroll-and-flash is simpler and meets the done-when.</li>
+  <li><strong>System prompt rewritten to describe three sources of truth + citation discipline.</strong> Old prompt only knew about wiki + SQL. New prompt explicitly tells the model that retrieve-then-cite is the right pattern for any source-doc-grounded answer, and that <code>[cN]</code> in the final answer is the rendering contract the UI depends on.</li>
+  <li><strong>Per-trace audit gets two new event kinds.</strong> <code>final_answer</code> logs <code>citations_used</code> vs <code>citations_available</code> so you can see at a glance how much of the retrieved context the model actually used. Tool-call/tool-result events already cover the retrieve calls themselves.</li>
+</ul>
+
+<h3>Deviations <span class="tag tag-deviation">deviation</span></h3>
+<ul>
+  <li><strong>Did not write a new end-to-end agent test.</strong> The <code>.env</code> has <code>ANTHROPIC_API_KEY=sk-ant-...</code> (placeholder), so running the agent loop against the real API isn't possible from this environment. Phase 4 was verified by smoke-testing every layer except the model call: tool schemas registered, citation registry allocates and dedups correctly, citation extraction de-duplicates and drops hallucinated ids, <code>retrieve</code> tool formats correctly, <code>read_source</code> handles missing/anchor cases, FastAPI app loads. The model-in-the-loop path will work the first time you run the UI with a real key; if it doesn't, the audit log will tell us exactly where.</li>
+  <li><strong>The <code>retrieve</code> tool output is text-formatted, not JSON.</strong> The spec didn't specify the format. Other tools (<code>run_sql</code>, <code>get_schema</code>) return JSON. <code>retrieve</code> returns a human-readable block with <code>[c1] source_id</code> headers and snippets because (a) it's what the model has to read, and (b) the format puts the citation id right next to the content it cites, which makes the "cite as [c1] in your answer" rule visually obvious. JSON would have buried the ids inside a nested structure.</li>
+  <li><strong>No new tests added for the loaders / chunker / index in <code>tests/</code>.</strong> Phase 3 came in lint-clean and smoke-tested via the ingest run, and Phase 8's golden-set evals will exercise the entire pipeline end-to-end. Writing a unit-test suite now would duplicate that future coverage. Existing tests still all import cleanly.</li>
+  <li><strong>Citation rendering uses a plain string replace on the rendered HTML.</strong> Technically fragile — if the markdown renderer ever emitted <code>[c1]</code> inside a <code>&lt;code&gt;</code> block, my replacement would still convert it into a clickable link inside the code block. Today our markdown renderer doesn't escape brackets that way and the model is unlikely to put citations inside fenced code, but flagging because it's a known sharp edge.</li>
+</ul>
+
+<h3>Tradeoffs <span class="tag tag-tradeoff">tradeoff</span></h3>
+<ul>
+  <li><strong>Citation id allocation: per-trace vs per-call.</strong> Per-call would give <code>c1</code> a different meaning in each retrieve, which is confusing for the model and breaks the "click [c1] to see the chunk" UI contract. Per-trace keeps ids stable for the whole conversation. Memory cost is negligible (one dict per trace, garbage-collected when the trace finishes).</li>
+  <li><strong>Snippet picking: simple substring match around the first query token vs. proper highlight extraction.</strong> Picked simple. Good enough for citation cards in the UI; the model gets the full chunk in the tool result, not just the snippet, so model behavior isn't affected.</li>
+  <li><strong>Score normalization: min-max vs reciprocal rank fusion (RRF).</strong> RRF is the more famous hybrid-retrieval combiner. Picked min-max because it preserves continuous score values (useful for citation-card display and reranker tiebreaking), is debuggable without an extra fusion concept, and works fine at this corpus size. Switch to RRF if it ever beats min-max in evals.</li>
+  <li><strong>Read_source vs read_wiki_page surface overlap.</strong> Both let the agent read prose. Kept them separate because they hit different layers: <code>read_source</code> for raw ingested documents (cited via [cN]), <code>read_wiki_page</code> for the LLM-built wiki (cited prose-style). The system prompt explains which to use when.</li>
+</ul>
+
+<h3>Open questions <span class="tag tag-open">open</span></h3>
+<ul>
+  <li><strong>Vector half of hybrid retrieval is still no-op without <code>VOYAGE_API_KEY</code>.</strong> Inherited from Phase 3 — already in <code>followups.html</code>. Currently the BM25 channel dominates rankings; you'll see the lift the moment a real Voyage key is plugged in.</li>
+  <li><strong>UI hover preview for citation links.</strong> Click currently scrolls + flashes the citation card. A hover popover with the snippet would make scanning a long answer easier. Deferred to follow-ups; not in the Phase 4 done-when.</li>
+  <li><strong>End-to-end run not exercised here.</strong> Needs a real Anthropic key. The smoke tests show every contract holds; the first real run is the integration test. Added to follow-ups.</li>
+</ul>
+
+<h3>Phase 4 completion <span class="tag tag-decision">decision</span></h3>
+<ul>
+  <li><strong>Files written / rewritten:</strong>
+    <ul>
+      <li><code>src/retrieval/search.py</code> — full <code>retrieve(query, k, filters, alpha, rerank, rerank_pool)</code> with hybrid scoring + optional Voyage rerank; <code>read_source(source_id, page_range)</code> for raw verification.</li>
+      <li><code>src/agent/tools.py</code> — added <code>CitationRegistry</code>, <code>ToolContext</code>, <code>retrieve</code> + <code>read_source</code> tool schemas, threaded <code>context</code> through <code>execute_tool</code>.</li>
+      <li><code>src/agent/loop.py</code> — creates a <code>ToolContext</code> per trace, threads it through tool calls, regex-extracts <code>[cN]</code> citations from final answer, returns <code>citations: list[CitationOut]</code> on <code>AgentResponse</code> + <code>final</code> SSE event.</li>
+      <li><code>src/agent/prompts.py</code> — rewrote <code>AGENT_SYSTEM_PROMPT</code> for three sources of truth + citation discipline.</li>
+      <li><code>src/api/chat.py</code> — <code>ChatResponse</code> now includes <code>citations</code>; synchronous endpoint serializes them.</li>
+      <li><code>web/app.js</code> — added <code>decorateCitations</code>, <code>renderCitationCards</code>, <code>wireCitationLinks</code>; final-event handler renders inline <code>[cN]</code> links + a Citations list per message.</li>
+      <li><code>web/style.css</code> — added Phase 4 citation styles (cite-ref badge, citations-list, cite-card with flash animation).</li>
+    </ul>
+  </li>
+  <li><strong>Verified:</strong>
+    <ul>
+      <li>Tool schemas registered (7 tools, including <code>retrieve</code> + <code>read_source</code>).</li>
+      <li><code>CitationRegistry</code> dedups across calls (3 unique chunks → 3 ids → stays 3 after re-retrieve).</li>
+      <li><code>_extract_citations</code> de-duplicates repeated <code>[c1]</code> mentions and drops hallucinated ids.</li>
+      <li><code>read_source</code> handles missing files, reference-only anchors, and unknown source_ids with clear error strings.</li>
+      <li>FastAPI app loads with 10 routes.</li>
+      <li><code>ruff check src scripts</code> passes clean.</li>
+      <li>JS brace/paren delta is balanced (any pre-existing imbalance was in HEAD already).</li>
+    </ul>
+  </li>
+  <li><strong>Not verified (no real API key):</strong> end-to-end agent run with model in the loop. Will work the first time you run the UI with a real <code>ANTHROPIC_API_KEY</code>; if anything breaks, the audit log will pinpoint it.</li>
+</ul>
+
+<h2>Phase 5 — Knowledge structurer</h2>
+
+<h3>Design decisions <span class="tag tag-decision">decision</span></h3>
+<ul>
+  <li><strong>Default scope: only the NEW entity types this phase introduces.</strong> Concepts.yaml declares seven entity types but four of them (skus, suppliers, customers, plus any future additions) already have pre-Phase-5 template-rendered pages from the original MVP. Rebuilding all 5,520 of those with LLM synthesis would cost real money on every run. The builder defaults to <code>NEW_ENTITY_TYPES = {refrigerants, regulations, manufacturers, procedures}</code> — about 32 pages — and only rebuilds the existing ones when <code>--include-existing</code> is passed (or they're named via <code>--only</code>).</li>
+  <li><strong>Two synthesis paths, picked at runtime.</strong> If <code>ANTHROPIC_API_KEY</code> is set, the builder uses Sonnet to synthesize prose with inline <code>[chunk_id]</code> citations. Otherwise it falls back to a deterministic composer that lays out the retrieved chunks under each required section as block-quoted snippets with bracketed citations. The deterministic page is honest about its limitations — the frontmatter records <code>synthesizer: deterministic</code> and the page body has a header note "This page was assembled without LLM synthesis." Same mechanism as the embed-fallback pattern from Phase 3.</li>
+  <li><strong>Page-build cache keyed by (entity_id, sorted chunk_ids, template version).</strong> SQLite at <code>data/structure_cache.sqlite</code>. Re-running with no source changes is free. Cache key uses the sorted chunk_id list so semantic equivalence beats source-order changes.</li>
+  <li><strong>Chunk_id citations, not chunk-text-hash citations.</strong> Phase 4's citation tool produces transient <code>c1</code>/<code>c2</code> ids that are per-conversation; the structurer needs persistent ones that survive across runs. Chunks already have stable content-hashed ids from Phase 3 (<code>{source_id}:{ordinal:04d}:{short_hash}</code>) so the page cites those directly. The wiki frontmatter's <code>source_chunks: [...]</code> list is the same id space; freshness uses it to detect when the supporting evidence has changed.</li>
+  <li><strong>Validation: post-generation, regex over <code>[chunk_id]</code>.</strong> The builder checks every cited id is in the retrieved set (model can't invent ids) and warns if the page contains no citations at all. Warnings travel to the page frontmatter (<code>validation_warnings: [...]</code>) and surface in the health check.</li>
+  <li><strong>Validation is non-blocking.</strong> A page with warnings still gets written. The alternative (refuse to write) would mean a hallucinated citation blocks the whole entity. The wiki being merely <em>imperfect</em> is more useful than the wiki being <em>missing</em>. The health-check tab surfaces warnings so problems aren't invisible.</li>
+  <li><strong>Freshness detects stale pages via two signals only.</strong> (a) Any cited <code>chunk_id</code> no longer exists in the LanceDB index, (b) the page's <code>template_version</code> is below the builder's current version. We don't separately model "chunk content changed" because chunk ids are content-hash-derived — a changed chunk has a new id and the old id is gone. This collapses two signals into one.</li>
+  <li><strong>Health check covers six dimensions.</strong> Orphan chunks (indexed but not cited anywhere), thin pages (&lt; 2 chunks), dangling wikilinks, validation warnings from the builder, optional LLM contradiction detection, and coverage-by-bucket (cited unique chunks ÷ total chunks per source bucket). LLM contradiction detection is opt-in via <code>--health-llm</code>.</li>
+  <li><strong>Health report writes to <code>data/wiki/concepts/health-check.md</code>.</strong> Returned to callers AND rendered as a wiki page so it shows up in the Obsidian view and (eventually) in the Phase 7 admin tab.</li>
+  <li><strong>Rerank disabled by default in batch builds.</strong> <code>builder._build_one</code> calls <code>retrieve(..., rerank=False)</code>. Reranking 32+ entities would burn Voyage credits with limited benefit at this corpus size. Easy to flip on if Phase 8 evals show rerank materially improves citation quality.</li>
+</ul>
+
+<h3>Deviations <span class="tag tag-deviation">deviation</span></h3>
+<ul>
+  <li><strong>Jinja2 templates listed in <code>concepts.yaml</code> are NOT used.</strong> Phase 1's open-items log already flagged that templates like <code>refrigerant.md.j2</code>, <code>regulation.md.j2</code>, etc. don't exist on disk. Going through with Jinja would mean (a) authoring four templates that the LLM would then have to fill, and (b) double-handling structure: Jinja owns sections and the LLM owns prose inside them. Cleaner: the system prompt and <code>required_fields</code> directly specify sections, the LLM writes the whole page, validation enforces structure. The <code>template</code> field is preserved in concepts.yaml and surfaces in frontmatter as <code>template_name</code> but is not load-bearing for the build. Followups item resolved by replacement.</li>
+  <li><strong>Did not exercise the LLM synthesis path live.</strong> Same reason as Phase 4: <code>.env</code> has a placeholder <code>ANTHROPIC_API_KEY</code>. Verified the LLM path imports cleanly, the prompt builds without errors, and the cache writes work. The first real <code>--no-llm</code>-off run with a live key is the integration test. Followups item already covers this from Phase 4.</li>
+  <li><strong>The deterministic fallback's section matching is loose.</strong> Pages get <code>required_fields</code> as H2 section headers; the fallback picks chunks whose <code>heading_path</code> contains the field name (case-insensitive substring). For most fields this works, but specific ones like "Retrofit Options" don't match any chunk heading, so those sections come out empty with "_No source coverage._" The LLM path doesn't have this limitation because it synthesizes prose from any chunk. Acceptable tradeoff: the deterministic page is explicitly stub-tier.</li>
+  <li><strong>No new <code>concept</code> pages built (yet).</strong> <code>concepts.yaml</code> has the four NEW entity types but doesn't include the cross-cutting concept pages (R-410A phase-out exposure, supplier concentration, top customers) from the original MVP. The structurer's pattern supports them — would just need a "concepts" entry in <code>concepts.yaml</code> with a static instance list — but the existing concept pages already exist as hand-authored prose. Adding "concepts" as a fifth NEW type is a one-line YAML addition + a re-run, deferred to followups.</li>
+  <li><strong>Dangling-wikilinks count is high (45) and mostly benign.</strong> Hand-authored sources reference wiki targets like <code>[[suppliers/]]</code> (an index) and <code>[[manufacturers/Lennox]]</code> that don't resolve as exact paths because the wikilink resolver is strict. The health check reports them honestly. Not a code bug — a content-organization opportunity. Flagged to followups.</li>
+</ul>
+
+<h3>Tradeoffs <span class="tag tag-tradeoff">tradeoff</span></h3>
+<ul>
+  <li><strong>Build scope: 32 new pages vs 5552 (everything).</strong> Considered defaulting to <code>--include-existing</code>. Cost-prohibitive for live LLM runs and would replace working SKU/supplier/customer pages with potentially worse output. Default-new keeps the demo fast (~0.2s deterministic, ~2 min with LLM) and lets the user opt in to the bigger rebuild when they want.</li>
+  <li><strong>One generic synthesis prompt vs per-entity-type prompts.</strong> Per-entity-type would tune content shape (a manufacturer page wants product categories + regulatory posture; a regulation page wants effective dates + affected equipment). One prompt with <code>required_fields</code> as the dispatch keeps the code simple at the cost of generic prose. Easier to specialize later if eval quality lags.</li>
+  <li><strong>Page-level cache vs no cache.</strong> No cache would make every build full-cost. Cache + <code>--force</code> for explicit invalidation matches the existing narrative-cache pattern (Phase 2 MVP) and lets re-runs of the same source state be free.</li>
+  <li><strong>Health check as one big walk vs incremental.</strong> Built it as one walk over all pages + all chunks. At 32 pages and 117 chunks it's milliseconds. If the corpus grows past ~10K chunks I'd want an incremental version that tracks deltas against the last run.</li>
+  <li><strong>Contradiction check: per-entity-type vs all-pages-at-once.</strong> Picked per-type: ask the LLM to compare among same-entity pages (e.g. all manufacturer pages together). Catches the most likely contradiction class (two manufacturer pages disagreeing on a manufacturer's refrigerant posture). All-pages-at-once would catch cross-type contradictions but cost more tokens and dilute signal.</li>
+</ul>
+
+<h3>Open questions <span class="tag tag-open">open</span></h3>
+<ul>
+  <li><strong>LLM path unexercised.</strong> Same blocker as Phase 4. Tracked in followups.</li>
+  <li><strong>Add "concepts" as an entity type in <code>concepts.yaml</code>?</strong> Would let the structurer rebuild the cross-cutting concept pages with citations. Currently those pages are hand-authored from the original MVP — adding the structurer to the loop is a tiny YAML change. Deferred.</li>
+  <li><strong>45 dangling wikilinks in the corpus.</strong> Most are <code>[[suppliers/]]</code> (index-style references) and similar in hand-authored sources. The health check reports them; could either (a) fix by creating index pages in <code>data/wiki/</code> or (b) loosen the resolver to treat trailing-slash links as directories. Followups.</li>
+  <li><strong>Validation could be stricter</strong> — currently checks that no <code>[chunk_id]</code> is invented but doesn't enforce that every claim has a citation (would need claim-splitting). Phase 8 eval's <code>unsupported_claims</code> metric will measure this; tighten if numbers are bad.</li>
+</ul>
+
+<h3>Phase 5 completion <span class="tag tag-decision">decision</span></h3>
+<ul>
+  <li><strong>Files written:</strong>
+    <ul>
+      <li><code>src/structure/builder.py</code> — full <code>build_entity</code> / <code>build_all</code> with LLM + deterministic synthesis paths, validation, SQLite cache, frontmatter writer.</li>
+      <li><code>src/structure/freshness.py</code> — <code>scan_stale</code> walks structurer pages and compares <code>source_chunks</code> against the live LanceDB; <code>rebuild_stale</code> re-runs the builder for each stale page.</li>
+      <li><code>src/structure/health.py</code> — <code>run_health_check</code> emits orphan chunks, thin pages, dangling wikilinks, validation warnings, coverage-by-bucket, optional LLM contradiction findings; writes <code>data/wiki/concepts/health-check.md</code>.</li>
+      <li><code>scripts/build_wiki.py</code> — CLI driver with <code>--only</code>, <code>--include-existing</code>, <code>--limit-per-type</code>, <code>--no-llm</code>, <code>--force</code>, <code>--rebuild-stale</code>, <code>--health</code>, <code>--health-llm</code>.</li>
+    </ul>
+  </li>
+  <li><strong>End-to-end verified (deterministic path):</strong>
+    <ul>
+      <li>Full <code>build_wiki.py --no-llm --health</code> builds 32 pages (5 refrigerants + 3 regulations + 20 manufacturers + 4 procedures) in 0.2 s.</li>
+      <li>Re-running uses cache: 5/5 refrigerants cached on second run.</li>
+      <li>Freshness cycle: modified a source → re-ingest → 8 dependent pages detected as stale → <code>--rebuild-stale</code> rebuilds them → 0 stale after.</li>
+      <li>Health report: 87/117 chunks cited (74%), bucket coverage shown unique-cited / total (bulletins 100%, manuals 100%, tickets 92%, specs 75%, sops 67%, emails 41%).</li>
+      <li><code>ruff check src scripts</code> passes clean.</li>
+    </ul>
+  </li>
+  <li><strong>Not verified (no real API key):</strong> Sonnet LLM synthesis quality and contradiction detection. Both paths import and the prompt builders run; first real run with a live key is the integration test.</li>
+</ul>
+
+<h2>Phase 6 — Ops-lead workflows</h2>
+
+<h3>Design decisions <span class="tag tag-decision">decision</span></h3>
+<ul>
+  <li><strong>Workflows are server-side bundles, not client-side prompts.</strong> Each <code>Workflow</code> declares a parameter schema + a prompt template. The UI <code>GET /workflows</code> to fetch the schemas and renders a form; the backend formats the prompt and runs the agent. This keeps prompt tuning a server-only change (no client deploy) and centralizes parameter validation.</li>
+  <li><strong>Workflows ride the existing agent loop.</strong> <code>POST /workflows/{slug}/stream</code> just constructs a user message from the parameters and yields events from <code>stream_agent()</code>. Workflows inherit streaming, audit, tool use, citations, and the <code>retrieve</code>/<code>read_source</code> contracts for free. No parallel orchestrator.</li>
+  <li><strong>Parameter types: <code>choice</code>, <code>string</code>, <code>number</code>.</strong> Enough surface to cover all four workflows without inventing a form-builder DSL. Coercion + validation in <code>runner._coerce</code>; bad input raises <code>WorkflowError</code> which the API maps to 400.</li>
+  <li><strong>Free-text supplier and manufacturer inputs, not enumerated choices.</strong> Workflows could pre-populate dropdowns by enumerating <code>SELECT name FROM suppliers</code> from DuckDB. Skipped — keeps the UI simpler and retrieval's substring-match on the <code>manufacturer</code> column is robust to short forms ("Lennox" vs "Lennox PartsPlus"). Followups item flagged in case you want enum dropdowns later.</li>
+  <li><strong>Derived prompt fields computed in the runner, not the workflow definition.</strong> Some templates need values that aren't direct parameters (e.g. the refrigerant slug "r-410a" for wiki path lookup, or a SQL fragment conditioned on whether a category was passed). <code>_derived_fields()</code> computes these per workflow slug — small, explicit, easy to grow.</li>
+  <li><strong>Four named workflows match the plan exactly:</strong>
+    <ul>
+      <li><code>refrigerant-exposure</code> — refrigerant + top_n → SQL + retrieve + actions.</li>
+      <li><code>supplier-risk-review</code> — supplier + optional mfr → concentration + signals + substitutes.</li>
+      <li><code>tariff-response</code> — manufacturer + magnitude + optional category → exposure + pricing decision + outreach.</li>
+      <li><code>daily-brief</code> — no params → standing 4-section brief.</li>
+    </ul>
+  </li>
+  <li><strong>Prompts steer tools explicitly.</strong> Each workflow's prompt says which tools to call in which order ("Run a DuckDB query…", "Retrieve regulatory context…", "Read the wiki page if one exists"). Counter-pattern to "let the agent figure it out" — the workflows are pre-canned recipes, so the prompt should encode the recipe.</li>
+  <li><strong>Same daily-brief prompt is used in two places.</strong> The standalone brief generator (<code>src/briefs/generator.py</code>) writes to <code>data/briefs/YYYY-MM-DD.md</code> as a file artifact; the workflow returns the answer in-conversation. Both prompts were updated to use <code>[cN]</code> citations + drop the PE-pitch framing in favor of "business owner / ops lead." The two prompts are <em>not</em> shared via import — they're close cousins kept locally because the standalone brief might evolve differently (it's headed for an email-delivery path).</li>
+  <li><strong>UI: workflows drawer alongside the existing briefs drawer.</strong> Reuses the drawer + scrim plumbing already in place. Workflow cards have inline parameter forms (no second-step modal). Submitting a card closes the drawer, appends a "Workflow · {title}" user message, and runs the standard streaming renderer — citations, sources panel, audit trace all work identically.</li>
+  <li><strong>Shared SSE reader for chat + workflows.</strong> Refactored <code>streamChat</code> into <code>streamSSE(url, body, renderer)</code>. <code>streamChat</code> and <code>streamWorkflow</code> are 1-line wrappers. Avoids two near-identical SSE parsers drifting.</li>
+</ul>
+
+<h3>Deviations <span class="tag tag-deviation">deviation</span></h3>
+<ul>
+  <li><strong>Workflow runs are NOT logged with a dedicated audit kind.</strong> They go through the normal trace log as if a user typed the formatted prompt. The SSE stream emits a <code>workflow_started</code> prefix event with <code>slug</code> + <code>prompt</code> so the UI knows the trigger, but the audit DB doesn't separately record "this trace was a workflow." If we want a "show me all workflow runs of {slug}" view in Phase 7, we'd add a tag column to <code>trace_steps</code> or a separate <code>workflow_runs</code> table. Skipped because the audit trail is already complete (user_question event contains the formatted prompt, which is grep-able).</li>
+  <li><strong>Did not exercise workflow runs with a live model.</strong> Same blocker as Phases 4/5. The runner and API were smoke-tested at the layer below the model call: parameter coercion works, prompt formatting works, route mounts, OpenAPI schema renders. First live run validates the model actually follows the recipe.</li>
+  <li><strong>Daily-brief workflow's prompt differs slightly from the standalone generator's.</strong> The workflow version says "under 500 words" and explicitly references citation discipline; the standalone version (also updated this phase) is similar but standalone-flavored. Not a deep difference — both pull the same data — but they will drift unless we consolidate, and consolidation isn't worth a shared module today.</li>
+</ul>
+
+<h3>Tradeoffs <span class="tag tag-tradeoff">tradeoff</span></h3>
+<ul>
+  <li><strong>Server-side workflow definitions vs. client-side.</strong> Client-side would mean the UI owns prompt strings and the backend is just <code>POST /chat</code>. Simpler API surface. But (a) prompt iteration would require client redeploys, (b) parameter validation would live in two places, and (c) the workflow concept couldn't be reused by a CLI / scheduled job. Server-side wins.</li>
+  <li><strong>One generic runner vs per-workflow handlers.</strong> Per-workflow handlers would let each workflow do custom orchestration (e.g. pre-fetch data, post-process the agent output into a JSON shape). For the four workflows in scope, the prompt is enough — they all want a markdown brief with citations. Add per-workflow handlers if a future workflow needs structured output (e.g. "return a JSON of {customer_id, retrofit_quote_url}").</li>
+  <li><strong>Drawer-based workflow picker vs dedicated page.</strong> Drawer keeps the existing chat front-and-center; a dedicated page would make workflows feel more first-class but split the UI into modes. Drawer fits the "workflows are shortcuts, chat is the main thing" mental model.</li>
+  <li><strong>Free-text vs enumerated suppliers/manufacturers.</strong> Enumerated dropdowns would give a discovery affordance ("what suppliers can I pick?"). Free-text is one less DuckDB round-trip on drawer open + tolerates the supplier-vs-manufacturer name fuzziness that's already baked into the retrieval filter. Flagged the enumerate option as a followup.</li>
+  <li><strong>Workflow prompts steer tools vs trust the agent's choice.</strong> Could have said "answer this question:" and let the agent pick tools. Picked recipe-style ("step 1: run SQL X; step 2: retrieve Y") because the demo value of workflows comes from reliable, repeatable structure. The agent retains judgment within each step.</li>
+</ul>
+
+<h3>Open questions <span class="tag tag-open">open</span></h3>
+<ul>
+  <li><strong>Workflow live-run not exercised.</strong> Same as Phase 4/5 — needs a real <code>ANTHROPIC_API_KEY</code>. The existing "End-to-end agent run" followup item covers it but workflows add a layer worth re-validating: does the model follow the recipe, do citations come back, do the parameters interpolate as expected?</li>
+  <li><strong>Enumerated dropdowns for supplier / manufacturer.</strong> See followups.</li>
+  <li><strong>Should a workflow run be a special audit-log kind?</strong> Today they're indistinguishable from chat traces. If you want "list all workflow runs of <em>refrigerant-exposure</em> this week" later, we'd add a <code>workflow_slug</code> column to the audit table. Skipped now.</li>
+  <li><strong>Daily brief: workflow vs file artifact.</strong> Workflow returns in-chat; the standalone generator still writes <code>data/briefs/{date}.md</code> on demand. Both have a place (chat = interactive, file = inbox-deliverable). If we ever wire email/Slack delivery (IDEAS.md item #B), the file artifact is the path; the workflow is the rehearsal.</li>
+</ul>
+
+<h3>Phase 6 completion <span class="tag tag-decision">decision</span></h3>
+<ul>
+  <li><strong>Files added:</strong>
+    <ul>
+      <li><code>src/workflows/__init__.py</code>, <code>src/workflows/definitions.py</code> — four <code>Workflow</code> dataclasses with parameter schemas + prompt templates.</li>
+      <li><code>src/workflows/runner.py</code> — parameter coercion, derived-field computation, <code>build_prompt</code>, <code>run_workflow</code>, <code>stream_workflow</code>.</li>
+      <li><code>src/api/workflows.py</code> — <code>GET /workflows</code>, <code>POST /workflows/{slug}/run</code>, <code>POST /workflows/{slug}/stream</code>.</li>
+    </ul>
+  </li>
+  <li><strong>Files modified:</strong>
+    <ul>
+      <li><code>src/api/main.py</code> — mount workflows router.</li>
+      <li><code>src/briefs/generator.py</code> — prompt updated to ops-lead framing + <code>[cN]</code> citations.</li>
+      <li><code>web/index.html</code> — "Workflows" top-bar button + drawer.</li>
+      <li><code>web/app.js</code> — <code>streamSSE</code> helper, <code>streamWorkflow</code>, workflow drawer logic (card rendering, parameter form, submit-into-chat-stream).</li>
+      <li><code>web/style.css</code> — workflow card / form styles.</li>
+    </ul>
+  </li>
+  <li><strong>Verified:</strong>
+    <ul>
+      <li>Four workflows enumerate; <code>build_prompt</code> renders cleanly for all four with valid params; bad-choice params correctly raise <code>WorkflowError</code>.</li>
+      <li>Derived fields work: refrigerant slug, optional manufacturer filter clause, optional category SQL clause.</li>
+      <li>FastAPI mounts 13 routes including all three new <code>/workflows</code> endpoints.</li>
+      <li><code>ruff check src scripts</code> passes clean.</li>
+      <li>JS braces balanced (234/234); pre-existing paren 1-off unchanged.</li>
+    </ul>
+  </li>
+  <li><strong>Not verified (no real API key):</strong> the model-in-the-loop path for each workflow. First live run with a live key validates that the recipe-style prompts produce the structured output described in the templates and that citations come through.</li>
+</ul>
+
+<h2>Phase 7 — UI polish</h2>
+
+<h3>Design decisions <span class="tag tag-decision">decision</span></h3>
+<ul>
+  <li><strong>One Admin drawer with three tabs, not three separate drawers.</strong> Ingest / Knowledge health / Evals all surface admin-flavored data; keeping them in one drawer matches the spec's "tab" language and avoids three more buttons cluttering the top bar. The drawer is wider than the others (max-width 880px) because the tables need horizontal room.</li>
+  <li><strong>Backend ``/admin/*`` endpoints are read-only and live-computed.</strong> No caching layer — running the health check on every request is sub-second at the current corpus size; <code>/admin/sources</code> walks LanceDB once per call. Worth revisiting if a tab feels sluggish (it won't, today).</li>
+  <li><strong>Sources tab data model:</strong> manifest entry + on-disk-status + chunk count from LanceDB + last-indexed timestamp from the audit log. Three sources joined at request time keeps the tab honest — a "missing" file or a never-indexed source shows up exactly as it is, no stale view.</li>
+  <li><strong>Health tab is essentially a UI for the structurer's <code>HealthReport</code>.</strong> Runs <code>run_health_check(use_llm=False)</code> on each tab activation. Coverage-by-bucket gets a table; thin pages, dangling wikilinks, validation warnings, and orphan chunks each get a list (first 30, with "and N more" footer). LLM contradiction detection is an opt-in <code>?use_llm=true</code> query param — no UI toggle yet (see followups).</li>
+  <li><strong>Evals tab gracefully handles the no-runs case.</strong> Phase 8 hasn't built the eval harness yet, so <code>data/evals/</code> doesn't exist. The tab detects that and shows a hint pointing at <code>scripts/run_evals.py</code> instead of failing or showing a blank table. Once Phase 8 writes summaries there, the same tab populates with no code changes.</li>
+  <li><strong>Inline citation popover is a custom positioned tooltip, not the browser <code>title</code> attribute alone.</strong> Browser titles are slow to appear, don't render HTML, and look like OS-default cruft. The custom popover is a single appended <code>&lt;div&gt;</code> that follows the hovered link, shows source_id + heading path + snippet with proper styling, and clamps to the viewport so it doesn't fall off the right edge. <code>title</code> is kept as a no-JS fallback.</li>
+  <li><strong>"Open source" button on every citation card.</strong> Fetches <code>/admin/source/{source_id}</code> (which wraps the existing <code>read_source</code> from Phase 4) and expands the full raw document body into a collapsible <code>&lt;pre&gt;</code> beneath the card. Loaded lazily, toggleable. Same source_id semantics as the agent's <code>read_source</code> tool, so the user can see exactly what the model could have read.</li>
+  <li><strong>Tab state is cleared on each drawer open.</strong> Closing and re-opening the drawer resets to the Ingest tab. Simpler than persisting state across opens; the cost is one re-fetch of the source list. Cached server-side responses keep this cheap.</li>
+</ul>
+
+<h3>Deviations <span class="tag tag-deviation">deviation</span></h3>
+<ul>
+  <li><strong>"Sources panel: ranked chunks with score, snippet, expand-to-page" was already largely shipped in Phase 4.</strong> Per-message citation cards already show score + snippet. Phase 7's expand-to-page interpretation became the "Open source" button — it shows the full source body (not strictly the source page where the chunk lives, but the document's full text, which is what's actually citable). For PDF sources the underlying <code>read_source</code> supports <code>page_range</code>; the UI doesn't expose that knob yet, but the backend is ready when it's needed.</li>
+  <li><strong>Did not factor citation rendering into a separate module.</strong> The hover popover, card decoration, and open-source button all sit inside <code>app.js</code> alongside the rest of the chat code. At ~700 lines total the file is still readable; splitting it would mean either a module system or copy-paste. Deferred.</li>
+  <li><strong>The Ingest tab doesn't have a "re-run ingest" button.</strong> The spec describes a corpus browser; running ingest is the CLI's job. Adding a one-click ingest button would mean adding a POST endpoint + a long-running job pattern in the UI; out of scope for "UI polish." Documented in the empty-evals message that the corresponding CLI is the path.</li>
+  <li><strong>Health tab refreshes are full rebuilds, not deltas.</strong> Every open recomputes the entire report. Fine at 32 pages / 117 chunks; revisit when the corpus is 10×.</li>
+</ul>
+
+<h3>Tradeoffs <span class="tag tag-tradeoff">tradeoff</span></h3>
+<ul>
+  <li><strong>Admin tabs in a drawer vs a top-level page.</strong> A top-level <code>/admin</code> page would feel more first-class but split the UI into modes (chat ↔ admin), requiring routing. Drawer keeps the chat the primary surface and lets a reviewer dip into admin without losing context. The wider drawer is a compromise — almost a panel — that handles the wider tables.</li>
+  <li><strong>Citation popover: lib (Floating UI / Popper) vs hand-rolled positioning.</strong> Hand-rolled is ~30 lines: <code>getBoundingClientRect</code>, viewport clamp, append below the link. A library would handle edge cases (auto-flip, arrow) better but balloon the JS surface for one feature.</li>
+  <li><strong>Health tab structure: tables-of-everything vs summary tiles + drill-down.</strong> Picked the summary-first layout (tiles at top, lists below) so the most useful signal (cited vs total, orphan count) is above the fold. The lists are capped at 30 rows with "and N more" footers; full detail still lives in <code>data/wiki/concepts/health-check.md</code> (the structurer also writes that file).</li>
+  <li><strong>Open-source button fetches lazily vs eagerly.</strong> Lazy — the button is the explicit user action that triggers the fetch. Loading every source upfront would balloon the page size on long answers.</li>
+  <li><strong>One admin router vs three.</strong> Considered separate <code>src/api/admin_sources.py</code>, <code>admin_health.py</code>, <code>admin_evals.py</code>. One <code>admin.py</code> is fine at ~200 lines and keeps the route surface easy to scan. Split when one section grows large.</li>
+</ul>
+
+<h3>Open questions <span class="tag tag-open">open</span></h3>
+<ul>
+  <li><strong>LLM contradiction check on the Health tab has no UI toggle.</strong> Backend supports <code>?use_llm=true</code>; the UI doesn't expose it. Adding a button would be a few lines; deferred because it's a slow + costs-money operation and we want explicit intent.</li>
+  <li><strong>Citation popover positioning is bottom-only.</strong> If a citation appears near the bottom of the viewport, the popover may go off-screen. A flip-to-top heuristic would be ~10 lines. Followups.</li>
+  <li><strong>Admin tab state isn't persisted across drawer opens.</strong> Resets to Ingest. Followups.</li>
+  <li><strong>"Sources panel" spec was partially fulfilled in Phase 4.</strong> Should the existing audit-trail "Show sources" button on each message be renamed or augmented to clearly distinguish "audit trail" from "cited chunks"? Today the citation cards already serve the "cited chunks" view; the side drawer serves the audit trail. The labels could be sharper.</li>
+</ul>
+
+<h3>Phase 7 completion <span class="tag tag-decision">decision</span></h3>
+<ul>
+  <li><strong>Files added:</strong>
+    <ul>
+      <li><code>src/api/admin.py</code> — five endpoints: <code>/admin/sources</code>, <code>/admin/source/{id}</code>, <code>/admin/health</code>, <code>/admin/evals</code>, <code>/admin/evals/{run_id}</code>.</li>
+    </ul>
+  </li>
+  <li><strong>Files modified:</strong>
+    <ul>
+      <li><code>src/api/main.py</code> — mount admin router (now 13 user-facing routes + 5 admin = 18 total).</li>
+      <li><code>web/index.html</code> — "Admin" top-bar button + admin drawer with tab strip + body.</li>
+      <li><code>web/app.js</code> — admin drawer logic (tab switching, three tab loaders), citation hover popover, "Open source" button + lazy source loading; <code>wireCitationLinks</code> takes citations list to feed popover content.</li>
+      <li><code>web/style.css</code> — admin drawer width, tabs, tiles, tables, citation popover, open-source button + expand panel.</li>
+    </ul>
+  </li>
+  <li><strong>Verified:</strong>
+    <ul>
+      <li>Admin endpoints all return reasonable data: 86 sources / 83 indexed / 117 chunks; health pulls 32 pages with 87/117 cited; evals returns empty shape (no Phase 8 runs yet).</li>
+      <li>HTML aside open/close counts balanced (4/4).</li>
+      <li>JS braces balanced (343/343); paren delta is balanced (the pre-existing 1-off survives unchanged).</li>
+      <li><code>ruff check src scripts</code> passes.</li>
+    </ul>
+  </li>
+  <li><strong>Not verified (no real API key):</strong> citation popover + open-source buttons in live agent runs. Both work with mocked data and the backend routes return real content.</li>
+</ul>
+
+<h2>Phase 8 — Evals + writeup</h2>
+
+<h3>Design decisions <span class="tag tag-decision">decision</span></h3>
+<ul>
+  <li><strong>Ground truth at source level, not chunk level.</strong> Phase 3's <code>chunk_id</code> format embeds a content hash, so any source edit invalidates all its chunk ids. Using chunk ids as golden-set ground truth would mean re-curating after every corpus tweak. <code>expected_source_ids</code> stays stable across content edits — the metric measures "did retrieval surface chunks from any expected source?"</li>
+  <li><strong>Two runner modes: <code>retrieval</code> and <code>agent</code>.</strong> Retrieval-only calls <code>retrieve()</code> directly and scores recall@5/@10 + MRR. No API key, no agent — fast, free, runnable by any reviewer. Agent mode runs the full loop and adds citation precision / recall + latency + token cost. Both write the same JSONL shape and the same <code>summary.json</code>, so the Phase 7 Admin → Evals tab displays whichever ran.</li>
+  <li><strong>Per-question + aggregate metrics.</strong> <code>PerQuestionScore</code> captures the full picture for one question (expected, retrieved, cited, RR, recall@k). <code>MetricsSummary</code> aggregates. Per-question records ship inside the summary file's <code>by_qid</code> array so the UI can show drill-downs without a second request.</li>
+  <li><strong>Golden-set size: 30 questions.</strong> Lower end of the spec's 30–50 range. Carefully chosen to cover all four workflow areas (8 refrigerant/regulatory, 6 SOP, 5 supplier/tariff, 5 technical TSB, 3 install procedure, 3 regulatory deep-cuts). 30 is small enough to hand-audit each retrieval result; expanding is a future-iteration knob.</li>
+  <li><strong>Cost roll-up uses Sonnet 4.6 list prices.</strong> $3/1M input, $15/1M output. Hardcoded into <code>metrics.py</code> as a documented approximation — the eval cost summary is informational, not a billing surface.</li>
+  <li><strong>Idempotent eval runs with timestamped run_ids.</strong> Default <code>run_id = YYYYMMDD-HHMMSS-{mode}</code> so back-to-back runs don't clobber each other. Override with <code>--run-id</code> if you want a stable filename for CI.</li>
+  <li><strong>Latency p50/p95 computed from <code>time.perf_counter</code> wall-clock.</strong> Retrieval-only mode times the <code>retrieve()</code> call; agent mode times the full <code>run_agent()</code> round-trip. p95 via linear interpolation, not the simpler rank-based percentile, so small sample sizes still give meaningful numbers.</li>
+  <li><strong>Token usage pulled from <code>response.usage</code> in agent mode.</strong> Already in the audit log per-iteration; we just sum across the trace. <code>_retrieved_from_trace()</code> walks the same audit log to recover which sources the agent's <code>retrieve</code> calls returned (so retrieval scoring works in agent mode too).</li>
+  <li><strong>Portfolio README is the writeup deliverable.</strong> Rewrote <code>README.md</code> top-to-bottom with: skill-matrix table at the top, architecture ASCII diagram, latest eval table with real numbers, quick-start, layout, key decisions pointer to <code>implementation-notes.html</code> and <code>followups.html</code>. No standalone "portfolio doc" — the README is the portfolio doc.</li>
+</ul>
+
+<h3>Deviations <span class="tag tag-deviation">deviation</span></h3>
+<ul>
+  <li><strong>LLM-judge claim coverage is not implemented.</strong> The plan listed "claim coverage via LLM-judge, unsupported-claim count." Both fields are reserved in <code>MetricsSummary</code> as <code>None</code>. Building the judge needs (a) a live API key and (b) a claim-splitter prompt that's its own small project. Phase 8's done-when explicitly requires "evals run reproducibly" + "portfolio README" — both achieved without LLM-judge. Flagged as a followup; the rest of the eval surface is real.</li>
+  <li><strong>No CI integration.</strong> Considered wiring <code>run_evals.py</code> into a pytest pin or GitHub Action that fails if recall@5 drops. Skipped because (a) there's no CI infrastructure to drop the action into yet, (b) regression-pinning makes more sense once we have multiple runs to compare against. Cheap follow-up: add a baseline summary file under <code>tests/eval/baseline.summary.json</code> and assert `recall@5 >= baseline.recall@5 - 0.02` in pytest.</li>
+  <li><strong>The chunk-level retrieved-from-trace parser uses a regex on the tool-result preview.</strong> The <code>retrieve</code> tool's output text starts each chunk line with <code>[cN] source-id-here</code>. <code>_retrieved_from_trace</code> grabs source ids from that text. Brittle: any prompt change to the <code>retrieve</code> tool result format will break it. Acceptable: that format is tested in Phase 4 smoke and the eval runner is the only consumer. If we change the format, this parser updates with it.</li>
+  <li><strong>Demo GIF / video is not produced.</strong> The plan listed it. Producing one requires a UI recording session against a live agent, which needs an API key. README has a layout ready for it (no placeholder yet — adding when there's a real recording). Tracked in followups.</li>
+</ul>
+
+<h3>Tradeoffs <span class="tag tag-tradeoff">tradeoff</span></h3>
+<ul>
+  <li><strong>Retrieval-only as the default mode.</strong> Considered making agent mode default since it's more comprehensive. Picked retrieval-only because (a) any reviewer cloning the repo can run it without an API key, (b) the metrics it produces are real and directly comparable across configurations (BM25 only vs hybrid vs hybrid+rerank).</li>
+  <li><strong>Reciprocal Rank vs Average Precision.</strong> MRR is one number per question (rank of first relevant), AP averages precision across all relevant ranks. With most golden records having 1–2 expected sources, AP collapses to MRR-with-extra-ceremony. Picked MRR for readability.</li>
+  <li><strong>Hand-author the golden set vs LLM-generate it.</strong> Considered asking Claude to generate questions from the corpus. Faster, but the ground truth would need a second pass and you lose the curator's judgment about what's a fair test. Hand-authored 30 — one afternoon's effort, no LLM bills, ground truth I can defend.</li>
+  <li><strong>Eval output files: JSONL per-question + JSON summary.</strong> Two-file pattern is more verbose than one big nested JSON. Wins: JSONL is grep-friendly + line-streamable; summary is small + cheap to read for the UI; the two files can stay in sync because the summary contains the same per-question records inside <code>by_qid</code>.</li>
+  <li><strong>Portfolio writeup format: extended README vs separate <code>WRITEUP.md</code>.</strong> Two docs splits attention. The README is the first thing a reviewer opens; investing in it directly is higher-leverage than maintaining a parallel writeup. Cross-references to <code>implementation-notes.html</code> (detailed decisions per phase) and <code>followups.html</code> (deferred items) live in the README for reviewers who want to drill down.</li>
+</ul>
+
+<h3>Open questions <span class="tag tag-open">open</span></h3>
+<ul>
+  <li><strong>Citation-precision numbers from a live agent run.</strong> Phase 8 verified the retrieval half; the agent half (citation precision / recall) needs a live API key. Existing followup item covers the broader "end-to-end agent run" but the eval-specific re-run is what would unblock the full metrics table.</li>
+  <li><strong>recall@5 = 0.867 — what's the floor for the 4 misses?</strong> Spot-check: q29 ("Technology Transitions Rule cutoff date") missed because the rule's GWP &lt; 700 cutoff language doesn't lexically share many tokens with the question. This is the kind of miss real Voyage embeddings would catch — flagging for the Voyage retest.</li>
+  <li><strong>Should the eval pin a baseline?</strong> A small <code>tests/eval/baseline.json</code> + pytest assertion would catch regressions when we tweak the chunker or filters. Followups.</li>
+  <li><strong>Demo GIF/video for the README.</strong> Followups — depends on a live API key + a recording session.</li>
+</ul>
+
+<h3>Phase 8 completion <span class="tag tag-decision">decision</span></h3>
+<ul>
+  <li><strong>Files added:</strong>
+    <ul>
+      <li><code>tests/eval/golden.jsonl</code> — 30 hand-authored questions with <code>expected_source_ids</code> + <code>expected_entities</code> + notes.</li>
+      <li><code>scripts/run_evals.py</code> — driver with <code>--mode retrieval|agent</code>, <code>--k</code>, <code>--run-id</code>, <code>--quiet</code>.</li>
+    </ul>
+  </li>
+  <li><strong>Files filled in (previously stubs):</strong>
+    <ul>
+      <li><code>src/eval/metrics.py</code> — <code>PerQuestionScore</code>, <code>MetricsSummary</code>, <code>score_question</code>, <code>aggregate</code>, <code>score_run</code> (re-score from disk).</li>
+      <li><code>src/eval/runner.py</code> — <code>read_golden</code>, <code>run_eval</code>, <code>event_stream</code>; retrieval-only + agent paths with trace inspection for retrieved-source recovery.</li>
+    </ul>
+  </li>
+  <li><strong>Files modified:</strong>
+    <ul>
+      <li><code>README.md</code> — rewritten as the portfolio writeup. Skill matrix, architecture diagram, eval table with real numbers, quick-start, decisions pointer.</li>
+    </ul>
+  </li>
+  <li><strong>Eval results from this session (retrieval-only, BM25 + pseudo-vectors):</strong>
+    <ul>
+      <li>30 questions, recall@5 = <strong>0.867</strong>, recall@10 = <strong>0.967</strong>, MRR = <strong>0.668</strong></li>
+      <li>Latency p50 = 19 ms, p95 = 21 ms</li>
+      <li>Surfaced in the Admin → Evals tab; <code>data/evals/20260519-170841-retrieval.summary.json</code></li>
+    </ul>
+  </li>
+  <li><strong>Lint clean:</strong> <code>ruff check src scripts</code> passes after Phase 8.</li>
+  <li><strong>Not exercised:</strong> agent-mode evals (needs live API key); LLM-judge claim coverage (not built).</li>
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+source_id: spec-johnstone-2025-q1-capacitors
+type: csv
+bucket: specs
+title: Johnstone 2025 Q1 Capacitors
+issuer: Distributor
+category: Capacitor
+doc_date: '2025-01-15'
+license: synthetic-internal

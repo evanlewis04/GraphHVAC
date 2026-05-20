@@ -1,0 +1,8 @@
+source_id: ticket-warranty-claims-2024
+type: ticket
+bucket: tickets
+title: Warranty Claims 2024
+issuer: Internal
+doc_date: '2024-12-20'
+record_count: 9
+license: synthetic-internal

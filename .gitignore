@@ -1,0 +1,40 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Generated data — keep the directory layout, drop the contents
+data/staging.duckdb
+data/audit.sqlite
+data/narrative_cache.sqlite
+data/raw/*
+!data/raw/.gitkeep
+
+# Phase 3 retrieval index — fully regenerable via `scripts/ingest.py`
+data/retrieval.lancedb/
+data/bm25.pkl
+
+# Phase 3/5 caches — fully regenerable
+data/embed_cache.sqlite
+data/metadata_cache.sqlite
+data/structure_cache.sqlite
+
+# Briefs are generated on demand
+data/briefs/*.md
+
+# Legacy templated wiki pages — too many to commit cleanly (5K+ SKUs).
+# Structurer-built pages (refrigerants/, regulations/, manufacturers/,
+# procedures/) ARE committed because they're small + demonstrate Phase 5.
+data/wiki/skus/*.md
+data/wiki/suppliers/*.md
+data/wiki/customers/*.md
+data/wiki/warehouses/*.md
+
+# Obsidian local state — ignored entirely; canonical defaults live in
+# data/obsidian-defaults/ and are seeded into here by
+# scripts/setup_obsidian.py (only on first run; never overwritten).
+data/wiki/.obsidian/

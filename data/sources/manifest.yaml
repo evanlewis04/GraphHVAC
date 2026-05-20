@@ -1,0 +1,832 @@
+# Source-corpus manifest.
+#
+# Auto-built by scripts/generate_corpus.py from per-file frontmatter
+# (markdown sources) and per-file .meta.yaml sidecars (jsonl/csv
+# sources). Real public anchors are declared in REAL_ANCHORS within
+# that script and appended with license: reference-only — they are
+# downloaded on demand by scripts/fetch_anchors.py.
+#
+# To re-build: python scripts/generate_corpus.py --manifest-only
+
+version: 1
+sources:
+- source_id: bulletin-epa-aim-act-summary
+  path: bulletins/epa-aim-act-summary.md
+  type: markdown
+  bucket: bulletins
+  title: "EPA AIM Act \u2014 HFC phase-down summary (paraphrased)"
+  issuer: EPA (paraphrased)
+  license: synthetic-internal
+  refrigerants:
+  - R-410A
+  - R-22
+  - R-32
+  - R-454B
+  regulations:
+  - AIM-Act
+  doc_date: 2023-10-05
+- source_id: bulletin-amana-tsb-2024-010-control-board-replacement
+  path: bulletins/mfr-amana-tsb-2024-010-control-board-replacement.md
+  type: markdown
+  bucket: bulletins
+  title: "Amana TSB 2024-010 \u2014 Control board replacement procedure \u2014 AMA460\
+    \ series"
+  issuer: Amana (synthetic)
+  license: synthetic-internal
+  manufacturer: Amana
+  doc_date: 2024-01-30
+- source_id: bulletin-bryant-tsb-2024-008-inducer-motor-bearing
+  path: bulletins/mfr-bryant-tsb-2024-008-inducer-motor-bearing.md
+  type: markdown
+  bucket: bulletins
+  title: "Bryant TSB 2024-008 \u2014 Inducer motor \u2014 bearing wear pattern"
+  issuer: Bryant (synthetic)
+  license: synthetic-internal
+  manufacturer: Bryant
+  doc_date: 2024-10-11
+- source_id: bulletin-carrier-tsb-2024-007-fan-motor
+  path: bulletins/mfr-carrier-tsb-2024-007-fan-motor.md
+  type: markdown
+  bucket: bulletins
+  title: "Carrier TSB 2024-007 \u2014 24ABC6 condenser fan motor field replacement"
+  issuer: Carrier (synthetic)
+  license: synthetic-internal
+  manufacturer: Carrier
+  doc_date: 2024-04-11
+- source_id: bulletin-daikin-tsb-2024-006-ecm-blower-firmware
+  path: bulletins/mfr-daikin-tsb-2024-006-ecm-blower-firmware.md
+  type: markdown
+  bucket: bulletins
+  title: "Daikin TSB 2024-006 \u2014 ECM blower module firmware update \u2014 DAI409"
+  issuer: Daikin (synthetic)
+  license: synthetic-internal
+  manufacturer: Daikin
+  doc_date: 2024-09-20
+- source_id: bulletin-goodman-tsb-2024-003-inducer-motor-bearing
+  path: bulletins/mfr-goodman-tsb-2024-003-inducer-motor-bearing.md
+  type: markdown
+  bucket: bulletins
+  title: "Goodman TSB 2024-003 \u2014 Inducer motor \u2014 bearing wear pattern"
+  issuer: Goodman (synthetic)
+  license: synthetic-internal
+  manufacturer: Goodman
+  doc_date: 2024-03-14
+- source_id: bulletin-goodman-tsb-2024-012-capacitor-batch-recall
+  path: bulletins/mfr-goodman-tsb-2024-012-capacitor-batch-recall.md
+  type: markdown
+  bucket: bulletins
+  title: "Goodman TSB 2024-012 \u2014 Capacitor batch \u2014 voluntary replacement\
+    \ program"
+  issuer: Goodman (synthetic)
+  license: synthetic-internal
+  manufacturer: Goodman
+  doc_date: 2024-10-09
+- source_id: bulletin-heil-tsb-2024-009-thermostat-wifi-reconnect
+  path: bulletins/mfr-heil-tsb-2024-009-thermostat-wifi-reconnect.md
+  type: markdown
+  bucket: bulletins
+  title: "Heil TSB 2024-009 \u2014 Smart thermostat \u2014 Wi-Fi auto-reconnect behavior"
+  issuer: Heil (synthetic)
+  license: synthetic-internal
+  manufacturer: Heil
+  doc_date: 2024-09-14
+- source_id: bulletin-honeywell-tsb-2024-011-ecm-blower-firmware
+  path: bulletins/mfr-honeywell-tsb-2024-011-ecm-blower-firmware.md
+  type: markdown
+  bucket: bulletins
+  title: "Honeywell TSB 2024-011 \u2014 ECM blower module firmware update \u2014 HON255"
+  issuer: Honeywell (synthetic)
+  license: synthetic-internal
+  manufacturer: Honeywell
+  doc_date: 2024-03-06
+- source_id: bulletin-lennox-tsb-2024-001-icomfort
+  path: bulletins/mfr-lennox-tsb-2024-001-icomfort.md
+  type: markdown
+  bucket: bulletins
+  title: "Lennox TSB 2024-001 \u2014 iComfort S30 thermostat firmware update"
+  issuer: Lennox (synthetic)
+  license: synthetic-internal
+  manufacturer: Lennox
+  doc_date: 2024-02-20
+- source_id: bulletin-mitsubishi-tsb-2024-007-capacitor-batch-recall
+  path: bulletins/mfr-mitsubishi-tsb-2024-007-capacitor-batch-recall.md
+  type: markdown
+  bucket: bulletins
+  title: "Mitsubishi TSB 2024-007 \u2014 Capacitor batch \u2014 voluntary replacement\
+    \ program"
+  issuer: Mitsubishi (synthetic)
+  license: synthetic-internal
+  manufacturer: Mitsubishi
+  doc_date: 2024-05-12
+- source_id: bulletin-rheem-tsb-2024-001-ecm-blower-firmware
+  path: bulletins/mfr-rheem-tsb-2024-001-ecm-blower-firmware.md
+  type: markdown
+  bucket: bulletins
+  title: "Rheem TSB 2024-001 \u2014 ECM blower module firmware update \u2014 RHE286"
+  issuer: Rheem (synthetic)
+  license: synthetic-internal
+  manufacturer: Rheem
+  doc_date: 2024-11-07
+- source_id: bulletin-rheem-tsb-2024-004-thermostat-wifi-reconnect
+  path: bulletins/mfr-rheem-tsb-2024-004-thermostat-wifi-reconnect.md
+  type: markdown
+  bucket: bulletins
+  title: "Rheem TSB 2024-004 \u2014 Smart thermostat \u2014 Wi-Fi auto-reconnect behavior"
+  issuer: Rheem (synthetic)
+  license: synthetic-internal
+  manufacturer: Rheem
+  doc_date: 2024-05-16
+- source_id: bulletin-rheem-tsb-2024-013-inducer-motor-bearing
+  path: bulletins/mfr-rheem-tsb-2024-013-inducer-motor-bearing.md
+  type: markdown
+  bucket: bulletins
+  title: "Rheem TSB 2024-013 \u2014 Inducer motor \u2014 bearing wear pattern"
+  issuer: Rheem (synthetic)
+  license: synthetic-internal
+  manufacturer: Rheem
+  doc_date: 2024-09-14
+- source_id: bulletin-trane-tsb-2024-002-r-32-launch
+  path: bulletins/mfr-trane-tsb-2024-002-r-32-launch.md
+  type: markdown
+  bucket: bulletins
+  title: "Trane TSB 2024-002 \u2014 4TWR8 R-454B product line launch and stocking\
+    \ notes"
+  issuer: Trane (synthetic)
+  license: synthetic-internal
+  manufacturer: Trane
+  refrigerants:
+  - R-454B
+  - R-410A
+  regulations:
+  - AIM-Act
+  doc_date: 2024-05-15
+- source_id: bulletin-york-tsb-2024-002-capacitor-batch-recall
+  path: bulletins/mfr-york-tsb-2024-002-capacitor-batch-recall.md
+  type: markdown
+  bucket: bulletins
+  title: "York TSB 2024-002 \u2014 Capacitor batch \u2014 voluntary replacement program"
+  issuer: York (synthetic)
+  license: synthetic-internal
+  manufacturer: York
+  doc_date: 2024-07-03
+- source_id: bulletin-york-tsb-2024-005-control-board-replacement
+  path: bulletins/mfr-york-tsb-2024-005-control-board-replacement.md
+  type: markdown
+  bucket: bulletins
+  title: "York TSB 2024-005 \u2014 Control board replacement procedure \u2014 YOR386\
+    \ series"
+  issuer: York (synthetic)
+  license: synthetic-internal
+  manufacturer: York
+  doc_date: 2024-06-03
+- source_id: bulletin-r-32-transition-overview
+  path: bulletins/r-32-transition-overview.md
+  type: markdown
+  bucket: bulletins
+  title: "R-32 \u2014 replacement refrigerant operational overview"
+  issuer: Internal Compliance
+  license: synthetic-internal
+  refrigerants:
+  - R-32
+  - R-410A
+  regulations:
+  - AIM-Act
+  - ASHRAE-34
+  - UL-60335-2-40
+  doc_date: 2024-03-04
+- source_id: bulletin-r-410a-phase-out-timeline
+  path: bulletins/r-410a-phase-out-timeline.md
+  type: markdown
+  bucket: bulletins
+  title: R-410A phase-out timeline and distributor impact
+  issuer: Internal Compliance
+  license: synthetic-internal
+  refrigerants:
+  - R-410A
+  - R-32
+  - R-454B
+  regulations:
+  - AIM-Act
+  doc_date: 2024-02-12
+- source_id: bulletin-r-454b-overview
+  path: bulletins/r-454b-overview.md
+  type: markdown
+  bucket: bulletins
+  title: "R-454B \u2014 replacement refrigerant operational overview"
+  issuer: Internal Compliance
+  license: synthetic-internal
+  refrigerants:
+  - R-454B
+  - R-410A
+  regulations:
+  - AIM-Act
+  - ASHRAE-34
+  - UL-60335-2-40
+  doc_date: 2024-03-04
+- source_id: email-abco-distribution-2024-07-22-product-discontinuation-022
+  path: emails/abco-distribution-2024-07-22-product-discontinuation-022.md
+  type: email
+  bucket: emails
+  title: "ABCO Distribution \u2014 End-of-life notice \u2014 YOR585 series"
+  issuer: ABCO Distribution
+  license: synthetic-internal
+  manufacturer: York
+  doc_date: 2024-07-22
+- source_id: email-baker-distributing-2024-09-06-product-discontinuation-016
+  path: emails/baker-distributing-2024-09-06-product-discontinuation-016.md
+  type: email
+  bucket: emails
+  title: "Baker Distributing \u2014 End-of-life notice \u2014 DAI136 series"
+  issuer: Baker Distributing
+  license: synthetic-internal
+  manufacturer: Daikin
+  doc_date: 2024-09-06
+- source_id: email-baker-distributing-2024-11-14-allocation-notice-000
+  path: emails/baker-distributing-2024-11-14-allocation-notice-000.md
+  type: email
+  bucket: emails
+  title: "Baker Distributing \u2014 Q2 allocation update \u2014 Motor"
+  issuer: Baker Distributing
+  license: synthetic-internal
+  manufacturer: Daikin
+  doc_date: 2024-11-14
+- source_id: email-baker-distributing-2024-12-19-product-discontinuation-014
+  path: emails/baker-distributing-2024-12-19-product-discontinuation-014.md
+  type: email
+  bucket: emails
+  title: "Baker Distributing \u2014 End-of-life notice \u2014 DAI825 series"
+  issuer: Baker Distributing
+  license: synthetic-internal
+  manufacturer: Daikin
+  doc_date: 2024-12-19
+- source_id: email-carrier-enterprise-2024-12-12-delivery-delay-001
+  path: emails/carrier-enterprise-2024-12-12-delivery-delay-001.md
+  type: email
+  bucket: emails
+  title: "Carrier Enterprise \u2014 Shipment delay notice \u2014 ControlBoard"
+  issuer: Carrier Enterprise
+  license: synthetic-internal
+  manufacturer: Mitsubishi
+  doc_date: 2024-12-12
+- source_id: email-carrier-tariff-passthrough-2025-03
+  path: emails/carrier-tariff-passthrough-2025-03.md
+  type: email
+  bucket: emails
+  title: "Carrier \u2014 2025-03 tariff pass-through announcement"
+  issuer: Carrier Enterprise
+  license: synthetic-internal
+  manufacturer: Carrier
+  doc_date: 2025-03-02
+- source_id: email-coastal-hvac-supply-2024-01-10-allocation-notice-026
+  path: emails/coastal-hvac-supply-2024-01-10-allocation-notice-026.md
+  type: email
+  bucket: emails
+  title: "Coastal HVAC Supply \u2014 Q4 allocation update \u2014 Capacitor"
+  issuer: Coastal HVAC Supply
+  license: synthetic-internal
+  manufacturer: Carrier
+  doc_date: 2024-01-10
+- source_id: email-coastal-hvac-supply-2024-01-21-rebate-program-017
+  path: emails/coastal-hvac-supply-2024-01-21-rebate-program-017.md
+  type: email
+  bucket: emails
+  title: "Coastal HVAC Supply \u2014 2025 Loyalty rebate program \u2014 enrollment\
+    \ open"
+  issuer: Coastal HVAC Supply
+  license: synthetic-internal
+  manufacturer: Goodman
+  doc_date: 2024-01-21
+- source_id: email-coastal-hvac-supply-2024-06-24-price-increase-018
+  path: emails/coastal-hvac-supply-2024-06-24-price-increase-018.md
+  type: email
+  bucket: emails
+  title: "Coastal HVAC Supply \u2014 Q3 price adjustment \u2014 Contactor line"
+  issuer: Coastal HVAC Supply
+  license: synthetic-internal
+  manufacturer: Mitsubishi
+  doc_date: 2024-06-24
+- source_id: email-goodin-company-2024-02-24-allocation-notice-009
+  path: emails/goodin-company-2024-02-24-allocation-notice-009.md
+  type: email
+  bucket: emails
+  title: "Goodin Company \u2014 Q3 allocation update \u2014 Thermostat"
+  issuer: Goodin Company
+  license: synthetic-internal
+  manufacturer: Heil
+  doc_date: 2024-02-24
+- source_id: email-goodin-company-2024-07-09-product-discontinuation-015
+  path: emails/goodin-company-2024-07-09-product-discontinuation-015.md
+  type: email
+  bucket: emails
+  title: "Goodin Company \u2014 End-of-life notice \u2014 HEI615 series"
+  issuer: Goodin Company
+  license: synthetic-internal
+  manufacturer: Heil
+  doc_date: 2024-07-09
+- source_id: email-goodin-company-2024-08-26-product-discontinuation-023
+  path: emails/goodin-company-2024-08-26-product-discontinuation-023.md
+  type: email
+  bucket: emails
+  title: "Goodin Company \u2014 End-of-life notice \u2014 HON390 series"
+  issuer: Goodin Company
+  license: synthetic-internal
+  manufacturer: Honeywell
+  doc_date: 2024-08-26
+- source_id: email-goodin-company-2024-09-16-delivery-delay-025
+  path: emails/goodin-company-2024-09-16-delivery-delay-025.md
+  type: email
+  bucket: emails
+  title: "Goodin Company \u2014 Shipment delay notice \u2014 Motor"
+  issuer: Goodin Company
+  license: synthetic-internal
+  manufacturer: Mitsubishi
+  doc_date: 2024-09-16
+- source_id: email-goodin-company-2024-10-24-price-increase-010
+  path: emails/goodin-company-2024-10-24-price-increase-010.md
+  type: email
+  bucket: emails
+  title: "Goodin Company \u2014 Q3 price adjustment \u2014 Coil line"
+  issuer: Goodin Company
+  license: synthetic-internal
+  manufacturer: Mitsubishi
+  doc_date: 2024-10-24
+- source_id: email-goodin-company-2025-03-25-allocation-notice-027
+  path: emails/goodin-company-2025-03-25-allocation-notice-027.md
+  type: email
+  bucket: emails
+  title: "Goodin Company \u2014 Q1 allocation update \u2014 Capacitor"
+  issuer: Goodin Company
+  license: synthetic-internal
+  manufacturer: Mitsubishi
+  doc_date: 2025-03-25
+- source_id: email-johnstone-supply-2024-06-22-price-increase-011
+  path: emails/johnstone-supply-2024-06-22-price-increase-011.md
+  type: email
+  bucket: emails
+  title: "Johnstone Supply \u2014 Q2 price adjustment \u2014 Motor line"
+  issuer: Johnstone Supply
+  license: synthetic-internal
+  manufacturer: Amana
+  doc_date: 2024-06-22
+- source_id: email-johnstone-supply-2025-05-09-product-discontinuation-002
+  path: emails/johnstone-supply-2025-05-09-product-discontinuation-002.md
+  type: email
+  bucket: emails
+  title: "Johnstone Supply \u2014 End-of-life notice \u2014 BRY627 series"
+  issuer: Johnstone Supply
+  license: synthetic-internal
+  manufacturer: Bryant
+  doc_date: 2025-05-09
+- source_id: email-lennox-2025-q1-allocations
+  path: emails/lennox-2025-q1-allocations.md
+  type: email
+  bucket: emails
+  title: Lennox 2025-Q1 allocation thread
+  issuer: Internal
+  license: synthetic-internal
+  manufacturer: Lennox
+  doc_date: 2025-01-08
+- source_id: email-lennox-partsplus-2024-05-18-delivery-delay-006
+  path: emails/lennox-partsplus-2024-05-18-delivery-delay-006.md
+  type: email
+  bucket: emails
+  title: "Lennox PartsPlus \u2014 Shipment delay notice \u2014 Motor"
+  issuer: Lennox PartsPlus
+  license: synthetic-internal
+  manufacturer: York
+  doc_date: 2024-05-18
+- source_id: email-lennox-partsplus-2024-07-05-rebate-program-013
+  path: emails/lennox-partsplus-2024-07-05-rebate-program-013.md
+  type: email
+  bucket: emails
+  title: "Lennox PartsPlus \u2014 2025 Loyalty rebate program \u2014 enrollment open"
+  issuer: Lennox PartsPlus
+  license: synthetic-internal
+  manufacturer: Carrier
+  doc_date: 2024-07-05
+- source_id: email-lennox-partsplus-2024-12-12-rebate-program-028
+  path: emails/lennox-partsplus-2024-12-12-rebate-program-028.md
+  type: email
+  bucket: emails
+  title: "Lennox PartsPlus \u2014 2025 Loyalty rebate program \u2014 enrollment open"
+  issuer: Lennox PartsPlus
+  license: synthetic-internal
+  manufacturer: Rheem
+  doc_date: 2024-12-12
+- source_id: email-munch-s-supply-2024-06-28-rebate-program-019
+  path: emails/munch-s-supply-2024-06-28-rebate-program-019.md
+  type: email
+  bucket: emails
+  title: "Munch's Supply \u2014 2025 Volume Plus rebate program \u2014 enrollment\
+    \ open"
+  issuer: Munch's Supply
+  license: synthetic-internal
+  manufacturer: Honeywell
+  doc_date: 2024-06-28
+- source_id: email-munch-s-supply-2025-02-18-delivery-delay-024
+  path: emails/munch-s-supply-2025-02-18-delivery-delay-024.md
+  type: email
+  bucket: emails
+  title: "Munch's Supply \u2014 Shipment delay notice \u2014 Thermostat"
+  issuer: Munch's Supply
+  license: synthetic-internal
+  manufacturer: Honeywell
+  doc_date: 2025-02-18
+- source_id: email-munch-s-supply-2025-03-30-product-discontinuation-004
+  path: emails/munch-s-supply-2025-03-30-product-discontinuation-004.md
+  type: email
+  bucket: emails
+  title: "Munch's Supply \u2014 End-of-life notice \u2014 RHE482 series"
+  issuer: Munch's Supply
+  license: synthetic-internal
+  manufacturer: Rheem
+  doc_date: 2025-03-30
+- source_id: email-munch-s-supply-2025-05-11-delivery-delay-021
+  path: emails/munch-s-supply-2025-05-11-delivery-delay-021.md
+  type: email
+  bucket: emails
+  title: "Munch's Supply \u2014 Shipment delay notice \u2014 Motor"
+  issuer: Munch's Supply
+  license: synthetic-internal
+  manufacturer: Rheem
+  doc_date: 2025-05-11
+- source_id: email-northern-hvac-wholesale-2024-04-14-rebate-program-012
+  path: emails/northern-hvac-wholesale-2024-04-14-rebate-program-012.md
+  type: email
+  bucket: emails
+  title: "Northern HVAC Wholesale \u2014 2025 Loyalty rebate program \u2014 enrollment\
+    \ open"
+  issuer: Northern HVAC Wholesale
+  license: synthetic-internal
+  manufacturer: Daikin
+  doc_date: 2024-04-14
+- source_id: email-northern-hvac-wholesale-2025-04-21-product-discontinuation-029
+  path: emails/northern-hvac-wholesale-2025-04-21-product-discontinuation-029.md
+  type: email
+  bucket: emails
+  title: "Northern HVAC Wholesale \u2014 End-of-life notice \u2014 RHE198 series"
+  issuer: Northern HVAC Wholesale
+  license: synthetic-internal
+  manufacturer: Rheem
+  doc_date: 2025-04-21
+- source_id: email-re-michel-2024-07-30-product-discontinuation-007
+  path: emails/re-michel-2024-07-30-product-discontinuation-007.md
+  type: email
+  bucket: emails
+  title: "RE Michel \u2014 End-of-life notice \u2014 DAI743 series"
+  issuer: RE Michel
+  license: synthetic-internal
+  manufacturer: Daikin
+  doc_date: 2024-07-30
+- source_id: email-re-michel-2025-03-01-price-increase-020
+  path: emails/re-michel-2025-03-01-price-increase-020.md
+  type: email
+  bucket: emails
+  title: "RE Michel \u2014 Q3 price adjustment \u2014 Coil line"
+  issuer: RE Michel
+  license: synthetic-internal
+  manufacturer: Heil
+  doc_date: 2025-03-01
+- source_id: email-trane-supply-2024-02-15-allocation-notice-003
+  path: emails/trane-supply-2024-02-15-allocation-notice-003.md
+  type: email
+  bucket: emails
+  title: "Trane Supply \u2014 Q3 allocation update \u2014 Thermostat"
+  issuer: Trane Supply
+  license: synthetic-internal
+  manufacturer: Lennox
+  doc_date: 2024-02-15
+- source_id: email-trane-supply-2024-04-22-price-increase-005
+  path: emails/trane-supply-2024-04-22-price-increase-005.md
+  type: email
+  bucket: emails
+  title: "Trane Supply \u2014 Q4 price adjustment \u2014 ControlBoard line"
+  issuer: Trane Supply
+  license: synthetic-internal
+  manufacturer: Honeywell
+  doc_date: 2024-04-22
+- source_id: email-trane-supply-2024-07-02-product-discontinuation-008
+  path: emails/trane-supply-2024-07-02-product-discontinuation-008.md
+  type: email
+  bucket: emails
+  title: "Trane Supply \u2014 End-of-life notice \u2014 RHE283 series"
+  issuer: Trane Supply
+  license: synthetic-internal
+  manufacturer: Rheem
+  doc_date: 2024-07-02
+- source_id: manual-synth-install-residential-condenser
+  path: manuals/synth-install-residential-condenser.md
+  type: markdown
+  bucket: manuals
+  title: "Residential split-system condenser installation \u2014 generic procedure"
+  issuer: Internal Training (synthetic)
+  license: synthetic-internal
+  doc_date: 2024-04-01
+- source_id: sop-backorder-communication
+  path: sops/backorder-communication.md
+  type: markdown
+  bucket: sops
+  title: Backorder communication SLA
+  issuer: Internal Ops
+  license: synthetic-internal
+  doc_date: 2023-12-14
+- source_id: sop-counter-day-runbook
+  path: sops/counter-day-runbook.md
+  type: markdown
+  bucket: sops
+  title: Counter day runbook
+  issuer: Internal Ops
+  license: synthetic-internal
+  doc_date: 2023-11-10
+- source_id: sop-credit-hold-procedure
+  path: sops/credit-hold-procedure.md
+  type: markdown
+  bucket: sops
+  title: Credit hold procedure
+  issuer: Internal Ops
+  license: synthetic-internal
+  doc_date: 2023-09-29
+- source_id: sop-customer-concentration-review
+  path: sops/customer-concentration-review.md
+  type: markdown
+  bucket: sops
+  title: Customer concentration review
+  issuer: Internal Ops
+  license: synthetic-internal
+  doc_date: 2025-01-20
+- source_id: sop-emergency-stock-allocation
+  path: sops/emergency-stock-allocation.md
+  type: markdown
+  bucket: sops
+  title: Emergency stock allocation between warehouses
+  issuer: Internal Ops
+  license: synthetic-internal
+  doc_date: 2025-03-09
+- source_id: sop-inventory-reorder-policy
+  path: sops/inventory-reorder-policy.md
+  type: markdown
+  bucket: sops
+  title: Inventory reorder policy
+  issuer: Internal Ops
+  license: synthetic-internal
+  doc_date: 2023-11-30
+- source_id: sop-new-customer-onboarding
+  path: sops/new-customer-onboarding.md
+  type: markdown
+  bucket: sops
+  title: New customer onboarding
+  issuer: Internal Ops
+  license: synthetic-internal
+  doc_date: 2024-10-30
+- source_id: sop-price-book-update-procedure
+  path: sops/price-book-update-procedure.md
+  type: markdown
+  bucket: sops
+  title: Price book update procedure
+  issuer: Internal Ops
+  license: synthetic-internal
+  doc_date: 2024-10-05
+- source_id: sop-r-410a-retrofit-customer-outreach
+  path: sops/r-410a-retrofit-customer-outreach.md
+  type: markdown
+  bucket: sops
+  title: "R-410A retrofit \u2014 customer outreach playbook"
+  issuer: Internal Ops
+  license: synthetic-internal
+  refrigerants:
+  - R-410A
+  - R-32
+  - R-454B
+  regulations:
+  - AIM-Act
+  doc_date: 2024-03-12
+- source_id: sop-refrigerant-pre-buy-guidance
+  path: sops/refrigerant-pre-buy-guidance.md
+  type: markdown
+  bucket: sops
+  title: "Refrigerant pre-buy guidance \u2014 2024-Q4 through 2025"
+  issuer: Internal Ops
+  license: synthetic-internal
+  refrigerants:
+  - R-410A
+  - R-32
+  - R-454B
+  - R-22
+  regulations:
+  - AIM-Act
+  doc_date: 2024-08-30
+- source_id: sop-return-and-rma-policy
+  path: sops/return-and-rma-policy.md
+  type: markdown
+  bucket: sops
+  title: Return and RMA policy
+  issuer: Internal Ops
+  license: synthetic-internal
+  doc_date: 2025-02-26
+- source_id: sop-seasonal-stocking-plan
+  path: sops/seasonal-stocking-plan.md
+  type: markdown
+  bucket: sops
+  title: Seasonal stocking plan
+  issuer: Internal Ops
+  license: synthetic-internal
+  doc_date: 2023-07-01
+- source_id: sop-supplier-bulletin-triage
+  path: sops/supplier-bulletin-triage.md
+  type: markdown
+  bucket: sops
+  title: Supplier bulletin triage
+  issuer: Internal Ops
+  license: synthetic-internal
+  doc_date: 2023-09-19
+- source_id: sop-supplier-consolidation-post-mna
+  path: sops/supplier-consolidation-post-mna.md
+  type: markdown
+  bucket: sops
+  title: Supplier consolidation post-M&A
+  issuer: Internal Ops
+  license: synthetic-internal
+  doc_date: 2024-01-22
+- source_id: sop-supplier-rebate-tracking
+  path: sops/supplier-rebate-tracking.md
+  type: markdown
+  bucket: sops
+  title: Supplier rebate tracking
+  issuer: Internal Ops
+  license: synthetic-internal
+  doc_date: 2024-03-26
+- source_id: sop-tariff-response-playbook
+  path: sops/tariff-response-playbook.md
+  type: markdown
+  bucket: sops
+  title: Tariff response playbook
+  issuer: Internal Ops
+  license: synthetic-internal
+  doc_date: 2024-02-01
+- source_id: sop-top-customer-pricing-communication
+  path: sops/top-customer-pricing-communication.md
+  type: markdown
+  bucket: sops
+  title: Top customer pricing communication template
+  issuer: Internal Ops
+  license: synthetic-internal
+  doc_date: 2023-12-04
+- source_id: sop-warranty-claim-escalation
+  path: sops/warranty-claim-escalation.md
+  type: markdown
+  bucket: sops
+  title: Warranty claim escalation
+  issuer: Internal Ops
+  license: synthetic-internal
+  doc_date: 2023-11-08
+- source_id: spec-baker-2025-blower-motors
+  path: specs/baker-2025-blower-motors.csv
+  type: csv
+  bucket: specs
+  title: Baker 2025 Blower Motors
+  issuer: US Motors
+  license: synthetic-internal
+  manufacturer: US Motors
+  doc_date: '2025-01-15'
+  category: Motor
+- source_id: spec-carrier-2025-residential-condensers
+  path: specs/carrier-2025-residential-condensers.csv
+  type: csv
+  bucket: specs
+  title: Carrier 2025 Residential Condensers
+  issuer: Carrier
+  license: synthetic-internal
+  manufacturer: Carrier
+  doc_date: '2025-01-15'
+  category: Condenser
+- source_id: spec-goodman-2024-furnace-ifc-boards
+  path: specs/goodman-2024-furnace-ifc-boards.csv
+  type: csv
+  bucket: specs
+  title: Goodman 2024 Furnace Ifc Boards
+  issuer: Goodman
+  license: synthetic-internal
+  manufacturer: Goodman
+  doc_date: '2024-01-15'
+  category: ControlBoard
+- source_id: spec-johnstone-2025-q1-capacitors
+  path: specs/johnstone-2025-q1-capacitors.csv
+  type: csv
+  bucket: specs
+  title: Johnstone 2025 Q1 Capacitors
+  issuer: Distributor
+  license: synthetic-internal
+  doc_date: '2025-01-15'
+  category: Capacitor
+- source_id: spec-lennox-2025-condenser-pricebook-excerpt
+  path: specs/lennox-2025-condenser-pricebook-excerpt.csv
+  type: csv
+  bucket: specs
+  title: Lennox 2025 Condenser Pricebook Excerpt
+  issuer: Lennox
+  license: synthetic-internal
+  manufacturer: Lennox
+  doc_date: '2025-01-15'
+  category: Condenser
+- source_id: spec-re-michel-2025-q1-contactors
+  path: specs/re-michel-2025-q1-contactors.csv
+  type: csv
+  bucket: specs
+  title: Re Michel 2025 Q1 Contactors
+  issuer: Distributor
+  license: synthetic-internal
+  doc_date: '2025-01-15'
+  category: Contactor
+- source_id: spec-rheem-2025-r-454b-condensers
+  path: specs/rheem-2025-r-454b-condensers.csv
+  type: csv
+  bucket: specs
+  title: Rheem 2025 R 454B Condensers
+  issuer: Rheem
+  license: synthetic-internal
+  manufacturer: Rheem
+  doc_date: '2025-01-15'
+  category: Condenser
+- source_id: spec-trane-2024-commercial-r-32
+  path: specs/trane-2024-commercial-r-32.csv
+  type: csv
+  bucket: specs
+  title: Trane 2024 Commercial R 32
+  issuer: Trane
+  license: synthetic-internal
+  manufacturer: Trane
+  doc_date: '2024-01-15'
+  category: Condenser
+- source_id: ticket-contractor-notes-2024-q3
+  path: tickets/contractor-notes-2024-q3.jsonl
+  type: ticket
+  bucket: tickets
+  title: Contractor Notes 2024 Q3
+  issuer: Internal
+  license: synthetic-internal
+  doc_date: '2024-09-30'
+  record_count: 10
+- source_id: ticket-contractor-notes-2024-q4
+  path: tickets/contractor-notes-2024-q4.jsonl
+  type: ticket
+  bucket: tickets
+  title: Contractor Notes 2024 Q4
+  issuer: Internal
+  license: synthetic-internal
+  doc_date: '2024-12-31'
+  record_count: 10
+- source_id: ticket-counter-day-2025-q1
+  path: tickets/counter-day-2025-q1.jsonl
+  type: ticket
+  bucket: tickets
+  title: Counter Day 2025 Q1
+  issuer: Internal
+  license: synthetic-internal
+  doc_date: '2025-03-31'
+  record_count: 9
+- source_id: ticket-warranty-claims-2024
+  path: tickets/warranty-claims-2024.jsonl
+  type: ticket
+  bucket: tickets
+  title: Warranty Claims 2024
+  issuer: Internal
+  license: synthetic-internal
+  doc_date: '2024-12-20'
+  record_count: 9
+- source_id: anchor-epa-aim-act-final-rule
+  path: bulletins/anchor-epa-aim-act-final-rule.pdf
+  type: pdf
+  bucket: bulletins
+  title: EPA AIM Act Final Rule on HFC Phase-down
+  issuer: EPA
+  refrigerants:
+  - R-410A
+  - R-22
+  - R-32
+  - R-454B
+  regulations:
+  - AIM-Act
+  license: reference-only
+  fetch: https://www.epa.gov/system/files/documents/2021-09/aim-act-final-rule.pdf
+- source_id: anchor-epa-snap-rule-23-summary
+  path: bulletins/anchor-epa-snap-rule-23-summary.pdf
+  type: pdf
+  bucket: bulletins
+  title: EPA SNAP Rule 23 (Refrigerant Alternatives)
+  issuer: EPA
+  refrigerants:
+  - R-410A
+  - R-32
+  - R-454B
+  regulations:
+  - EPA-SNAP
+  license: reference-only
+  fetch: https://www.epa.gov/snap/snap-final-rule-23
+- source_id: anchor-doe-residential-cac-rule
+  path: bulletins/anchor-doe-residential-cac-rule.pdf
+  type: pdf
+  bucket: bulletins
+  title: "DOE Energy Conservation Standards \u2014 Residential Central AC"
+  issuer: DOE
+  license: reference-only
+  fetch: https://www.energy.gov/eere/buildings/articles/residential-central-air-conditioners-and-heat-pumps

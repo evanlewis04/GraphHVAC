@@ -1,0 +1,9 @@
+source_id: spec-goodman-2024-furnace-ifc-boards
+type: csv
+bucket: specs
+title: Goodman 2024 Furnace Ifc Boards
+issuer: Goodman
+manufacturer: Goodman
+category: ControlBoard
+doc_date: '2024-01-15'
+license: synthetic-internal

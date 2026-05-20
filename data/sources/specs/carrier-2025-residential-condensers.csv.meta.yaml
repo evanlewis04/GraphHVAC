@@ -1,0 +1,9 @@
+source_id: spec-carrier-2025-residential-condensers
+type: csv
+bucket: specs
+title: Carrier 2025 Residential Condensers
+issuer: Carrier
+manufacturer: Carrier
+category: Condenser
+doc_date: '2025-01-15'
+license: synthetic-internal

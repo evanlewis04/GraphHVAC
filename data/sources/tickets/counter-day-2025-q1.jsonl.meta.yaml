@@ -1,0 +1,8 @@
+source_id: ticket-counter-day-2025-q1
+type: ticket
+bucket: tickets
+title: Counter Day 2025 Q1
+issuer: Internal
+doc_date: '2025-03-31'
+record_count: 9
+license: synthetic-internal

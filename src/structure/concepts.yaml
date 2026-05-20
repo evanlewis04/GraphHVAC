@@ -1,0 +1,90 @@
+# Wiki ontology declaration.
+#
+# Each top-level key is an entity type. The structurer iterates each
+# entity type, enumerates instances (from DuckDB or a static list), pulls
+# relevant chunks via retrieval.search.retrieve(), and synthesizes a
+# wiki page per instance with cited claims.
+#
+# Schema per entity type:
+#   source_query:    how to enumerate instances (sql or static)
+#   retrieve_query:  template for pulling relevant chunks per instance
+#   retrieve_k:      how many chunks to include in the synthesis prompt
+#   filters:         optional retrieval filters (manufacturer, refrigerant, ...)
+#   wiki_dir:        target directory under data/wiki/
+#   template:        jinja2 template name under src/compile/templates/
+#   refresh:         "on_source_change" | "manual" | "scheduled:daily"
+#   required_fields: claims the page MUST cover (validator enforces)
+
+skus:
+  source_query: "SELECT id FROM skus"
+  retrieve_query: "{manufacturer} {category} {sub_type} {id}"
+  retrieve_k: 8
+  wiki_dir: skus
+  template: sku.md.j2
+  refresh: on_source_change
+  required_fields: [description, refrigerant_notes, substitutes]
+
+suppliers:
+  source_query: "SELECT id FROM suppliers"
+  retrieve_query: "{name} supplier bulletin pricing tariff"
+  retrieve_k: 10
+  wiki_dir: suppliers
+  template: supplier.md.j2
+  refresh: on_source_change
+  required_fields: [overview, recent_signals, categories_carried]
+
+customers:
+  source_query: "SELECT id FROM customers"
+  retrieve_query: "{name} {segment} {region}"
+  retrieve_k: 6
+  wiki_dir: customers
+  template: customer.md.j2
+  refresh: on_source_change
+  required_fields: [overview, top_purchases, concentration_notes]
+
+refrigerants:
+  source_query: static
+  source_static: [R-22, R-410A, R-32, R-454B, R-1234yf]
+  retrieve_query: "{value} phase-out regulation retrofit"
+  retrieve_k: 12
+  filters: {refrigerant: "{value}"}
+  wiki_dir: refrigerants
+  template: refrigerant.md.j2  # Phase 5: new template
+  refresh: on_source_change
+  required_fields: [regulatory_status, retrofit_options, exposure_summary]
+
+regulations:
+  source_query: static
+  source_static: [AIM-Act, EPA-SNAP, AHRI-210-240]
+  retrieve_query: "{value}"
+  retrieve_k: 10
+  filters: {source_type: bulletin}
+  wiki_dir: regulations
+  template: regulation.md.j2  # Phase 5: new template
+  refresh: on_source_change
+  required_fields: [summary, effective_dates, affected_equipment]
+
+manufacturers:
+  source_query: "SELECT DISTINCT manufacturer FROM skus"
+  retrieve_query: "{value} install service technical bulletin"
+  retrieve_k: 10
+  filters: {manufacturer: "{value}"}
+  wiki_dir: manufacturers
+  template: manufacturer.md.j2  # Phase 5: new template
+  refresh: on_source_change
+  required_fields: [overview, product_categories, regulatory_posture]
+
+procedures:
+  source_query: static
+  # Static list of procedure topics derived from common ops tasks.
+  source_static:
+    - r-410a-retrofit-workflow
+    - warranty-claim-escalation
+    - tariff-response-playbook
+    - supplier-consolidation-post-mna
+  retrieve_query: "{value} steps procedure"
+  retrieve_k: 12
+  wiki_dir: procedures
+  template: procedure.md.j2  # Phase 5: new template
+  refresh: manual
+  required_fields: [purpose, steps, citations]

@@ -1,0 +1,9 @@
+source_id: spec-lennox-2025-condenser-pricebook-excerpt
+type: csv
+bucket: specs
+title: Lennox 2025 Condenser Pricebook Excerpt
+issuer: Lennox
+manufacturer: Lennox
+category: Condenser
+doc_date: '2025-01-15'
+license: synthetic-internal

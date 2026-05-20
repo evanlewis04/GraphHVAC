@@ -1,0 +1,9 @@
+source_id: spec-baker-2025-blower-motors
+type: csv
+bucket: specs
+title: Baker 2025 Blower Motors
+issuer: US Motors
+manufacturer: US Motors
+category: Motor
+doc_date: '2025-01-15'
+license: synthetic-internal
