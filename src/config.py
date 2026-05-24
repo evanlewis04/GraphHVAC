@@ -9,7 +9,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-load_dotenv()
+# override=True so values in .env beat any empty/stale shell env vars.
+load_dotenv(override=True)
 
 
 @dataclass(frozen=True)

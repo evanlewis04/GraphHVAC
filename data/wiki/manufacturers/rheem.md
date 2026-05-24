@@ -4,135 +4,40 @@ entity_id: Rheem
 slug: rheem
 template_version: 1
 template_name: manufacturer.md.j2
-last_built: '2026-05-19T03:34:13+00:00'
+last_built: '2026-05-24T19:54:35+00:00'
 source_chunks:
+- bulletin-rheem-tsb-2024-004-thermostat-wifi-reconnect:0000:be8d51ddf1
 - bulletin-rheem-tsb-2024-013-inducer-motor-bearing:0000:29c0ae84bb
 - ticket-contractor-notes-2024-q4#TKT-2024-Q4-009:0000:fc69e53e57
-- bulletin-rheem-tsb-2024-004-thermostat-wifi-reconnect:0000:be8d51ddf1
-- bulletin-r-32-transition-overview:0000:29e90451bd
-- spec-rheem-2025-r-454b-condensers:0000:bb87b1f4eb
-- bulletin-r-454b-overview:0000:5abf4e6fa7
-- sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c
 - bulletin-rheem-tsb-2024-001-ecm-blower-firmware:0000:a52fb5a5e4
+- bulletin-r-32-transition-overview:0000:29e90451bd
+- bulletin-r-454b-overview:0000:5abf4e6fa7
+- spec-rheem-2025-r-454b-condensers:0000:bb87b1f4eb
+- sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c
 - sop-tariff-response-playbook:0000:48e5f73ab0
-synthesizer: deterministic
+synthesizer: llm
 ---
 
 # Rheem
 
-_This page was assembled without LLM synthesis (no `ANTHROPIC_API_KEY` or `--no-llm` was used). Content below is a structured list of supporting source chunks; set the API key and rebuild for narrative synthesis._
-
 ## Overview
 
-> # R-32 — replacement refrigerant overview
-
-R-32 (difluoromethane) is one of two leading low-GWP replacements for
-R-410A in U.S. residential AC and heat-pump equipment. The other is
-R-454B; see [[bulletins/r-454b-overview]].
-
-## Properties
-
-| Property                 | R-32          | R-410A     |
-| ------------------------ | ------------- | ---------- |
-| ASHRAE classification    | A2L (mildly flammable) | A1 (non-flammable) |
-| GWP (AR4)                | 675           | 2088       |
-| Single-component         | Yes           | No (blend) |
-| Glide                    | None          | Low… [bulletin-r-32-transition-overview:0000:29e90451bd]
-
-> # R-454B — replacement refrigerant overview
-
-R-454B (trade name Opteon XL41, Solstice 454B) is the leading low-GWP
-replacement chosen by Carrier, Trane, and Lennox for U.S. residential
-AC and heat-pump equipment in 2025+ model years.
-
-## Properties
-
-| Property                 | R-454B          | R-410A     |
-| ------------------------ | --------------- | ---------- |
-| ASHRAE classification    | A2L (mildly flammable) | A1 (non-flammable) |
-| GWP (AR4)                | 466             | 2088       |
-| Composition              | 68.9% R-32 / 31.1% R-1234yf | 50/50 R-32/R-125 |
-| Glide… [bulletin-r-454b-overview:0000:5abf4e6fa7]
+Rheem is a major HVAC OEM whose equipment spans residential and light-commercial applications. The brand is treated as a tier-1 manufacturer alongside Carrier, Trane, Lennox, Goodman, and York for purposes of tariff monitoring and price-list tracking [sop-tariff-response-playbook:0000:48e5f73ab0]. Rheem distributes equipment requiring R-410A, R-454B, and R-32 refrigerants across its current condenser lineup [spec-rheem-2025-r-454b-condensers:0000:bb87b1f4eb], reflecting an active transition away from R-410A.
 
 ## Product Categories
 
-_No source coverage._
+**Condensers:** Rheem's 2025 condenser catalog spans 2.0–5.0 ton units across three refrigerants — R-410A, R-454B, and R-32 — in the RHE-series platform [spec-rheem-2025-r-454b-condensers:0000:bb87b1f4eb]. Both low-GWP options are present, meaning distributors must stock R-454B and R-32 in parallel to cover Rheem installs [bulletin-r-32-transition-overview:0000:29e90451bd].
+
+**Gas Furnaces / Air Handlers:** The RHE792 platform is a documented furnace or air-handler product with an inducer motor assembly subject to bearing wear under high-cycle or dirty-environment operation [bulletin-rheem-tsb-2024-013-inducer-motor-bearing:0000:29c0ae84bb]. The RHE286 platform carries an ECM blower module [bulletin-rheem-tsb-2024-001-ecm-blower-firmware:0000:a52fb5a5e4].
+
+**Smart Thermostats:** Rheem offers the RHE101 Wi-Fi smart thermostat with cloud/app connectivity [bulletin-rheem-tsb-2024-004-thermostat-wifi-reconnect:0000:be8d51ddf1].
+
+**Controls / Firmware:** Multiple platforms (RHE286 ECM blower, RHE101 thermostat) require OEM firmware tooling for field updates; Rheem issues Technical Service Bulletins to manage these [bulletin-rheem-tsb-2024-001-ecm-blower-firmware:0000:a52fb5a5e4][bulletin-rheem-tsb-2024-004-thermostat-wifi-reconnect:0000:be8d51ddf1].
 
 ## Regulatory Posture
 
-_No source coverage._
+Rheem has adopted a **split refrigerant strategy** for the post-R-410A transition: portions of the line use R-454B (GWP 466, A2L) and portions use R-32 (GWP 675, A2L), rather than committing entirely to one replacement [bulletin-r-454b-overview:0000:5abf4e6fa7][bulletin-r-32-transition-overview:0000:29e90451bd]. This is confirmed by the 2025 condenser catalog, which includes active SKUs in all three refrigerants [spec-rheem-2025-r-454b-condensers:0000:bb87b1f4eb].
 
-## Additional Source Material
+Practical implication for distributors: Rheem contractors may call for either R-454B or R-32 depending on the specific model installed — verify refrigerant type per SKU on every order. A contractor sourcing R-454B 25-lb cylinders for a Rheem RHE150 was already noted in late 2024 [ticket-contractor-notes-2024-q4#TKT-2024-Q4-009:0000:fc69e53e57]. Both A2L refrigerants require A2L-rated recovery equipment, leak detectors, and installer training [bulletin-r-454b-overview:0000:5abf4e6fa7][bulletin-r-32-transition-overview:0000:29e90451bd].
 
-> # Rheem Technical Service Bulletin 2024-013
-
-Subject: inducer motor on RHE792 — bearing wear after extended cycle counts.
-
-Symptom: inducer motor audible bearing growl, progressing over 2-3 months, eventual lock-up. Affects units operating in dirty environments (commercial kitchens, agricultural).
-
-Resolution: replace with sealed-bearing variant RH-57386. Customer is responsible for adding filtrat… [bulletin-rheem-tsb-2024-013-inducer-motor-bearing:0000:29c0ae84bb]
-
-> Ticket TKT-2024-Q4-009 (2024-12-03, customer CUS-0444)
-manufacturer: Rheem | equipment_model: RHE150 | warehouse: WH-ATL
-
-Notes: do you have 25-lb R-454B cylinders in stock at WH-ATL? [ticket-contractor-notes-2024-q4#TKT-2024-Q4-009:0000:fc69e53e57]
-
-> # Rheem Technical Service Bulletin 2024-004
-
-Subject: RHE101 smart thermostat — Wi-Fi auto-reconnect on router reboot.
-
-Symptom: after a router restart or ISP-side network reset, thermostat does not auto-reconnect to Wi-Fi. HVAC control continues to function locally; remote app does not.
-
-Resolution: firmware update RH-53514. OTA delivery to thermostats with active cloud connectivity; manual USB u… [bulletin-rheem-tsb-2024-004-thermostat-wifi-reconnect:0000:be8d51ddf1]
-
-> # Rheem 2025 R 454B Condensers
-
-_Rheem · Rheem · Condenser_
-
-
-| model | tonnage | refrigerant | list_price | tier_2_price |
-|---|---|---|---|---|
-| RHE371 | 5.0 | R-454B | 4303.00 | 5536.00 |
-| RHE491 | 5.0 | R-410A | 5594.00 | 2984.00 |
-| RHE108 | 2.5 | R-410A | 2707.00 | 2746.00 |
-| RHE282 | 3.0 | R-410A | 5222.00 | 2814.00 |
-| RHE612 | 4.0 | R-410A | 5446.00 | 5245.00 |
-| RHE290 | 3.5 | R-454B… [spec-rheem-2025-r-454b-condensers:0000:bb87b1f4eb]
-
-> # R-410A retrofit — customer outreach playbook
-
-Owner: Sales Ops. Last reviewed: 2024-Q1. Driving doc:
-[[bulletins/r-410a-phase-out-timeline]].
-
-## Purpose
-
-Reach contractor customers who carry high R-410A exposure with a
-proactive replacement-quote offer **before** their installed base
-starts hitting service costs they can't pass on.
-
-## Identify the target list
-
-Run the standard exposure query:… [sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c]
-
-> # Rheem Technical Service Bulletin 2024-001
-
-Subject: ECM blower module on RHE286 platform — firmware update for low-airflow alarm.
-
-Symptom: ECM blower posts low-airflow alarm code 21 on standard 0.5 in. WC static. Customers report unit running but reduced airflow at the registers.
-
-Resolution: Apply firmware update RH-15100 via the OEM service tool (kit ST-FW-200). Update preserves dip-switch co… [bulletin-rheem-tsb-2024-001-ecm-blower-firmware:0000:a52fb5a5e4]
-
-> # Tariff response playbook
-
-How we respond when a supplier announces a tariff-driven price change
-or allocation cut. Owner: VP Operations. Last reviewed: 2024-Q1.
-
-## When this triggers
-
-Any of:
-
-- A supplier email announces a price increase of >5% on a category we
-  carry, attributed to tariffs (Section 232 steel/aluminum, Section
-  301 China, anti-dumping, etc.).
-- A supplier announces an alloca… [sop-tariff-response-playbook:0000:48e5f73ab0]
-
+Rheem's continued sale of R-410A condenser models in the 2025 catalog [spec-rheem-2025-r-454b-condensers:0000:bb87b1f4eb] means the installed base will generate R-410A service demand well into the back half of the decade, though refill pricing pressure increases as EPA allowances tighten through 2028 [sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c].

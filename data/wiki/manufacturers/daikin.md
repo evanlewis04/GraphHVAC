@@ -4,92 +4,35 @@ entity_id: Daikin
 slug: daikin
 template_version: 1
 template_name: manufacturer.md.j2
-last_built: '2026-05-19T03:34:13+00:00'
+last_built: '2026-05-24T19:53:42+00:00'
 source_chunks:
-- bulletin-daikin-tsb-2024-006-ecm-blower-firmware:0000:3b7525377a
-- sop-tariff-response-playbook:0000:48e5f73ab0
-- bulletin-r-32-transition-overview:0000:29e90451bd
-- sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c
 - ticket-contractor-notes-2024-q4#TKT-2024-Q4-002:0000:803b78f848
 - ticket-warranty-claims-2024#TKT-MS-2024-003:0000:2dad4c447d
-synthesizer: deterministic
+- bulletin-r-32-transition-overview:0000:29e90451bd
+- bulletin-daikin-tsb-2024-006-ecm-blower-firmware:0000:3b7525377a
+- sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c
+- sop-tariff-response-playbook:0000:48e5f73ab0
+synthesizer: llm
 ---
 
 # Daikin
 
-_This page was assembled without LLM synthesis (no `ANTHROPIC_API_KEY` or `--no-llm` was used). Content below is a structured list of supporting source chunks; set the API key and rebuild for narrative synthesis._
-
 ## Overview
 
-> # R-32 — replacement refrigerant overview
-
-R-32 (difluoromethane) is one of two leading low-GWP replacements for
-R-410A in U.S. residential AC and heat-pump equipment. The other is
-R-454B; see [[bulletins/r-454b-overview]].
-
-## Properties
-
-| Property                 | R-32          | R-410A     |
-| ------------------------ | ------------- | ---------- |
-| ASHRAE classification    | A2L (mildly flammable) | A1 (non-flammable) |
-| GWP (AR4)                | 675           | 2088       |
-| Single-component         | Yes           | No (blend) |
-| Glide                    | None          | Low… [bulletin-r-32-transition-overview:0000:29e90451bd]
+Daikin is a major OEM in the U.S. HVAC market, recognized as one of the primary manufacturers tracked for pricing, allocation, and supply-chain events by distributor operations [sop-tariff-response-playbook:0000:48e5f73ab0]. The company has an established presence across residential and commercial equipment lines, with active service bulletin activity and field-support infrastructure including OEM service tools [bulletin-daikin-tsb-2024-006-ecm-blower-firmware:0000:3b7525377a].
 
 ## Product Categories
 
-_No source coverage._
+Daikin equipment in the distributor's active install base includes multiple platform models. Known platforms include:
+
+- **DAI585** — referenced in active compatibility and parts inquiries [ticket-contractor-notes-2024-q4#TKT-2024-Q4-002:0000:803b78f848]
+- **DAI196** — air-handler or fan-coil unit with drain pan and float switch assembly; fault code E33 associated with drain pan overflow events; parts DA-44347 used in warranty service [ticket-warranty-claims-2024#TKT-MS-2024-003:0000:2dad4c447d]
+- **DAI409** — platform with ECM blower module; subject to low-airflow alarm (code 21) on standard 0.5 in. WC static; addressed via firmware update DA-41307 using service kit ST-FW-200 [bulletin-daikin-tsb-2024-006-ecm-blower-firmware:0000:3b7525377a]
 
 ## Regulatory Posture
 
-_No source coverage._
+Daikin is a long-standing R-32 adopter for U.S. residential AC and heat-pump equipment, making it one of the earlier OEM commitments to a low-GWP R-410A replacement [bulletin-r-32-transition-overview:0000:29e90451bd]. R-32 carries an A2L (mildly flammable) ASHRAE classification and a GWP of 675 versus R-410A's 2088, aligning Daikin's lineup with EPA AIM Act trajectory requirements [bulletin-r-32-transition-overview:0000:29e90451bd].
 
-## Additional Source Material
+Distributor implications: Daikin's R-32 path diverges from R-454B adopters such as Carrier, Trane, and Lennox, requiring parallel refrigerant stocking and strict inventory separation to prevent cross-contamination [bulletin-r-32-transition-overview:0000:29e90451bd]. Contractors servicing Daikin equipment will require A2L-rated recovery machines, gauges, and leak detectors [bulletin-r-32-transition-overview:0000:29e90451bd].
 
-> # Daikin Technical Service Bulletin 2024-006
-
-Subject: ECM blower module on DAI409 platform — firmware update for low-airflow alarm.
-
-Symptom: ECM blower posts low-airflow alarm code 21 on standard 0.5 in. WC static. Customers report unit running but reduced airflow at the registers.
-
-Resolution: Apply firmware update DA-41307 via the OEM service tool (kit ST-FW-200). Update preserves dip-switch c… [bulletin-daikin-tsb-2024-006-ecm-blower-firmware:0000:3b7525377a]
-
-> # Tariff response playbook
-
-How we respond when a supplier announces a tariff-driven price change
-or allocation cut. Owner: VP Operations. Last reviewed: 2024-Q1.
-
-## When this triggers
-
-Any of:
-
-- A supplier email announces a price increase of >5% on a category we
-  carry, attributed to tariffs (Section 232 steel/aluminum, Section
-  301 China, anti-dumping, etc.).
-- A supplier announces an alloca… [sop-tariff-response-playbook:0000:48e5f73ab0]
-
-> # R-410A retrofit — customer outreach playbook
-
-Owner: Sales Ops. Last reviewed: 2024-Q1. Driving doc:
-[[bulletins/r-410a-phase-out-timeline]].
-
-## Purpose
-
-Reach contractor customers who carry high R-410A exposure with a
-proactive replacement-quote offer **before** their installed base
-starts hitting service costs they can't pass on.
-
-## Identify the target list
-
-Run the standard exposure query:… [sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c]
-
-> Ticket TKT-2024-Q4-002 (2024-11-30, customer CUS-0336)
-manufacturer: Daikin | equipment_model: DAI585 | warehouse: WH-ATL
-
-Notes: customer asked: is DA-57598 compatible with DAI585? [ticket-contractor-notes-2024-q4#TKT-2024-Q4-002:0000:803b78f848]
-
-> Ticket TKT-MS-2024-003 (2024-11-05, customer CUS-0320)
-manufacturer: Daikin | equipment_model: DAI196 | warehouse: WH-PHX | fault_code: E33 | parts_used: DA-44347
-
-Notes: Contractor reports drain pan overflow — float switch tripped. Photos attached. Cert # 608-5892. [ticket-warranty-claims-2024#TKT-MS-2024-003:0000:2dad4c447d]
-
+Daikin is also on the monitored OEM list for out-of-cycle price-list updates tied to tariff events, triggering the distributor's tariff response playbook when such updates occur [sop-tariff-response-playbook:0000:48e5f73ab0].

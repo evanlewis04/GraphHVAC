@@ -4,16 +4,23 @@ entity_id: Fasco
 slug: fasco
 template_version: 1
 template_name: manufacturer.md.j2
-last_built: '2026-05-19T03:33:19+00:00'
+last_built: '2026-05-24T19:51:47+00:00'
 source_chunks: []
-synthesizer: deterministic
+synthesizer: llm
 validation_warnings:
 - no_citations_in_body
 ---
 
 # Fasco
 
-_This page was assembled without LLM synthesis (no `ANTHROPIC_API_KEY` or `--no-llm` was used). Content below is a structured list of supporting source chunks; set the API key and rebuild for narrative synthesis._
+## overview
 
-_No source chunks were retrieved for this entity._
+_No source coverage._
 
+## product_categories
+
+_No source coverage._
+
+## regulatory_posture
+
+_No source coverage._

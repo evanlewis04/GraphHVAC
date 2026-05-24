@@ -28,6 +28,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterator
 
+from src.config import load_settings  # noqa: F401 — triggers .env load
 from src.eval.metrics import (
     MetricsSummary,
     PerQuestionScore,
@@ -35,6 +36,8 @@ from src.eval.metrics import (
     score_question,
 )
 from src.retrieval.search import retrieve
+
+load_settings()  # explicit nudge in case import elision skips the side effect
 
 ROOT = Path(__file__).resolve().parents[2]
 EVALS_DIR = Path(os.environ.get("GRAPH_DATA_DIR", ROOT / "data")) / "evals"

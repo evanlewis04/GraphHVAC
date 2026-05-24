@@ -1,0 +1,938 @@
+{
+  "run_id": "20260524-153507-agent",
+  "mode": "agent",
+  "k": 10,
+  "generated_at": "2026-05-24T19:47:39+00:00",
+  "n_questions": 30,
+  "recall_at_5": 0.9666666666666667,
+  "recall_at_10": 1.0,
+  "mrr": 0.95,
+  "citation_precision": 0.7078571428571429,
+  "citation_recall": 0.9833333333333333,
+  "claim_coverage": null,
+  "unsupported_claims_total": null,
+  "latency_p50_ms": 20880,
+  "latency_p95_ms": 45549,
+  "avg_input_tokens": null,
+  "avg_output_tokens": null,
+  "avg_cost_usd": null,
+  "by_qid": [
+    {
+      "qid": "q01",
+      "question": "What is the timeline for the R-410A manufacture cutoff for new residential AC equipment?",
+      "expected_source_ids": [
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-410a-phase-out-timeline"
+      ],
+      "retrieved_source_ids": [
+        "bulletin-r-410a-phase-out-timeline",
+        "bulletin-epa-aim-act-summary",
+        "sop-r-410a-retrofit-customer-outreach",
+        "sop-refrigerant-pre-buy-guidance",
+        "bulletin-trane-tsb-2024-002-r-32-launch"
+      ],
+      "cited_source_ids": [
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-410a-phase-out-timeline",
+        "bulletin-trane-tsb-2024-002-r-32-launch"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 0.6666666666666666,
+      "citation_recall": 1.0,
+      "latency_ms": 20636,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q02",
+      "question": "What refrigerants replace R-410A in 2025 model year Carrier, Trane, and Lennox residential equipment?",
+      "expected_source_ids": [
+        "bulletin-r-454b-overview",
+        "bulletin-trane-tsb-2024-002-r-32-launch"
+      ],
+      "retrieved_source_ids": [
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-410a-phase-out-timeline",
+        "bulletin-r-454b-overview",
+        "bulletin-trane-tsb-2024-002-r-32-launch",
+        "bulletin-r-32-transition-overview",
+        "bulletin-r-454b-overview",
+        "spec-carrier-2025-residential-condensers",
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-410a-phase-out-timeline",
+        "bulletin-r-32-transition-overview",
+        "bulletin-r-454b-overview",
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-410a-phase-out-timeline",
+        "email-lennox-2025-q1-allocations",
+        "spec-lennox-2025-condenser-pricebook-excerpt",
+        "bulletin-r-454b-overview",
+        "bulletin-trane-tsb-2024-002-r-32-launch",
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-32-transition-overview",
+        "spec-trane-2024-commercial-r-32"
+      ],
+      "cited_source_ids": [
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-410a-phase-out-timeline",
+        "bulletin-r-454b-overview",
+        "spec-carrier-2025-residential-condensers",
+        "bulletin-trane-tsb-2024-002-r-32-launch",
+        "spec-lennox-2025-condenser-pricebook-excerpt",
+        "bulletin-r-32-transition-overview"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 0.3333333333333333,
+      "citation_precision": 0.2857142857142857,
+      "citation_recall": 1.0,
+      "latency_ms": 34399,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q03",
+      "question": "What is R-32's GWP and ASHRAE safety classification?",
+      "expected_source_ids": [
+        "bulletin-r-32-transition-overview"
+      ],
+      "retrieved_source_ids": [
+        "bulletin-r-32-transition-overview",
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-454b-overview",
+        "spec-carrier-2025-residential-condensers",
+        "spec-rheem-2025-r-454b-condensers"
+      ],
+      "cited_source_ids": [
+        "bulletin-r-32-transition-overview",
+        "bulletin-epa-aim-act-summary"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 0.5,
+      "citation_recall": 1.0,
+      "latency_ms": 17678,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q04",
+      "question": "What is the difference in glide and charging requirements between R-32 and R-454B?",
+      "expected_source_ids": [
+        "bulletin-r-32-transition-overview",
+        "bulletin-r-454b-overview"
+      ],
+      "retrieved_source_ids": [
+        "bulletin-r-32-transition-overview",
+        "bulletin-r-454b-overview",
+        "manual-synth-install-residential-condenser",
+        "bulletin-epa-aim-act-summary",
+        "spec-trane-2024-commercial-r-32",
+        "bulletin-r-454b-overview",
+        "manual-synth-install-residential-condenser",
+        "bulletin-trane-tsb-2024-002-r-32-launch",
+        "bulletin-r-32-transition-overview",
+        "email-lennox-2025-q1-allocations"
+      ],
+      "cited_source_ids": [
+        "bulletin-r-32-transition-overview",
+        "bulletin-r-454b-overview",
+        "manual-synth-install-residential-condenser"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 0.6666666666666666,
+      "citation_recall": 1.0,
+      "latency_ms": 23785,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q05",
+      "question": "Are R-410A service refills still legal after 2025-01-01?",
+      "expected_source_ids": [
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-410a-phase-out-timeline"
+      ],
+      "retrieved_source_ids": [
+        "bulletin-r-410a-phase-out-timeline",
+        "bulletin-epa-aim-act-summary",
+        "sop-r-410a-retrofit-customer-outreach",
+        "email-lennox-2025-q1-allocations",
+        "sop-refrigerant-pre-buy-guidance"
+      ],
+      "cited_source_ids": [
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-410a-phase-out-timeline",
+        "sop-r-410a-retrofit-customer-outreach"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 0.6666666666666666,
+      "citation_recall": 1.0,
+      "latency_ms": 18714,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q06",
+      "question": "Why must R-454B be charged in liquid phase from the cylinder?",
+      "expected_source_ids": [
+        "bulletin-r-454b-overview",
+        "bulletin-trane-tsb-2024-002-r-32-launch"
+      ],
+      "retrieved_source_ids": [
+        "bulletin-r-454b-overview",
+        "manual-synth-install-residential-condenser",
+        "bulletin-trane-tsb-2024-002-r-32-launch",
+        "ticket-contractor-notes-2024-q4",
+        "ticket-counter-day-2025-q1",
+        "ticket-contractor-notes-2024-q3"
+      ],
+      "cited_source_ids": [
+        "bulletin-r-454b-overview",
+        "manual-synth-install-residential-condenser"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 0.5,
+      "citation_recall": 0.5,
+      "latency_ms": 21130,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q07",
+      "question": "Which OEMs chose R-454B versus R-32 for their 2025 residential lineup?",
+      "expected_source_ids": [
+        "bulletin-r-32-transition-overview",
+        "bulletin-r-454b-overview"
+      ],
+      "retrieved_source_ids": [
+        "bulletin-r-454b-overview",
+        "spec-carrier-2025-residential-condensers",
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-32-transition-overview",
+        "spec-rheem-2025-r-454b-condensers",
+        "bulletin-r-32-transition-overview",
+        "bulletin-epa-aim-act-summary",
+        "spec-carrier-2025-residential-condensers",
+        "bulletin-r-410a-phase-out-timeline",
+        "spec-rheem-2025-r-454b-condensers"
+      ],
+      "cited_source_ids": [
+        "spec-carrier-2025-residential-condensers",
+        "bulletin-trane-tsb-2024-002-r-32-launch",
+        "email-lennox-2025-q1-allocations",
+        "spec-lennox-2025-condenser-pricebook-excerpt",
+        "bulletin-r-454b-overview",
+        "spec-rheem-2025-r-454b-condensers",
+        "bulletin-r-32-transition-overview",
+        "bulletin-epa-aim-act-summary"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 0.25,
+      "citation_recall": 1.0,
+      "latency_ms": 24273,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q08",
+      "question": "What does our R-410A pre-buy policy require in terms of customer eligibility?",
+      "expected_source_ids": [
+        "sop-refrigerant-pre-buy-guidance"
+      ],
+      "retrieved_source_ids": [
+        "sop-refrigerant-pre-buy-guidance",
+        "sop-r-410a-retrofit-customer-outreach",
+        "ticket-contractor-notes-2024-q4",
+        "ticket-counter-day-2025-q1",
+        "bulletin-epa-aim-act-summary"
+      ],
+      "cited_source_ids": [
+        "sop-refrigerant-pre-buy-guidance",
+        "bulletin-epa-aim-act-summary"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 0.5,
+      "citation_recall": 1.0,
+      "latency_ms": 14763,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q09",
+      "question": "What's our tariff response playbook when a supplier announces a 7% price increase?",
+      "expected_source_ids": [
+        "sop-tariff-response-playbook"
+      ],
+      "retrieved_source_ids": [
+        "sop-tariff-response-playbook",
+        "sop-supplier-bulletin-triage",
+        "email-carrier-tariff-passthrough-2025-03",
+        "sop-price-book-update-procedure",
+        "sop-supplier-consolidation-post-mna"
+      ],
+      "cited_source_ids": [
+        "sop-tariff-response-playbook",
+        "sop-supplier-bulletin-triage",
+        "sop-top-customer-pricing-communication",
+        "sop-price-book-update-procedure",
+        "email-carrier-tariff-passthrough-2025-03"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 0.2,
+      "citation_recall": 1.0,
+      "latency_ms": 24705,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q10",
+      "question": "How does our warranty claim escalation flow handle a SKU outside the standard OEM warranty window?",
+      "expected_source_ids": [
+        "sop-warranty-claim-escalation"
+      ],
+      "retrieved_source_ids": [
+        "sop-warranty-claim-escalation",
+        "ticket-warranty-claims-2024",
+        "ticket-contractor-notes-2024-q3",
+        "manual-synth-install-residential-condenser",
+        "sop-counter-day-runbook",
+        "sop-return-and-rma-policy"
+      ],
+      "cited_source_ids": [
+        "sop-warranty-claim-escalation"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 29986,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q11",
+      "question": "What's the 90-day timeline for consolidating supplier relationships after an acquisition?",
+      "expected_source_ids": [
+        "sop-supplier-consolidation-post-mna"
+      ],
+      "retrieved_source_ids": [
+        "sop-supplier-consolidation-post-mna",
+        "bulletin-r-410a-phase-out-timeline",
+        "email-lennox-2025-q1-allocations",
+        "sop-warranty-claim-escalation",
+        "sop-new-customer-onboarding"
+      ],
+      "cited_source_ids": [
+        "sop-supplier-consolidation-post-mna"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 20441,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q12",
+      "question": "How do we triage incoming supplier bulletins and tag them for action?",
+      "expected_source_ids": [
+        "sop-supplier-bulletin-triage"
+      ],
+      "retrieved_source_ids": [
+        "sop-supplier-bulletin-triage",
+        "sop-tariff-response-playbook",
+        "sop-warranty-claim-escalation",
+        "sop-price-book-update-procedure",
+        "sop-refrigerant-pre-buy-guidance"
+      ],
+      "cited_source_ids": [
+        "sop-supplier-bulletin-triage",
+        "sop-tariff-response-playbook"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 0.5,
+      "citation_recall": 1.0,
+      "latency_ms": 18882,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q13",
+      "question": "How do we reach out to contractors with heavy R-410A exposure about replacement quotes?",
+      "expected_source_ids": [
+        "sop-r-410a-retrofit-customer-outreach"
+      ],
+      "retrieved_source_ids": [
+        "sop-r-410a-retrofit-customer-outreach",
+        "sop-refrigerant-pre-buy-guidance",
+        "sop-tariff-response-playbook",
+        "sop-warranty-claim-escalation",
+        "sop-return-and-rma-policy",
+        "sop-r-410a-retrofit-customer-outreach",
+        "bulletin-r-410a-phase-out-timeline",
+        "bulletin-epa-aim-act-summary",
+        "bulletin-trane-tsb-2024-002-r-32-launch",
+        "sop-refrigerant-pre-buy-guidance"
+      ],
+      "cited_source_ids": [
+        "sop-r-410a-retrofit-customer-outreach",
+        "bulletin-r-410a-phase-out-timeline",
+        "sop-refrigerant-pre-buy-guidance"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 0.3333333333333333,
+      "citation_recall": 1.0,
+      "latency_ms": 28850,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q14",
+      "question": "What is the maximum R-410A pre-buy quantity we allow per customer?",
+      "expected_source_ids": [
+        "sop-refrigerant-pre-buy-guidance"
+      ],
+      "retrieved_source_ids": [
+        "sop-refrigerant-pre-buy-guidance",
+        "ticket-counter-day-2025-q1",
+        "ticket-contractor-notes-2024-q4",
+        "sop-r-410a-retrofit-customer-outreach",
+        "email-lennox-2025-q1-allocations"
+      ],
+      "cited_source_ids": [
+        "sop-refrigerant-pre-buy-guidance"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 45617,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q15",
+      "question": "What did Lennox say about Q1 2025 condenser allocations for our account?",
+      "expected_source_ids": [
+        "email-lennox-2025-q1-allocations"
+      ],
+      "retrieved_source_ids": [
+        "email-lennox-2025-q1-allocations",
+        "email-lennox-partsplus-2024-12-12-rebate-program-028",
+        "email-lennox-partsplus-2024-07-05-rebate-program-013",
+        "email-lennox-partsplus-2024-05-18-delivery-delay-006",
+        "email-lennox-2025-q1-allocations",
+        "sop-supplier-bulletin-triage",
+        "spec-lennox-2025-condenser-pricebook-excerpt",
+        "bulletin-r-410a-phase-out-timeline",
+        "sop-tariff-response-playbook"
+      ],
+      "cited_source_ids": [
+        "email-lennox-2025-q1-allocations"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 18447,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q16",
+      "question": "What is Carrier's 2025-03 tariff pass-through magnitude and effective date?",
+      "expected_source_ids": [
+        "email-carrier-tariff-passthrough-2025-03"
+      ],
+      "retrieved_source_ids": [
+        "bulletin-r-410a-phase-out-timeline",
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-454b-overview",
+        "bulletin-r-32-transition-overview",
+        "bulletin-carrier-tsb-2024-007-fan-motor",
+        "email-carrier-tariff-passthrough-2025-03",
+        "email-lennox-partsplus-2024-05-18-delivery-delay-006",
+        "email-goodin-company-2024-09-16-delivery-delay-025",
+        "email-carrier-enterprise-2024-12-12-delivery-delay-001",
+        "email-munch-s-supply-2025-02-18-delivery-"
+      ],
+      "cited_source_ids": [
+        "email-carrier-tariff-passthrough-2025-03"
+      ],
+      "recall_at_5": 0.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 0.16666666666666666,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 28230,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q17",
+      "question": "Which Carrier model series are affected by the Section 301 tariff pass-through?",
+      "expected_source_ids": [
+        "email-carrier-tariff-passthrough-2025-03"
+      ],
+      "retrieved_source_ids": [
+        "email-carrier-tariff-passthrough-2025-03",
+        "sop-tariff-response-playbook",
+        "spec-carrier-2025-residential-condensers",
+        "ticket-counter-day-2025-q1",
+        "ticket-contractor-notes-2024-q3",
+        "b"
+      ],
+      "cited_source_ids": [
+        "email-carrier-tariff-passthrough-2025-03"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 21124,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q18",
+      "question": "How many EL16XC1 R-410A terminal-inventory units does Lennox have left for us?",
+      "expected_source_ids": [
+        "email-lennox-2025-q1-allocations"
+      ],
+      "retrieved_source_ids": [
+        "email-lennox-2025-q1-allocations",
+        "spec-lennox-2025-condenser-pricebook-excerpt",
+        "ticket-contractor-notes-2024-q4",
+        "bulletin-r-410a-phase-out-timeline",
+        "bulletin-epa-aim-act-summary"
+      ],
+      "cited_source_ids": [
+        "email-lennox-2025-q1-allocations"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 25331,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q19",
+      "question": "What categories carry allocation risk when we consolidate suppliers post-acquisition?",
+      "expected_source_ids": [
+        "sop-supplier-consolidation-post-mna"
+      ],
+      "retrieved_source_ids": [
+        "sop-supplier-consolidation-post-mna",
+        "email-lennox-2025-q1-allocations",
+        "email-coastal-hvac-supply-2024-01-10-allocation-notice-026",
+        "sop-customer-concentration-review",
+        "bulletin-r-32-transition-overview",
+        "sop-supplier-consolidation-post-mna",
+        "sop-customer-concentration-review",
+        "sop-supplier-bulletin-triage",
+        "email-coastal-hvac-supply-2024-01-10-allocation-notice-026",
+        "email-lennox-2025-q1-allocations",
+        "sop-supplier-consolidation-post-mna",
+        "sop-refrigerant-pre-buy-guidance",
+        "email-coastal-hvac-supply-2024-01-10-allocation-notice-026",
+        "email-trane-supply-2024-02-15-allocation-notice-003",
+        "ticket-contractor-notes-2024-q4",
+        "email-baker-distributing-2024-11-14-allocation-notice-000",
+        "email-lennox-2025-q1-allocations",
+        "email-munch-s-supply-2025-03-30-product-discontinuation-004",
+        "email-munch-s-supply-2025-05-11-delivery-delay-021",
+        "email-johnstone-supply-2024-06-22-price-increase-011",
+        "sop-supplier-consolidation-post-mna",
+        "email-lennox-2025-q1-allocations",
+        "ticket-contractor-notes-2024-q3",
+        "ticket-contractor-notes-2024-q4"
+      ],
+      "cited_source_ids": [
+        "sop-supplier-consolidation-post-mna",
+        "email-trane-supply-2024-02-15-allocation-notice-003",
+        "email-baker-distributing-2024-11-14-allocation-notice-000",
+        "email-munch-s-supply-2025-05-11-delivery-delay-021",
+        "email-lennox-2025-q1-allocations",
+        "email-coastal-hvac-supply-2024-01-10-allocation-notice-026"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 0.16666666666666666,
+      "citation_recall": 1.0,
+      "latency_ms": 77210,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q20",
+      "question": "What is the field-replacement procedure for the condenser fan motor on a Carrier 24ABC6?",
+      "expected_source_ids": [
+        "bulletin-carrier-tsb-2024-007-fan-motor"
+      ],
+      "retrieved_source_ids": [
+        "bulletin-carrier-tsb-2024-007-fan-motor",
+        "manual-synth-install-residential-condenser",
+        "sop-warranty-claim-escalation",
+        "email-carrier-tariff-passthrough-2025-03",
+        "sop-supplier-bulletin-triage"
+      ],
+      "cited_source_ids": [
+        "bulletin-carrier-tsb-2024-007-fan-motor",
+        "sop-warranty-claim-escalation"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 0.5,
+      "citation_recall": 1.0,
+      "latency_ms": 24312,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q21",
+      "question": "What fixes the Lennox iComfort S30 thermostat Wi-Fi loss after a brownout?",
+      "expected_source_ids": [
+        "bulletin-lennox-tsb-2024-001-icomfort"
+      ],
+      "retrieved_source_ids": [
+        "bulletin-lennox-tsb-2024-001-icomfort",
+        "sop-warranty-claim-escalation",
+        "sop-supplier-bulletin-triage",
+        "ticket-counter-day-2025-q1",
+        "ticket-counter-day-2025-q1"
+      ],
+      "cited_source_ids": [
+        "bulletin-lennox-tsb-2024-001-icomfort",
+        "sop-warranty-claim-escalation"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 0.5,
+      "citation_recall": 1.0,
+      "latency_ms": 20082,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q22",
+      "question": "What is the refrigerant charge weight for a 3.0-ton Trane 4TWR8 heat pump?",
+      "expected_source_ids": [
+        "bulletin-trane-tsb-2024-002-r-32-launch"
+      ],
+      "retrieved_source_ids": [
+        "bulletin-trane-tsb-2024-002-r-32-launch",
+        "spec-trane-2024-commercial-r-32",
+        "bulletin-r-32-transition-overview",
+        "bulletin-r-454b-overview",
+        "bulletin-epa-aim-act-summary"
+      ],
+      "cited_source_ids": [
+        "bulletin-trane-tsb-2024-002-r-32-launch"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 17735,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q23",
+      "question": "What service tools are required to work on R-454B equipment?",
+      "expected_source_ids": [
+        "bulletin-r-454b-overview",
+        "bulletin-trane-tsb-2024-002-r-32-launch"
+      ],
+      "retrieved_source_ids": [
+        "bulletin-trane-tsb-2024-002-r-32-launch",
+        "bulletin-r-454b-overview",
+        "bulletin-r-32-transition-overview",
+        "manual-synth-install-residential-condenser",
+        "bulletin-epa-aim-act-summary"
+      ],
+      "cited_source_ids": [
+        "bulletin-trane-tsb-2024-002-r-32-launch",
+        "bulletin-r-32-transition-overview",
+        "bulletin-r-454b-overview"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 0.6666666666666666,
+      "citation_recall": 1.0,
+      "latency_ms": 20388,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q24",
+      "question": "What is the proper nitrogen pressure-test procedure for a new residential install?",
+      "expected_source_ids": [
+        "manual-synth-install-residential-condenser"
+      ],
+      "retrieved_source_ids": [
+        "manual-synth-install-residential-condenser",
+        "bulletin-r-32-transition-overview",
+        "bulletin-carrier-tsb-2024-007-fan-motor",
+        "ticket-contractor-notes-2024-q3",
+        "ticket-contractor-notes-2024-q4"
+      ],
+      "cited_source_ids": [
+        "manual-synth-install-residential-condenser"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 22650,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q25",
+      "question": "What's the target subcooling range at startup on a residential split-system condenser?",
+      "expected_source_ids": [
+        "manual-synth-install-residential-condenser"
+      ],
+      "retrieved_source_ids": [
+        "manual-synth-install-residential-condenser",
+        "bulletin-r-410a-phase-out-timeline",
+        "bulletin-r-32-transition-overview",
+        "ticket-warranty-claims-2024",
+        "email-carrier-tariff-passthrough-2025-03"
+      ],
+      "cited_source_ids": [
+        "manual-synth-install-residential-condenser"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 17343,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q26",
+      "question": "Why must service techs triple-evacuate to 500 microns before charging?",
+      "expected_source_ids": [
+        "manual-synth-install-residential-condenser"
+      ],
+      "retrieved_source_ids": [
+        "manual-synth-install-residential-condenser",
+        "bulletin-r-32-transition-overview",
+        "ticket-contractor-notes-2024-q3",
+        "ticket-counter-day-2025-q1",
+        "ticket-contractor-notes-2024-q3",
+        "ticket-counter-day-2025-q1",
+        "manual-synth-install-residential-condenser",
+        "bulletin-r-32-transition-overview",
+        "bulletin-bryant-tsb-2024-008-inducer-motor-bearing",
+        "ticket-contractor-notes-2024-q4",
+        "bulletin-rheem-tsb-2024-013-inducer-motor-bearing",
+        "sop-new-customer-onboarding",
+        "sop-top-customer-pricing-communication",
+        "sop-warranty-claim-escalation",
+        "sop-r-410a-retrofit-customer-outreach",
+        "sop-return-and-rma-policy",
+        "bulletin-trane-tsb-2024-002-r-32-launch",
+        "bulletin-r-32-transition-overview",
+        "bulletin-r-410a-phase-out-timeline",
+        "bulletin-r-454b-overview",
+        "bulletin-epa-aim-act-summary",
+        "manual-synth-install-residential-condenser",
+        "ticket-contractor-notes-2024-q3",
+        "ticket-contractor-notes-2024-q3",
+        "ticket-contractor-notes-2024-q4",
+        "ticket-warranty-claims-2024",
+        "ticket-counter-da",
+        "manual-synth-install-residential-condenser",
+        "ticket-contractor-notes-2024-q4",
+        "ticket-contractor-notes-2024-q3",
+        "bulletin-york-tsb-2024-002-capacitor-batch-recall",
+        "ticket-counter-day-2025-q1"
+      ],
+      "cited_source_ids": [
+        "manual-synth-install-residential-condenser"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 45466,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q27",
+      "question": "What iComfort S30 firmware version restores Wi-Fi reconnection after a brownout event?",
+      "expected_source_ids": [
+        "bulletin-lennox-tsb-2024-001-icomfort"
+      ],
+      "retrieved_source_ids": [
+        "bulletin-lennox-tsb-2024-001-icomfort",
+        "bulletin-heil-tsb-2024-009-thermostat-wifi-reconnect",
+        "bulletin-rheem-tsb-2024-004-thermostat-wifi-reconnect",
+        "bulletin-york-tsb-2024-002-capacitor-batch-recall",
+        "bulletin-mitsubishi-tsb-2024-007-capacitor-batch-recall"
+      ],
+      "cited_source_ids": [
+        "bulletin-lennox-tsb-2024-001-icomfort"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 14740,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q28",
+      "question": "What is the AIM Act allowance schedule for HFCs from 2024 through 2036?",
+      "expected_source_ids": [
+        "bulletin-epa-aim-act-summary"
+      ],
+      "retrieved_source_ids": [
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-410a-phase-out-timeline",
+        "bulletin-r-32-transition-overview",
+        "bulletin-r-454b-overview",
+        "bulletin-amana-tsb-2024-010-control-board-replacement"
+      ],
+      "cited_source_ids": [
+        "bulletin-epa-aim-act-summary"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 18121,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q29",
+      "question": "What is the Technology Transitions Rule GWP cutoff for new residential AC and heat pumps and when does it take effect?",
+      "expected_source_ids": [
+        "bulletin-epa-aim-act-summary"
+      ],
+      "retrieved_source_ids": [
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-410a-phase-out-timeline",
+        "bulletin-r-454b-overview",
+        "bulletin-r-32-transition-overview",
+        "bulletin-trane-tsb-2024-002-r-32-launch"
+      ],
+      "cited_source_ids": [
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-454b-overview",
+        "bulletin-r-32-transition-overview"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 0.3333333333333333,
+      "citation_recall": 1.0,
+      "latency_ms": 14437,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    },
+    {
+      "qid": "q30",
+      "question": "Can R-410A equipment manufactured before 2025-01-01 still be sold and installed after that date?",
+      "expected_source_ids": [
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-410a-phase-out-timeline"
+      ],
+      "retrieved_source_ids": [
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-410a-phase-out-timeline",
+        "sop-r-410a-retrofit-customer-outreach",
+        "email-lennox-2025-q1-allocations",
+        "ticket-counter-day-2025-q1"
+      ],
+      "cited_source_ids": [
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-410a-phase-out-timeline"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 19058,
+      "input_tokens": null,
+      "output_tokens": null,
+      "error": null
+    }
+  ]
+}

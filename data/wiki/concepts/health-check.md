@@ -1,33 +1,33 @@
 ---
 type: concept
 topic: Knowledge health check
-generated_at: 2026-05-19T03:50:21+00:00
+generated_at: 2026-05-24T19:58:36+00:00
 ---
 
 # Knowledge Health Check
 
-_Generated 2026-05-19T03:50:21+00:00_
+_Generated 2026-05-24T19:58:36+00:00_
 
 ## Summary
 - Wiki pages (structurer-built): **32**
 - Chunks in retrieval: **117**
-- Chunks cited by at least one wiki page: **87**
-- Orphan chunks (not cited anywhere): **30**
+- Chunks cited by at least one wiki page: **85**
+- Orphan chunks (not cited anywhere): **32**
 - Thin pages (< 2 source chunks): **13**
-- Dangling wikilinks: **45**
+- Dangling wikilinks: **0**
 - Pages with validation warnings: **10**
-- Contradiction findings: **0**
+- Contradiction findings: **3**
 
 ## Coverage by bucket
 
 | Bucket | Cited chunks | Total chunks | Coverage |
 | --- | --- | --- | --- |
 | bulletins | 20 | 20 | 100% |
-| emails | 13 | 32 | 41% |
+| emails | 12 | 32 | 38% |
 | manuals | 1 | 1 | 100% |
 | sops | 12 | 18 | 67% |
 | specs | 6 | 8 | 75% |
-| tickets | 35 | 38 | 92% |
+| tickets | 34 | 38 | 89% |
 
 ## Thin pages (< 2 chunks)
 
@@ -45,40 +45,6 @@ _Generated 2026-05-19T03:50:21+00:00_
 - **regulations/AIM-Act** (0 chunks) — `regulations\aim-act.md`
 - **regulations/EPA-SNAP** (0 chunks) — `regulations\epa-snap.md`
 
-## Dangling wikilinks
-
-- `manufacturers\amana.md` → `[[bulletins/r-454b-overview]]`
-- `manufacturers\amana.md` → `[[bulletins/r-410a-phase-out-timeline]]`
-- `manufacturers\bryant.md` → `[[bulletins/r-410a-phase-out-timeline]]`
-- `manufacturers\carrier.md` → `[[bulletins/]]`
-- `manufacturers\carrier.md` → `[[bulletins/mfr-carrier-tsb-2024-007-fan-motor]]`
-- `manufacturers\daikin.md` → `[[bulletins/r-454b-overview]]`
-- `manufacturers\daikin.md` → `[[bulletins/r-410a-phase-out-timeline]]`
-- `manufacturers\goodman.md` → `[[bulletins/r-454b-overview]]`
-- `manufacturers\goodman.md` → `[[bulletins/r-410a-phase-out-timeline]]`
-- `manufacturers\lennox.md` → `[[bulletins/r-410a-phase-out-timeline]]`
-- `manufacturers\lennox.md` → `[[bulletins/epa-aim-act-summary]]`
-- `manufacturers\mitsubishi.md` → `[[bulletins/r-454b-overview]]`
-- `manufacturers\rheem.md` → `[[bulletins/r-454b-overview]]`
-- `manufacturers\rheem.md` → `[[bulletins/r-410a-phase-out-timeline]]`
-- `manufacturers\trane.md` → `[[bulletins/r-454b-overview]]`
-- `manufacturers\trane.md` → `[[bulletins/r-410a-phase-out-timeline]]`
-- `manufacturers\york.md` → `[[bulletins/r-454b-overview]]`
-- `manufacturers\york.md` → `[[bulletins/r-410a-phase-out-timeline]]`
-- `procedures\r-410a-retrofit-workflow.md` → `[[bulletins/mfr-carrier-tsb-2024-007-fan-motor]]`
-- `procedures\r-410a-retrofit-workflow.md` → `[[bulletins/mfr-carrier-tsb-2024-007-fan-motor]]`
-- `procedures\r-410a-retrofit-workflow.md` → `[[bulletins/r-410a-phase-out-timeline]]`
-- `procedures\r-410a-retrofit-workflow.md` → `[[bulletins/epa-aim-act-summary]]`
-- `procedures\tariff-response-playbook.md` → `[[bulletins/mfr-carrier-tsb-2024-007-fan-motor]]`
-- `procedures\tariff-response-playbook.md` → `[[bulletins/mfr-carrier-tsb-2024-007-fan-motor]]`
-- `procedures\warranty-claim-escalation.md` → `[[bulletins/]]`
-- `procedures\warranty-claim-escalation.md` → `[[bulletins/mfr-carrier-tsb-2024-007-fan-motor]]`
-- `refrigerants\r-22.md` → `[[bulletins/r-410a-phase-out-timeline]]`
-- `refrigerants\r-22.md` → `[[bulletins/epa-aim-act-summary]]`
-- `refrigerants\r-32.md` → `[[bulletins/r-410a-phase-out-timeline]]`
-- `refrigerants\r-32.md` → `[[bulletins/epa-aim-act-summary]]`
-- … and 15 more
-
 ## Validation warnings
 
 - `manufacturers\copeland.md`: ['no_citations_in_body']
@@ -92,36 +58,87 @@ _Generated 2026-05-19T03:50:21+00:00_
 - `regulations\aim-act.md`: ['no_citations_in_body']
 - `regulations\epa-snap.md`: ['no_citations_in_body']
 
+## LLM contradiction findings
+
+### manufacturers
+I'll compare factual claims across all pages systematically.
+
+**Checking R-410A GWP:**
+- daikin.md: R-410A GWP = 2088
+- No other page states a different GWP for R-410A. ✓
+
+**Checking R-32 GWP:**
+- daikin.md: R-32 GWP = 675
+- No contradiction found. ✓
+
+**Checking R-454B GWP:**
+- bryant.md: R-454B GWP = 466
+- carrier.md: (no GWP stated for R-454B)
+- No contradiction found. ✓
+
+**Checking standard parts warranty:**
+- amana.md: Standard warranty on Amana parts is **5 years**
+- bryant.md: Standard parts warranty is **5 years**
+- No contradiction. ✓
+
+**Checking R-454B adopters:**
+- bryant.md: Lists R-454B primary adopters as Carrier, Trane, Lennox, and Bryant
+- daikin.md: Lists R-454B adopters as Carrier, Trane, and Lennox (no Bryant)
+- carrier.md: (no explicit adopter list)
+
+- **R-454B primary adopters list: bryant.md includes Bryant itself; daikin.md lists only Carrier, Trane, and Lennox, omitting Bryant.**
+
+No other factual contradictions found across the remaining pages (Copeland and Ecobee have no source coverage).
+
+---
+
+**Contradictions found:**
+
+- **R-454B primary adopters:** `bryant.md` lists Bryant, Carrier, Trane, and Lennox as primary R-454B adopters for U.S. residential platforms; `daikin.md` lists only Carrier, Trane, and Lennox, omitting Bryant.
+
+### procedures
+**NONE**
+
+The pages cover distinct procedures (R-410A retrofit workflow, supplier consolidation, tariff response, warranty claim escalation) with minimal factual overlap. Where shared facts appear (e.g., EPA AIM Act manufacture cutoff of January 1, 2025; TSB filing location `data/sources/bulletins/`; purchasing inbox review at 10 am and 3 pm), they are stated consistently across pages.
+
+### refrigerants
+I found one factual contradiction:
+
+- **R-454B blend composition (R-1234yf vs. R-454B pages):** `r-1234yf.md` states R-454B is **68.9% R-32 / 31.1% R-1234yf**, while `r-454b.md` contains no explicit composition figures to confirm or deny this — however, this is not a cross-page conflict within the provided text. Reviewing more carefully:
+
+**NONE** — No direct same-fact contradictions are present across the provided pages. The R-410A GWP is consistently cited as ~2088, R-454B GWP as 466, R-32 GWP as 675, both A2L classifications are consistent, the January 1 2025 equipment cutoff is consistent, and the AIM Act allowance tiers (60%/30%/15%) are consistent across all pages that reference them.
+
+
 ## Orphan chunks (not cited)
 
-_30 chunks; sampling first 30:_
+_32 chunks; sampling first 30:_
+- `email-abco-distribution-2024-07-22-product-discontinuation-022:0000:bdb5a689ab`
 - `email-baker-distributing-2024-09-06-product-discontinuation-016:0000:d3d8c3cf74`
 - `email-baker-distributing-2024-11-14-allocation-notice-000:0000:5055cfd16b`
 - `email-baker-distributing-2024-12-19-product-discontinuation-014:0000:e8ae614093`
-- `email-carrier-enterprise-2024-12-12-delivery-delay-001:0000:ecf956daca`
 - `email-coastal-hvac-supply-2024-01-10-allocation-notice-026:0000:15c6fddc3f`
-- `email-coastal-hvac-supply-2024-01-21-rebate-program-017:0000:f44bc5e123`
+- `email-coastal-hvac-supply-2024-06-24-price-increase-018:0000:95359591c9`
+- `email-goodin-company-2024-02-24-allocation-notice-009:0000:106b7f99f0`
 - `email-goodin-company-2024-07-09-product-discontinuation-015:0000:4afbc073e6`
+- `email-goodin-company-2024-08-26-product-discontinuation-023:0000:c24894e12b`
 - `email-goodin-company-2024-09-16-delivery-delay-025:0000:ae589c7e6c`
 - `email-goodin-company-2024-10-24-price-increase-010:0000:cf3f324991`
+- `email-goodin-company-2025-03-25-allocation-notice-027:0000:a7ac5cfce0`
 - `email-johnstone-supply-2024-06-22-price-increase-011:0000:b7fc954655`
 - `email-johnstone-supply-2025-05-09-product-discontinuation-002:0000:19f528fe05`
-- `email-lennox-partsplus-2024-05-18-delivery-delay-006:0000:1ea8eafe42`
-- `email-lennox-partsplus-2024-07-05-rebate-program-013:0000:1829ed2a23`
+- `email-munch-s-supply-2024-06-28-rebate-program-019:0000:9f0c19d33a`
+- `email-munch-s-supply-2025-02-18-delivery-delay-024:0000:157f4a6f23`
 - `email-munch-s-supply-2025-03-30-product-discontinuation-004:0000:9ffcced2a3`
 - `email-northern-hvac-wholesale-2024-04-14-rebate-program-012:0000:d55da8bd38`
 - `email-northern-hvac-wholesale-2025-04-21-product-discontinuation-029:0000:c07ef882c6`
-- `email-re-michel-2024-07-30-product-discontinuation-007:0000:473b5fbf7f`
-- `email-re-michel-2025-03-01-price-increase-020:0000:db819d4bf0`
-- `email-trane-supply-2024-04-22-price-increase-005:0000:527a7ef590`
+- `email-trane-supply-2024-02-15-allocation-notice-003:0000:51a77785d6`
+- `sop-backorder-communication:0000:2b7d053360`
 - `sop-counter-day-runbook:0000:8e5d2fe21a`
 - `sop-customer-concentration-review:0000:f4970620b6`
 - `sop-emergency-stock-allocation:0000:36fab96380`
 - `sop-inventory-reorder-policy:0000:4898b45d4a`
-- `sop-new-customer-onboarding:0000:674d0b015e`
 - `sop-return-and-rma-policy:0000:3004a7f628`
 - `spec-johnstone-2025-q1-capacitors:0000:0311afbd4c`
 - `spec-re-michel-2025-q1-contactors:0000:f5a07dbf8d`
-- `ticket-counter-day-2025-q1#TKT-2025-Q1-001:0000:ae98210281`
-- `ticket-counter-day-2025-q1#TKT-2025-Q1-002:0000:769192face`
-- `ticket-warranty-claims-2024#TKT-MS-2024-002:0000:316c595b2e`
+- `ticket-contractor-notes-2024-q3#TKT-2024-Q3-006:0000:ba26e7ef0f`
+- `ticket-contractor-notes-2024-q3#TKT-2024-Q3-007:0000:8f42e66d1c`

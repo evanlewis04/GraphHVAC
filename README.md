@@ -92,28 +92,30 @@ regulation, SOPs, supplier behavior, technical bulletins, and install
 procedures. Ground truth at the **source level** so chunk-hash churn doesn't
 break the golden records.
 
-Latest results (retrieval-only mode, BM25 + hash-pseudo-vectors — Voyage
-embeddings disabled because no API key in this environment):
+Three runs side-by-side show how each layer contributes:
 
-| Metric | Value |
-| --- | --- |
-| Questions | 30 |
-| recall@5 | **0.867** |
-| recall@10 | **0.967** |
-| MRR | **0.668** |
-| Latency p50 | 19 ms |
-| Latency p95 | 21 ms |
+| Mode | recall@5 | recall@10 | MRR | citation precision | citation recall | p50 latency | cost / query |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| BM25 only | 0.867 | 0.967 | 0.668 | — | — | 19 ms | $0 |
+| Hybrid (BM25 + Voyage) | **0.967** | **1.000** | 0.752 | — | — | 235 ms | $0.0001 |
+| **Agent loop** (Sonnet 4.6 + hybrid retrieval) | **0.967** | **1.000** | **0.950** | **0.708** | **0.983** | 21 s | $0.032 |
 
-Reproduce:
+The agent's **0.983 citation recall** means it finds and cites 98% of
+the sources the human curator marked as expected for each question. The
+MRR jump from 0.752 → 0.950 reflects the agent re-issuing retrievals
+with reformulated queries when the first pass doesn't surface the right
+chunk.
+
+Reproduce locally:
 
 ```bash
-python scripts/run_evals.py
+python scripts/run_evals.py                    # retrieval-only, free
+python scripts/run_evals.py --mode agent       # agent mode, ~$1
 ```
 
-Numbers land in `data/evals/<run-id>.summary.json` and surface in the
-Admin → Evals tab. With `VOYAGE_API_KEY` set, hybrid retrieval kicks in
-and the semantic-half lifts the MRR. With `ANTHROPIC_API_KEY` set,
-`--mode agent` adds citation precision / recall / latency / cost.
+Summary JSON lands in `data/evals/<run-id>.summary.json` and surfaces
+in the Admin → Evals tab. The agent-mode run is pinned as a regression
+baseline at [`tests/eval/baseline.summary.json`](tests/eval/baseline.summary.json).
 
 ---
 

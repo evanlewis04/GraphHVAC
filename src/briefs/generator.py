@@ -53,7 +53,9 @@ def generate_brief(target_date: date | None = None) -> Path:
         f"trace_id: {result.trace_id}\n"
         f"iterations: {result.iterations}\n"
         f"---\n\n"
-        f"# Daily Brief — {target.strftime('%A, %B %-d, %Y')}\n\n"
+        # Use platform-portable strftime — strip the leading-zero day in code,
+        # since %-d (POSIX) / %#d (Windows) aren't cross-platform.
+        f"# Daily Brief — {target.strftime('%A, %B ') + str(target.day) + target.strftime(', %Y')}\n\n"
         f"{result.answer}\n"
     )
     path = out_dir / f"{target.isoformat()}.md"

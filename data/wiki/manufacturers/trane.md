@@ -4,149 +4,45 @@ entity_id: Trane
 slug: trane
 template_version: 1
 template_name: manufacturer.md.j2
-last_built: '2026-05-19T03:34:13+00:00'
+last_built: '2026-05-24T19:52:14+00:00'
 source_chunks:
-- sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c
-- ticket-contractor-notes-2024-q3#TKT-2024-Q3-010:0000:693f5461f3
-- bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761
-- email-trane-supply-2024-02-15-allocation-notice-003:0000:51a77785d6
-- bulletin-r-32-transition-overview:0000:29e90451bd
 - email-trane-supply-2024-07-02-product-discontinuation-008:0000:fa3faaecba
-- sop-tariff-response-playbook:0000:48e5f73ab0
-- bulletin-epa-aim-act-summary:0000:2219085edc
-- bulletin-r-454b-overview:0000:5abf4e6fa7
+- ticket-contractor-notes-2024-q3#TKT-2024-Q3-010:0000:693f5461f3
+- sop-supplier-consolidation-post-mna:0000:014bd6862b
+- ticket-warranty-claims-2024#TKT-MS-2024-002:0000:316c595b2e
+- bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761
+- email-trane-supply-2024-04-22-price-increase-005:0000:527a7ef590
+- sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c
+- bulletin-r-32-transition-overview:0000:29e90451bd
 - ticket-warranty-claims-2024#TKT-MS-2024-007:0000:f3482ff171
-synthesizer: deterministic
+- bulletin-r-454b-overview:0000:5abf4e6fa7
+synthesizer: llm
 ---
 
 # Trane
 
-_This page was assembled without LLM synthesis (no `ANTHROPIC_API_KEY` or `--no-llm` was used). Content below is a structured list of supporting source chunks; set the API key and rebuild for narrative synthesis._
-
 ## Overview
 
-> # R-32 — replacement refrigerant overview
+Trane is a major HVAC OEM with an active distributor supply channel operated under the **Trane Supply** brand. The company supplies residential and commercial heating and cooling equipment along with a broad parts catalog including control boards, refrigerant components, and ECM modules. Trane Supply communicates product lifecycle changes, price adjustments, and technical service bulletins directly to distributor purchasing contacts [email-trane-supply-2024-07-02-product-discontinuation-008:0000:fa3faaecba][email-trane-supply-2024-04-22-price-increase-005:0000:527a7ef590].
 
-R-32 (difluoromethane) is one of two leading low-GWP replacements for
-R-410A in U.S. residential AC and heat-pump equipment. The other is
-R-454B; see [[bulletins/r-454b-overview]].
-
-## Properties
-
-| Property                 | R-32          | R-410A     |
-| ------------------------ | ------------- | ---------- |
-| ASHRAE classification    | A2L (mildly flammable) | A1 (non-flammable) |
-| GWP (AR4)                | 675           | 2088       |
-| Single-component         | Yes           | No (blend) |
-| Glide                    | None          | Low… [bulletin-r-32-transition-overview:0000:29e90451bd]
-
-> # R-454B — replacement refrigerant overview
-
-R-454B (trade name Opteon XL41, Solstice 454B) is the leading low-GWP
-replacement chosen by Carrier, Trane, and Lennox for U.S. residential
-AC and heat-pump equipment in 2025+ model years.
-
-## Properties
-
-| Property                 | R-454B          | R-410A     |
-| ------------------------ | --------------- | ---------- |
-| ASHRAE classification    | A2L (mildly flammable) | A1 (non-flammable) |
-| GWP (AR4)                | 466             | 2088       |
-| Composition              | 68.9% R-32 / 31.1% R-1234yf | 50/50 R-32/R-125 |
-| Glide… [bulletin-r-454b-overview:0000:5abf4e6fa7]
+Trane is recognized as one of the major suppliers distributors consolidate volume with following M&A activity, alongside Lennox PartsPlus, Carrier Enterprise, Johnstone Supply, and RE Michel [sop-supplier-consolidation-post-mna:0000:014bd6862b].
 
 ## Product Categories
 
-_No source coverage._
+Trane's catalog as reflected in distributor activity includes:
+
+- **Residential heat pumps** — The 4TWR series is a key residential heat-pump platform. The 4TWR7 (R-410A) is being wound down through end-of-life inventory burn in 2024-Q4, succeeded by the 4TWR8 (R-454B), with production starting 2024-Q3 for the 2025 model year [bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761].
+- **Control boards** — The ControlBoard line is an active product category subject to its own pricing and supply communications [email-trane-supply-2024-04-22-price-increase-005:0000:527a7ef590].
+- **RHE series components** — The RHE283 series reached end-of-production on 2024-08-23, replaced by the RHE689 [email-trane-supply-2024-07-02-product-discontinuation-008:0000:fa3faaecba].
+- **Parts (OEM)** — Active warranty and service tickets reference Trane equipment models (TRA414, TRA462, TRA780) and OEM part numbers (TR-37834, TR-84800) across multiple warehouses [ticket-warranty-claims-2024#TKT-MS-2024-002:0000:316c595b2e][ticket-warranty-claims-2024#TKT-MS-2024-007:0000:f3482ff171][ticket-contractor-notes-2024-q3#TKT-2024-Q3-010:0000:693f5461f3].
 
 ## Regulatory Posture
 
-_No source coverage._
+Trane has committed to **R-454B** (Opteon XL41 / Solstice 454B) as its primary low-GWP refrigerant platform for U.S. residential AC and heat-pump equipment in 2025+ model years, in line with EPA AIM Act requirements phasing out R-410A [bulletin-r-454b-overview:0000:5abf4e6fa7][bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761].
 
-## Additional Source Material
+Key compliance implications for distributors:
 
-> # R-410A retrofit — customer outreach playbook
-
-Owner: Sales Ops. Last reviewed: 2024-Q1. Driving doc:
-[[bulletins/r-410a-phase-out-timeline]].
-
-## Purpose
-
-Reach contractor customers who carry high R-410A exposure with a
-proactive replacement-quote offer **before** their installed base
-starts hitting service costs they can't pass on.
-
-## Identify the target list
-
-Run the standard exposure query:… [sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c]
-
-> Ticket TKT-2024-Q3-010 (2024-08-26, customer CUS-0482)
-manufacturer: Trane | equipment_model: TRA414 | warehouse: WH-CHA
-
-Notes: customer asked: any cross-ref on TR-31776 from a non-OEM supplier? [ticket-contractor-notes-2024-q3#TKT-2024-Q3-010:0000:693f5461f3]
-
-> # Trane Technical Service Bulletin 2024-002
-
-**Subject:** 4TWR8 series heat pump — R-454B model launch. Distributor
-stocking, service tool, and crossover guidance.
-
-**Effective:** Production starts 2024-Q3 for 2025 model year.
-
-## What's new
-
-The 4TWR8 platform is the first Trane residential heat-pump line built
-on R-454B. The 4TWR7 series (R-410A) continues in production through
-end-of-life inven… [bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761]
-
-> # Trane Supply — Q3 allocation update — Thermostat
-
----
-
-**From:** Carlos Romero <carlos.romero@tranesupply.example>
-**To:** purchasing@graph-distributor.example
-**Date:** 2024-02-15 10:48 EST
-**Subject:** Q3 allocation update — Thermostat
-
-Our Thermostat capacity for Q3 is allocated at 4% of trailing-quarter volume across the channel. Your account allocation specifically: see attached. We expect… [email-trane-supply-2024-02-15-allocation-notice-003:0000:51a77785d6]
-
-> # Trane Supply — End-of-life notice — RHE283 series
-
----
-
-**From:** Jamie Carrillo <jamie.carrillo@tranesupply.example>
-**To:** purchasing@graph-distributor.example
-**Date:** 2024-07-02 10:45 EST
-**Subject:** End-of-life notice — RHE283 series
-
-The RHE283 series will reach end-of-production on 2024-08-23. Terminal inventory will be allocated to active orders only; no new POs against RHE283 accepte… [email-trane-supply-2024-07-02-product-discontinuation-008:0000:fa3faaecba]
-
-> # Tariff response playbook
-
-How we respond when a supplier announces a tariff-driven price change
-or allocation cut. Owner: VP Operations. Last reviewed: 2024-Q1.
-
-## When this triggers
-
-Any of:
-
-- A supplier email announces a price increase of >5% on a category we
-  carry, attributed to tariffs (Section 232 steel/aluminum, Section
-  301 China, anti-dumping, etc.).
-- A supplier announces an alloca… [sop-tariff-response-playbook:0000:48e5f73ab0]
-
-> # AIM Act HFC phase-down — operational summary
-
-This is a paraphrased operational summary of the EPA American Innovation
-and Manufacturing Act (AIM Act). It is not the original regulatory text.
-For the authoritative version see the EPA Final Rule (40 CFR Part 84).
-
-## What the AIM Act does
-
-The AIM Act phases down the U.S. production and import of
-hydrofluorocarbon (HFC) refrigerants on a fixed al… [bulletin-epa-aim-act-summary:0000:2219085edc]
-
-> Ticket TKT-MS-2024-007 (2024-10-19, customer CUS-0065)
-manufacturer: Trane | equipment_model: TRA462 | warehouse: WH-ATL | fault_code: E21 | parts_used: TR-84800
-
-Notes: Contractor reports blower not starting, ECM module fault code 21. Photos attached. Cert # 608-9271. [ticket-warranty-claims-2024#TKT-MS-2024-007:0000:f3482ff171]
-
+- The 4TWR8 is the **first Trane residential heat-pump line built on R-454B**. The R-410A-based 4TWR7 is not retrofittable; any replacement requires a full system swap (condenser, evaporator, line set flush, new TXV) [bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761].
+- R-454B carries an **A2L (mildly flammable)** ASHRAE classification, requiring A2L-rated service tools: leak detectors, digital manifold gauge sets, and recovery machines with blend-preservation rating [bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761][bulletin-r-454b-overview:0000:5abf4e6fa7].
+- Liquid-line charging is **mandatory** for R-454B — vapor charging from a virgin cylinder will fractionate the blend [bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761].
+- Trane's R-454B adoption path contrasts with OEMs such as Daikin, Mitsubishi, and parts of Goodman/Amana, which have standardized on R-32 [bulletin-r-32-transition-overview:0000:29e90451bd]. Distributors stocking Trane lines must maintain R-454B inventory separately from R-32 stock.

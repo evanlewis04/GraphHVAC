@@ -317,6 +317,74 @@
   <p>Em-dashes (U+2014) render as <code>�</code> in plain Windows cmd. The data on disk is correct UTF-8 — only the console display is broken. Set <code>PYTHONUTF8=1</code> in the shell or use Windows Terminal. Worth a line in the README&rsquo;s troubleshooting section in Phase 8.</p>
 </div>
 
+<h2>Future direction: "brain on a heartbeat"</h2>
+
+<p class="section-note">The four tiers below turn the system from a reactive RAG agent (answers when asked) into a proactive one (surfaces things you didn&rsquo;t ask about). They&rsquo;re sequenced by effort-to-value ratio. <strong>Important:</strong> before implementing any tier, write a dedicated implementation plan for that tier — same format as the original 8-phase plan in <code>PLAN.md</code>. Each tier has enough surface area (scheduling, delivery, anomaly rules, memory) that diving in without an upfront plan would mix architectural decisions into feature commits and create messy phases.</p>
+
+<div class="item">
+  <h3>Tier 1 — Scheduled proactive analysis</h3>
+  <div class="tags">
+    <span class="tag t-prio-high">priority: high (best effort/value)</span>
+    <span class="tag t-effort">effort: 3–5 days</span>
+    <span class="tag t-trigger">trigger: when you want the system to message you without prompting</span>
+    <span class="tag t-origin">origin: post-Phase-8 roadmap</span>
+  </div>
+  <p>Run the existing daily-brief workflow + health check on a schedule, deliver to email/Slack, and add a small alerts table for threshold rules. Most of this is glue around code that already exists.</p>
+  <dl class="row">
+    <dt>Scope:</dt>
+    <dd>(a) <code>scripts/scheduler.py</code> using APScheduler with three jobs: daily brief 7am, health check Monday 8am, ingest watch nightly. (b) <code>src/delivery/</code> with one adapter (SMTP email or Slack webhook). (c) <code>alerts</code> table in SQLite with simple threshold rules (refrigerant exposure &gt; $X, customer revenue drop &gt; Y%, supplier bulletin spike). (d) "Inbox" UI tab showing scheduled-output items.</dd>
+    <dt>Plan first:</dt><dd>Write a Tier-1 implementation plan covering the scheduler choice, delivery-channel decision, alert-rule DSL shape, and Inbox UI design before any code lands.</dd>
+  </dl>
+</div>
+
+<div class="item">
+  <h3>Tier 2 — Pattern + anomaly detection</h3>
+  <div class="tags">
+    <span class="tag t-prio-medium">priority: medium</span>
+    <span class="tag t-effort">effort: 1–2 weeks</span>
+    <span class="tag t-trigger">trigger: once Tier 1 is in active use and you can distinguish signal from noise</span>
+    <span class="tag t-origin">origin: post-Phase-8 roadmap</span>
+  </div>
+  <p>Detect non-obvious patterns: "three emails this week mention R-454B pricing — looks coordinated", "customer&rsquo;s R-410A exposure crossed the SOP&rsquo;s retrofit-outreach threshold", "TSB-2024-007 contradicts the inventory reorder policy". Hard to get right — false positives become noise. Ship rule-based detection first; layer LLM-judged signals only on candidates the rules surface.</p>
+  <dl class="row">
+    <dt>Scope:</dt>
+    <dd>(a) Rule engine over DuckDB + retrieval results (cron + SQL diffs + chunk-cluster scans). (b) Per-rule confidence scoring. (c) An "anomalies" feed in the Inbox UI. (d) Optional LLM judge gate to suppress weak signals.</dd>
+    <dt>Plan first:</dt><dd>Write a Tier-2 implementation plan that nails down the rule DSL, what counts as a baseline, and the false-positive containment strategy (mute rules, confidence thresholds, user feedback loop). Skipping this plan is how anomaly systems become noise machines.</dd>
+  </dl>
+</div>
+
+<div class="item">
+  <h3>Tier 3 — Recommendations + autonomous action</h3>
+  <div class="tags">
+    <span class="tag t-prio-low">priority: low until Tier 1+2 are dialed in</span>
+    <span class="tag t-effort">effort: 3+ weeks</span>
+    <span class="tag t-trigger">trigger: when Tier 2 anomalies are trustworthy enough that the next step is "and then what"</span>
+    <span class="tag t-origin">origin: post-Phase-8 roadmap</span>
+  </div>
+  <p>The system chains detection → action: "Carrier sent a tariff email; want me to run the tariff-response workflow and draft customer comms?" "Customer Z hit your retrofit threshold; here&rsquo;s a draft outreach email." High lift because it needs guardrails (draft, never send), a decisions/audit table, and observability so the user trusts what the system is about to do.</p>
+  <dl class="row">
+    <dt>Scope:</dt>
+    <dd>(a) Decision-policy layer that maps anomalies → recommended workflows. (b) "Draft mode" by default — no autonomous external action. (c) Approval UI: every recommendation shows the rationale, draft output, and an approve/dismiss flow. (d) Outcome tracking so we can measure recommendation quality.</dd>
+    <dt>Plan first:</dt><dd>Write a Tier-3 plan covering the decision policy, the guardrails, the approval UX, and the outcome-tracking metric. Anything here that runs without explicit approval is a liability — the plan is where we draw the line.</dd>
+  </dl>
+</div>
+
+<div class="item">
+  <h3>Tier 4 — Memory + learning</h3>
+  <div class="tags">
+    <span class="tag t-prio-low">priority: low (long game)</span>
+    <span class="tag t-effort">effort: 2+ weeks initial, ongoing accrual</span>
+    <span class="tag t-trigger">trigger: once there&rsquo;s ~3+ months of audit-log history to learn from</span>
+    <span class="tag t-origin">origin: post-Phase-8 roadmap</span>
+  </div>
+  <p>"You asked this last week; here&rsquo;s the diff." "You decided pass-through on Carrier 30 days ago — has revenue held?" "These are the questions you ask every Monday — want them auto-surfaced?" Cheap to start (the audit log already has the data), valuable once accumulated.</p>
+  <dl class="row">
+    <dt>Scope:</dt>
+    <dd>(a) Question-history index over the audit log with semantic clustering. (b) Decision-tracking table for workflow outcomes. (c) "What changed since last week" diff workflow. (d) Personalized morning-briefing that picks up on the user&rsquo;s pattern of questions.</dd>
+    <dt>Plan first:</dt><dd>Write a Tier-4 plan covering the memory schema, what counts as a "decision," the diffing strategy, and how personalization avoids creepy. The audit log gives us the raw material; the plan tells us what to do with it.</dd>
+  </dl>
+</div>
+
 <h2>Resolved</h2>
 
 <p class="section-note">Items that were open and have been closed. Kept here for traceability.</p>
@@ -354,6 +422,30 @@
 <div class="item resolved">
   <h3>Pre-existing wiki frontmatter migration
     <span class="resolved-note">✓ resolved in Phase 5 — structurer skips existing entity types (skus/suppliers/customers) by default; new pages have the expected frontmatter</span>
+  </h3>
+</div>
+
+<div class="item resolved">
+  <h3>End-to-end agent run with real <code>ANTHROPIC_API_KEY</code>
+    <span class="resolved-note">✓ resolved in live test session 2026-05-24 — all 4 Phase A questions, all 4 Phase B workflows, and the full 30-question Phase E agent eval ran cleanly; recall@5=0.967, citation precision=0.708, citation recall=0.983</span>
+  </h3>
+</div>
+
+<div class="item resolved">
+  <h3>Set <code>VOYAGE_API_KEY</code> to enable real embeddings
+    <span class="resolved-note">✓ resolved in live test session — Voyage hybrid lifted recall@5 from 0.867 → 0.967, MRR from 0.668 → 0.752</span>
+  </h3>
+</div>
+
+<div class="item resolved">
+  <h3>Baseline + regression check in pytest
+    <span class="resolved-note">✓ partially resolved — agent-mode summary pinned at <code>tests/eval/baseline.summary.json</code>; pytest wrapper still TODO</span>
+  </h3>
+</div>
+
+<div class="item resolved">
+  <h3>Bryant / Daikin R-454B adopter list contradiction
+    <span class="resolved-note">✓ caught by Phase 5 health-LLM check during live testing — bryant.md includes Bryant as a primary adopter; daikin.md omits it. Real contradiction in the LLM-built pages — useful demo of the health check actually working</span>
   </h3>
 </div>
 

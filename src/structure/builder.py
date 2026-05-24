@@ -52,7 +52,10 @@ from typing import Any
 import duckdb
 import yaml
 
+from src.config import load_settings  # noqa: F401 — triggers .env load
 from src.retrieval.search import RetrievedChunk, retrieve
+
+load_settings()  # ensure env is hydrated even when no other module triggered it
 
 TEMPLATE_VERSION = 1
 

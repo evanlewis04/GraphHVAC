@@ -4,212 +4,60 @@ entity_id: tariff-response-playbook
 slug: tariff-response-playbook
 template_version: 1
 template_name: procedure.md.j2
-last_built: '2026-05-19T03:34:13+00:00'
+last_built: '2026-05-24T19:56:51+00:00'
 source_chunks:
 - sop-supplier-bulletin-triage:0000:9620fe3cf5
-- manual-synth-install-residential-condenser:0000:dc2822e656
-- email-carrier-tariff-passthrough-2025-03:0000:c1e7dd2120
 - sop-price-book-update-procedure:0000:b0b51285b2
+- sop-supplier-consolidation-post-mna:0000:014bd6862b
+- email-re-michel-2024-07-30-product-discontinuation-007:0000:473b5fbf7f
+- ticket-warranty-claims-2024#TKT-MS-2024-005:0000:f2ff669782
+- email-carrier-tariff-passthrough-2025-03:0000:c1e7dd2120
+- ticket-contractor-notes-2024-q3#TKT-2024-Q3-003:0000:9caf625514
+- bulletin-epa-aim-act-summary:0000:2219085edc
+- sop-supplier-rebate-tracking:0000:b6f847f568
 - sop-top-customer-pricing-communication:0000:8fb4cc6cc8
-- email-coastal-hvac-supply-2024-06-24-price-increase-018:0000:95359591c9
-- email-munch-s-supply-2024-06-28-rebate-program-019:0000:9f0c19d33a
-- ticket-counter-day-2025-q1#TKT-2025-Q1-006:0000:b8b7b3c15c
-- ticket-contractor-notes-2024-q4#TKT-2024-Q4-003:0000:e903bee253
-- email-goodin-company-2024-08-26-product-discontinuation-023:0000:c24894e12b
-- email-lennox-2025-q1-allocations:0000:848d0c2bdb
-- sop-tariff-response-playbook:0000:48e5f73ab0
-synthesizer: deterministic
+- email-trane-supply-2024-04-22-price-increase-005:0000:527a7ef590
+- ticket-warranty-claims-2024#TKT-MS-2024-006:0000:6f66251535
+synthesizer: llm
 ---
 
 # tariff-response-playbook
 
-_This page was assembled without LLM synthesis (no `ANTHROPIC_API_KEY` or `--no-llm` was used). Content below is a structured list of supporting source chunks; set the API key and rebuild for narrative synthesis._
-
 ## Purpose
 
-> # Supplier bulletin triage
-
-Owner: Purchasing. Last reviewed: 2023-Q3.
-
-Every supplier email, TSB, or bulletin arrives somewhere. This is the
-funnel.
-
-## Inbox routing
-
-Bulletins land in `purchasing@<our-domain>` from supplier rep email
-distros. Purchasing assistant reviews twice daily (10am, 3pm). Each
-bulletin gets tagged:
-
-- `pricing` — any price change.
-- `allocation` — supplier is constraining shipment quantity.
-- `tariff` — pricing change attributed to tariffs.
-- `tsb` — manufacturer technical service bulletin (product issue).
-- `recall` — manufacturer safety recall.
-- `program` — new re… [sop-supplier-bulletin-triage:0000:9620fe3cf5]
-
-> # Residential split-system condenser — installation procedure
-
-Generic procedure used in our counter-day training material. Not a
-substitute for the OEM install manual that ships with the unit. For
-specific torque, charge, and clearance values consult the manufacturer
-document — e.g.
-[[bulletins/mfr-carrier-tsb-2024-007-fan-motor]] for fan-motor specs,
-or the model-specific install IO sheet from the OEM.
-
-## 1. Site survey
-
-Before pulling stock for the install:
-
-- Confirm electrical service capacity for the new unit's MCA / MOP
-  rating. Most 2.0–5.0 ton residential condensers run 25–60A on… [manual-synth-install-residential-condenser:0000:dc2822e656]
+The tariff-response playbook standardizes the internal reaction whenever a supplier bulletin signals a pricing change—especially one attributed to tariffs. It is the shared SOP referenced by Purchasing, Operations, and Sales to ensure cost changes are absorbed, re-priced, and communicated consistently before the effective date. The playbook is triggered any time a bulletin is tagged `pricing`, `allocation`, or `tariff` in the purchasing inbox [sop-supplier-bulletin-triage:0000:9620fe3cf5], and also governs off-cycle price book updates outside the standard quarterly refresh [sop-price-book-update-procedure:0000:b0b51285b2].
 
 ## Steps
 
-_No source coverage._
+### Day 0 — Triage and tag
+
+1. Purchasing assistant receives the bulletin at `purchasing@<our-domain>` (reviewed at 10 am and 3 pm daily) and applies the appropriate tag (`pricing`, `tariff`, or `allocation`) [sop-supplier-bulletin-triage:0000:9620fe3cf5].
+2. If tagged `allocation`, VP Ops is flagged the same day [sop-supplier-bulletin-triage:0000:9620fe3cf5].
+3. File the bulletin as a PDF or markdown under `data/sources/bulletins/` using the naming convention `supplier-<supplier>-<year>-<short-slug>.<md|pdf>` [sop-supplier-bulletin-triage:0000:9620fe3cf5].
+
+### Day 0–effective date — Cost intake
+
+1. Pull updated supplier costs into the staging table [sop-price-book-update-procedure:0000:b0b51285b2].
+2. Identify the exact SKUs affected. For example, a Carrier tariff pass-through may cover specific model families (e.g., 24ABC6, 24ANB7, 25HCC5, partial 38MGRQ) while leaving others untouched [email-carrier-tariff-passthrough-2025-03:0000:c1e7dd2120]. Clarify any ambiguous SKU scope with the supplier rep before publishing [email-carrier-tariff-passthrough-2025-03:0000:c1e7dd2120].
+3. Note any in-flight PO protection window the supplier offers (e.g., POs shipping before the effective date honored at the old price) [email-carrier-tariff-passthrough-2025-03:0000:c1e7dd2120].
+
+### Price book update
+
+1. Apply category margin policy to the updated costs and generate a proposed off-cycle price book [sop-price-book-update-procedure:0000:b0b51285b2].
+2. Review with the sales and pricing committee, then publish to the ERP and counter terminals [sop-price-book-update-procedure:0000:b0b51285b2].
+3. Log the update with: supplier bulletin source, SKUs affected, and effective date [sop-price-book-update-procedure:0000:b0b51285b2].
+
+### Customer communication
+
+1. **Same day** for tariff- and allocation-driven changes: account reps call top-25 customers (by 24-month revenue) directly, then follow up by email confirming effective date, magnitude, any substitute path, and an offer for a pre-buy at the old price if the customer has unfulfilled commitments [sop-top-customer-pricing-communication:0000:8fb4cc6cc8].
+2. All remaining customers receive a bulletin email [sop-price-book-update-procedure:0000:b0b51285b2].
+3. Log every customer conversation in the CRM with timestamp and customer reaction [sop-top-customer-pricing-communication:0000:8fb4cc6cc8].
 
 ## Citations
 
-_No source coverage._
-
-## Additional Source Material
-
-> # Supplier bulletin triage
-
-Owner: Purchasing. Last reviewed: 2023-Q3.
-
-Every supplier email, TSB, or bulletin arrives somewhere. This is the
-funnel.
-
-## Inbox routing
-
-Bulletins land in `purchasing@<our-domain>` from supplier rep email
-distros. Purchasing assistant reviews twice daily (10am, 3pm). Each
-bulletin gets tagged:
-
-- `pricing` — any price change.
-- `allocation` — supplier is constrainin… [sop-supplier-bulletin-triage:0000:9620fe3cf5]
-
-> # Residential split-system condenser — installation procedure
-
-Generic procedure used in our counter-day training material. Not a
-substitute for the OEM install manual that ships with the unit. For
-specific torque, charge, and clearance values consult the manufacturer
-document — e.g.
-[[bulletins/mfr-carrier-tsb-2024-007-fan-motor]] for fan-motor specs,
-or the model-specific install IO sheet from t… [manual-synth-install-residential-condenser:0000:dc2822e656]
-
-> # Carrier Enterprise — 2025-03 tariff pass-through
-
----
-
-**From:** Diane Yu <dyu@carrierenterprise.example>
-**To:** purchasing@graph-distributor.example
-**Date:** 2025-03-02 11:08 EST
-**Subject:** 2025-03 price adjustment — Section 301 pass-through
-
-Hi all,
-
-Heads up: effective **2025-03-17** Carrier will pass through a **4.2%
-increase** across the residential condenser, heat pump, and packaged
-un… [email-carrier-tariff-passthrough-2025-03:0000:c1e7dd2120]
-
-> # Price book update procedure
-
-Owner: Operations. Internal SOP.
-
-## Section 1
-
-Quarterly price book refresh is the primary cadence. Off-cycle updates triggered by supplier price changes follow the tariff playbook (see sops/tariff-response-playbook).
-
-## Section 2
-
-Mechanics: pull updated supplier costs into the staging table, apply category margin policy, generate the proposed price book, review w… [sop-price-book-update-procedure:0000:b0b51285b2]
-
-> # Top customer pricing communication template
-
-Owner: Operations. Internal SOP.
-
-## Section 1
-
-Triggered by any pricing change affecting a top-25 customer's commonly-purchased SKUs.
-
-## Section 2
-
-Channel: direct call from account rep, followed by an email confirming the conversation.
-
-## Section 3
-
-Content: effective date, magnitude, the substitute path if one exists, an offer for a pre-buy at th… [sop-top-customer-pricing-communication:0000:8fb4cc6cc8]
-
-> # Coastal HVAC Supply — Q3 price adjustment — Contactor line
-
----
-
-**From:** Jamie Carrillo <jamie.carrillo@coastalhvacsupply.example>
-**To:** purchasing@graph-distributor.example
-**Date:** 2024-06-24 10:57 EST
-**Subject:** Q3 price adjustment — Contactor line
-
-We're writing to confirm a 3% list price adjustment on the Contactor line, effective 2024-08-15. The change reflects raw material cost pre… [email-coastal-hvac-supply-2024-06-24-price-increase-018:0000:95359591c9]
-
-> # Munch's Supply — 2025 Volume Plus rebate program — enrollment open
-
----
-
-**From:** Carlos Romero <carlos.romero@munchssupply.example>
-**To:** purchasing@graph-distributor.example
-**Date:** 2024-06-28 10:44 EST
-**Subject:** 2025 Volume Plus rebate program — enrollment open
-
-Enrollment is now open for the 2025 Volume Plus program. Tier thresholds, accrual basis, and program-year boundaries are unc… [email-munch-s-supply-2024-06-28-rebate-program-019:0000:9f0c19d33a]
-
-> Ticket TKT-2025-Q1-006 (2025-02-23, customer CUS-0007)
-manufacturer: York | equipment_model: YOR698 | warehouse: WH-CHA
-
-Notes: customer asked: R-410A pre-buy quote for 50 cylinders, picked up at WH-CHA [ticket-counter-day-2025-q1#TKT-2025-Q1-006:0000:b8b7b3c15c]
-
-> Ticket TKT-2024-Q4-003 (2024-10-06, customer CUS-0496)
-manufacturer: Mitsubishi | equipment_model: MIT612 | warehouse: WH-CHA
-
-Notes: counter call — do you have 25-lb R-454B cylinders in stock at WH-CHA?. Followed up by email. [ticket-contractor-notes-2024-q4#TKT-2024-Q4-003:0000:e903bee253]
-
-> # Goodin Company — End-of-life notice — HON390 series
-
----
-
-**From:** Carlos Romero <carlos.romero@goodincompany.example>
-**To:** purchasing@graph-distributor.example
-**Date:** 2024-08-26 10:16 EST
-**Subject:** End-of-life notice — HON390 series
-
-The HON390 series will reach end-of-production on 2024-09-22. Terminal inventory will be allocated to active orders only; no new POs against HON390 accep… [email-goodin-company-2024-08-26-product-discontinuation-023:0000:c24894e12b]
-
-> # Lennox 2025-Q1 allocation thread
-
----
-
-**From:** Marcus Hale <mhale@lennoxpros.example>
-**To:** purchasing@graph-distributor.example
-**Cc:** allocation@lennoxpros.example
-**Date:** 2025-01-08 09:14 EST
-**Subject:** 2025-Q1 condenser allocation update — action requested
-
-Hi team,
-
-Quick note on the Q1 allocation for residential condenser lines. As
-you know we transitioned the bulk of the resident… [email-lennox-2025-q1-allocations:0000:848d0c2bdb]
-
-> # Tariff response playbook
-
-How we respond when a supplier announces a tariff-driven price change
-or allocation cut. Owner: VP Operations. Last reviewed: 2024-Q1.
-
-## When this triggers
-
-Any of:
-
-- A supplier email announces a price increase of >5% on a category we
-  carry, attributed to tariffs (Section 232 steel/aluminum, Section
-  301 China, anti-dumping, etc.).
-- A supplier announces an alloca… [sop-tariff-response-playbook:0000:48e5f73ab0]
-
+| Source | Relevance |
+|---|---|
+| [sop-supplier-bulletin-triage:0000:9620fe3cf5] | Inbox routing rules, tagging taxonomy, filing convention |
+| [sop-price-book-update-procedure:0000:b0b51285b2] | Off-cycle price book mechanics, audit logging, customer broadcast |
+| [sop-top-customer-pricing-communication:0000:8fb4cc6cc8] | Top-25 customer call-and-email protocol, CRM logging |
+| [email-carrier-tariff-passthrough-2025-03:0000:c1e7dd2120] | Live example: Carrier Section 301 pass-through, SKU scoping, PO protection window |

@@ -4,209 +4,94 @@ entity_id: r-410a-retrofit-workflow
 slug: r-410a-retrofit-workflow
 template_version: 1
 template_name: procedure.md.j2
-last_built: '2026-05-19T03:33:19+00:00'
+last_built: '2026-05-24T19:56:02+00:00'
 source_chunks:
-- bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761
 - manual-synth-install-residential-condenser:0000:dc2822e656
-- spec-rheem-2025-r-454b-condensers:0000:bb87b1f4eb
+- spec-carrier-2025-residential-condensers:0000:730402755b
+- bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761
 - sop-refrigerant-pre-buy-guidance:0000:75588b7bfe
-- spec-lennox-2025-condenser-pricebook-excerpt:0000:2675d0b6a1
 - sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c
 - bulletin-r-410a-phase-out-timeline:0000:ef1c9a2973
-- bulletin-rheem-tsb-2024-004-thermostat-wifi-reconnect:0000:be8d51ddf1
-- ticket-contractor-notes-2024-q4#TKT-2024-Q4-004:0000:bdfda6993c
-- ticket-counter-day-2025-q1#TKT-2025-Q1-006:0000:b8b7b3c15c
-- spec-carrier-2025-residential-condensers:0000:730402755b
-- sop-backorder-communication:0000:2b7d053360
-synthesizer: deterministic
+- bulletin-r-454b-overview:0000:5abf4e6fa7
+- email-coastal-hvac-supply-2024-01-21-rebate-program-017:0000:f44bc5e123
+- bulletin-epa-aim-act-summary:0000:2219085edc
+- bulletin-r-32-transition-overview:0000:29e90451bd
+- email-re-michel-2024-07-30-product-discontinuation-007:0000:473b5fbf7f
+- spec-lennox-2025-condenser-pricebook-excerpt:0000:2675d0b6a1
+synthesizer: llm
 ---
 
 # r-410a-retrofit-workflow
 
-_This page was assembled without LLM synthesis (no `ANTHROPIC_API_KEY` or `--no-llm` was used). Content below is a structured list of supporting source chunks; set the API key and rebuild for narrative synthesis._
+## purpose
 
-## Purpose
+This workflow guides HVAC operations leads and contractor customers through replacing R-410A residential split-system equipment as the AIM Act phase-out takes effect. Starting January 1, 2025, new manufacture and import of R-410A residential AC and heat-pump equipment is prohibited under the EPA Technology Transitions Rule (GWP < 700 cutoff) [bulletin-epa-aim-act-summary:0000:2219085edc]. R-410A service refills remain legal, but bulk allowances compress to 60% of baseline through 2028 and 30% starting 2029, driving prices up 20–60% over the transition window [bulletin-r-410a-phase-out-timeline:0000:ef1c9a2973]. The retrofit workflow exists to move customers off R-410A equipment before service costs become unpassable.
 
-> # Trane Technical Service Bulletin 2024-002
+---
 
-**Subject:** 4TWR8 series heat pump — R-454B model launch. Distributor
-stocking, service tool, and crossover guidance.
+## steps
 
-**Effective:** Production starts 2024-Q3 for 2025 model year.
+### 1. Identify customer exposure
 
-## What's new
+Run the R-410A exposure query against order history to flag contractor accounts with >$15K R-410A revenue in the trailing 24 months. Sort by descending exposure and keep the call list around 50 customers per region [sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c].
 
-The 4TWR8 platform is the first Trane residential heat-pump line built
-on R-454B. The 4TWR7 series (R-410A) continues in production through
-end-of-life inventory burn-down in 2024-Q4.
+### 2. Customer outreach
 
-Model number changes from `4TWR7XXX1000A` &rarr; `4TWR8XXX1000A`. Tonnages
-and electrical specs are unchanged. Refrigerant charge differs:
+Contact targeted contractors with a proactive replacement-quote offer. Key talking points: the 2025-01-01 manufacture cutoff, year-over-year refill price increases (~18% already observed), and the tightening allowance schedule through 2028. Offer two actions: (1) pull SKU history and price R-32 or R-454B equivalents, or (2) pre-buy refill cylinders to lock 2024 pricing [sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c].
 
-| Tonnage | 4TWR7 (R-410A) charg… [bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761]
+### 3. Confirm replacement refrigerant and OEM path
 
-> # Residential split-system condenser — installation procedure
+Determine which low-GWP refrigerant applies to the replacement unit. Major OEM splits as of 2024-Q4:
+- **R-454B:** Carrier, Trane, Lennox, Bryant [bulletin-r-454b-overview:0000:5abf4e6fa7]
+- **R-32:** Daikin, Mitsubishi, parts of Goodman/Amana [bulletin-r-32-transition-overview:0000:29e90451bd]
 
-Generic procedure used in our counter-day training material. Not a
-substitute for the OEM install manual that ships with the unit. For
-specific torque, charge, and clearance values consult the manufacturer
-document — e.g.
-[[bulletins/mfr-carrier-tsb-2024-007-fan-motor]] for fan-motor specs,
-or the model-specific install IO sheet from the OEM.
+**Critical:** R-410A systems cannot be retrofitted in place — the path for any R-410A unit requiring replacement is full system replacement (condenser + evaporator + line set flush + new TXV). There is no drop-in conversion [bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761].
 
-## 1. Site survey
+### 4. Site survey before pulling stock
 
-Before pulling stock for the install:
+- Confirm electrical service capacity for the new unit's MCA/MOP rating (most 2.0–5.0 ton residential condensers run 25–60A on 208/230V single-phase) [manual-synth-install-residential-condenser:0000:dc2822e656].
+- For A2L units (R-454B or R-32), confirm room volume at the evaporator location meets UL 60335-2-40 charge limits [manual-synth-install-residential-condenser:0000:dc2822e656].
+- Inspect the existing line set: reuse is permitted only if length is within OEM spec, the line set is free of moisture and acid, and it has been triple-flushed per OEM procedure [manual-synth-install-residential-condenser:0000:dc2822e656].
 
-- Confirm electrical service capacity for the new unit's MCA / MOP
-  rating. Most 2.0–5.0 ton residential condensers run 25–60A on… [manual-synth-install-residential-condenser:0000:dc2822e656]
+### 5. Verify technician tooling for A2L systems
 
-## Steps
+Before dispatch, confirm the tech has A2L-rated equipment:
+- A2L-rated leak detector (per UL 60335-2-40 §GG.6.2.4)
+- A2L-rated digital manifold gauge set (required for charge weight verification)
+- A2L-rated recovery machine with blend-preservation rating
+- Liquid-line charging hose (3/8" SAE) — **mandatory** for R-454B; vapor-charging from a virgin cylinder will fractionate the blend [bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761]
 
-_No source coverage._
+Mixing R-32 and R-410A in the same system destroys the system; strict bulk inventory separation is required at the counter [bulletin-r-32-transition-overview:0000:29e90451bd].
 
-## Citations
+### 6. Mechanical installation
 
-_No source coverage._
+- Pad: level, 4" minimum thickness, 4" minimum clearance from exterior wall. Hurricane straps where required by code.
+- Service clearance: 24" service-side, 12" airflow clearance on all other sides [manual-synth-install-residential-condenser:0000:dc2822e656].
 
-## Additional Source Material
+### 7. Pressure test and evacuation
 
-> # Trane Technical Service Bulletin 2024-002
+- Pressure test with **nitrogen** to OEM spec — typically 500–550 psig for R-410A legacy systems; 350–400 psig for R-454B systems. Hold 15 minutes; drop >5 psig fails.
+- Triple evacuate to **500 microns** absolute. Standing vacuum test 10 minutes; drift must not exceed 1,000 microns. Failure indicates remaining moisture or leak [manual-synth-install-residential-condenser:0000:dc2822e656].
 
-**Subject:** 4TWR8 series heat pump — R-454B model launch. Distributor
-stocking, service tool, and crossover guidance.
+### 8. Charge by weight
 
-**Effective:** Production starts 2024-Q3 for 2025 model year.
+Charge by weight using the OEM nameplate value. Note that R-454B charges differ from equivalent R-410A charges — for example, a 3.0-ton Trane unit requires 7 lb 0 oz R-410A vs. 7 lb 4 oz R-454B [bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761]. R-454B **must** be charged as liquid to prevent fractionation [bulletin-r-454b-overview:0000:5abf4e6fa7].
 
-## What's new
+### 9. Pre-buy refill inventory for residual R-410A service load
 
-The 4TWR8 platform is the first Trane residential heat-pump line built
-on R-454B. The 4TWR7 series (R-410A) continues in production through
-end-of-life inven… [bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761]
+For customers maintaining existing R-410A units through the service window, offer pre-buy contracts capped at 18 months of trailing 24-month R-410A consumption or 200 25-lb cylinders, priced at spot +8%. Storage billing applies after month 2 at $0.85/cylinder/month [sop-refrigerant-pre-buy-guidance:0000:75588b7bfe].
 
-> # Residential split-system condenser — installation procedure
+---
 
-Generic procedure used in our counter-day training material. Not a
-substitute for the OEM install manual that ships with the unit. For
-specific torque, charge, and clearance values consult the manufacturer
-document — e.g.
-[[bulletins/mfr-carrier-tsb-2024-007-fan-motor]] for fan-motor specs,
-or the model-specific install IO sheet from t… [manual-synth-install-residential-condenser:0000:dc2822e656]
+## citations
 
-> # Rheem 2025 R 454B Condensers
-
-_Rheem · Rheem · Condenser_
-
-
-| model | tonnage | refrigerant | list_price | tier_2_price |
-|---|---|---|---|---|
-| RHE371 | 5.0 | R-454B | 4303.00 | 5536.00 |
-| RHE491 | 5.0 | R-410A | 5594.00 | 2984.00 |
-| RHE108 | 2.5 | R-410A | 2707.00 | 2746.00 |
-| RHE282 | 3.0 | R-410A | 5222.00 | 2814.00 |
-| RHE612 | 4.0 | R-410A | 5446.00 | 5245.00 |
-| RHE290 | 3.5 | R-454B… [spec-rheem-2025-r-454b-condensers:0000:bb87b1f4eb]
-
-> # Refrigerant pre-buy guidance
-
-Owner: Inventory Ops. Last reviewed: 2024-Q3. Revisit 2025-Q1.
-
-## Why this exists
-
-The AIM Act allowance schedule compresses R-410A bulk supply through
-2028. Contractors are asking us to stock more R-410A through the
-transition; some are asking for pre-buy contracts. Goal of this SOP:
-decide who to say yes to and how much to commit.
-
-See [[bulletins/r-410a-phase-ou… [sop-refrigerant-pre-buy-guidance:0000:75588b7bfe]
-
-> # Lennox 2025 Condenser Pricebook Excerpt
-
-_Lennox · Lennox · Condenser_
-
-
-| model | tonnage | refrigerant | list_price | tier_2_price |
-|---|---|---|---|---|
-| LEN469 | 2.5 | R-454B | 6031.00 | 5119.00 |
-| LEN354 | 1.5 | R-454B | 3456.00 | 3619.00 |
-| LEN618 | 2.5 | R-410A | 4211.00 | 2542.00 |
-| LEN167 | 3.5 | R-454B | 5978.00 | 3373.00 |
-| LEN836 | 2.5 | R-410A | 4056.00 | 3925.00 |
-| LEN252 |… [spec-lennox-2025-condenser-pricebook-excerpt:0000:2675d0b6a1]
-
-> # R-410A retrofit — customer outreach playbook
-
-Owner: Sales Ops. Last reviewed: 2024-Q1. Driving doc:
-[[bulletins/r-410a-phase-out-timeline]].
-
-## Purpose
-
-Reach contractor customers who carry high R-410A exposure with a
-proactive replacement-quote offer **before** their installed base
-starts hitting service costs they can't pass on.
-
-## Identify the target list
-
-Run the standard exposure query:… [sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c]
-
-> # R-410A phase-out — operational timeline
-
-Synthesized from the AIM Act Technology Transitions Rule, AHRI updates,
-and OEM transition guides. For regulatory authority see
-[[bulletins/epa-aim-act-summary]].
-
-## Timeline
-
-**Through 2024-12-31**
-- R-410A residential and light-commercial AC/HP equipment may be
-  manufactured and imported.
-- Distributor inventory builds for the 2025 transition.
-
-**2025… [bulletin-r-410a-phase-out-timeline:0000:ef1c9a2973]
-
-> # Rheem Technical Service Bulletin 2024-004
-
-Subject: RHE101 smart thermostat — Wi-Fi auto-reconnect on router reboot.
-
-Symptom: after a router restart or ISP-side network reset, thermostat does not auto-reconnect to Wi-Fi. HVAC control continues to function locally; remote app does not.
-
-Resolution: firmware update RH-53514. OTA delivery to thermostats with active cloud connectivity; manual USB u… [bulletin-rheem-tsb-2024-004-thermostat-wifi-reconnect:0000:be8d51ddf1]
-
-> Ticket TKT-2024-Q4-004 (2024-10-26, customer CUS-0379)
-manufacturer: Lennox | equipment_model: LEN283 | warehouse: WH-CHI
-
-Notes: customer asked: R-410A pre-buy quote for 50 cylinders, picked up at WH-CHI [ticket-contractor-notes-2024-q4#TKT-2024-Q4-004:0000:bdfda6993c]
-
-> Ticket TKT-2025-Q1-006 (2025-02-23, customer CUS-0007)
-manufacturer: York | equipment_model: YOR698 | warehouse: WH-CHA
-
-Notes: customer asked: R-410A pre-buy quote for 50 cylinders, picked up at WH-CHA [ticket-counter-day-2025-q1#TKT-2025-Q1-006:0000:b8b7b3c15c]
-
-> # Carrier 2025 Residential Condensers
-
-_Carrier · Carrier · Condenser_
-
-
-| model | tonnage | refrigerant | list_price | tier_2_price |
-|---|---|---|---|---|
-| CAR940 | 4.0 | R-410A | 5011.00 | 4637.00 |
-| CAR996 | 4.0 | R-410A | 2289.00 | 3148.00 |
-| CAR562 | 3.5 | R-454B | 3627.00 | 4830.00 |
-| CAR512 | 5.0 | R-32 | 6559.00 | 4976.00 |
-| CAR560 | 3.0 | R-410A | 6448.00 | 3097.00 |
-| CAR570 | 2.5… [spec-carrier-2025-residential-condensers:0000:730402755b]
-
-> # Backorder communication SLA
-
-Owner: Operations. Internal SOP.
-
-## Section 1
-
-Backorder occurs when an order line item ships partial or short. Customer is notified within 4 business hours of the shipment leaving.
-
-## Section 2
-
-Backorder ETA is updated every 5 business days until the SKU ships. If ETA slips beyond 10 business days, the line item is offered for substitute or cancellation.
-
-## Sect… [sop-backorder-communication:0000:2b7d053360]
-
+| Chunk | Source |
+|---|---|
+| [bulletin-epa-aim-act-summary:0000:2219085edc] | AIM Act HFC phase-down — operational summary |
+| [bulletin-r-410a-phase-out-timeline:0000:ef1c9a2973] | R-410A phase-out — operational timeline |
+| [sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c] | R-410A retrofit — customer outreach playbook |
+| [bulletin-r-454b-overview:0000:5abf4e6fa7] | R-454B — replacement refrigerant overview |
+| [bulletin-r-32-transition-overview:0000:29e90451bd] | R-32 — replacement refrigerant overview |
+| [bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761] | Trane TSB 2024-002: 4TWR8 / R-454B launch |
+| [manual-synth-install-residential-condenser:0000:dc2822e656] | Residential split-system condenser — installation procedure |
+| [sop-refrigerant-pre-buy-guidance:0000:75588b7bfe] | Refrigerant pre-buy guidance |

@@ -4,54 +4,26 @@ entity_id: Honeywell
 slug: honeywell
 template_version: 1
 template_name: manufacturer.md.j2
-last_built: '2026-05-19T03:33:19+00:00'
+last_built: '2026-05-24T19:53:48+00:00'
 source_chunks:
-- ticket-warranty-claims-2024#TKT-MS-2024-008:0000:17c899e6c2
 - bulletin-honeywell-tsb-2024-011-ecm-blower-firmware:0000:903113f43b
-synthesizer: deterministic
+- ticket-warranty-claims-2024#TKT-MS-2024-008:0000:17c899e6c2
+synthesizer: llm
 ---
 
 # Honeywell
 
-_This page was assembled without LLM synthesis (no `ANTHROPIC_API_KEY` or `--no-llm` was used). Content below is a structured list of supporting source chunks; set the API key and rebuild for narrative synthesis._
+## overview
 
-## Overview
+Honeywell is an HVAC equipment and controls manufacturer with a product portfolio spanning blower modules, contactors, and related electromechanical components. Field support is provided via technical service bulletins and warranty claims processes. [bulletin-honeywell-tsb-2024-011-ecm-blower-firmware:0000:903113f43b][ticket-warranty-claims-2024#TKT-MS-2024-008:0000:17c899e6c2]
 
-> Ticket TKT-MS-2024-008 (2024-09-21, customer CUS-0420)
-manufacturer: Honeywell | equipment_model: HON772 | warehouse: WH-PHX | fault_code: P-LOW | parts_used: HO-41020
+## product_categories
 
-Notes: Tech: intermittent humming at contactor pull-in. Confirmed in field. Need warranty swap of HO-41020. [ticket-warranty-claims-2024#TKT-MS-2024-008:0000:17c899e6c2]
+Honeywell's documented product lines include:
 
-> # Honeywell Technical Service Bulletin 2024-011
+- **ECM Blower Modules** — e.g., the HON255 platform, subject to firmware updates addressing low-airflow alarm conditions (fault code 21). [bulletin-honeywell-tsb-2024-011-ecm-blower-firmware:0000:903113f43b]
+- **Contactors** — e.g., part HO-41020, associated with the HON772 equipment model. Field faults include intermittent humming at contactor pull-in (fault code P-LOW). [ticket-warranty-claims-2024#TKT-MS-2024-008:0000:17c899e6c2]
 
-Subject: ECM blower module on HON255 platform — firmware update for low-airflow alarm.
-
-Symptom: ECM blower posts low-airflow alarm code 21 on standard 0.5 in. WC static. Customers report unit running but reduced airflow at the registers.
-
-Resolution: Apply firmware update HO-85004 via the OEM service tool (kit ST-FW-200). Update preserves dip-switch configuration. Estimated 8 minutes per unit.
-
-Warranty: not warranty-replacement-eligible; firmware-only fix. [bulletin-honeywell-tsb-2024-011-ecm-blower-firmware:0000:903113f43b]
-
-## Product Categories
+## regulatory_posture
 
 _No source coverage._
-
-## Regulatory Posture
-
-_No source coverage._
-
-## Additional Source Material
-
-> Ticket TKT-MS-2024-008 (2024-09-21, customer CUS-0420)
-manufacturer: Honeywell | equipment_model: HON772 | warehouse: WH-PHX | fault_code: P-LOW | parts_used: HO-41020
-
-Notes: Tech: intermittent humming at contactor pull-in. Confirmed in field. Need warranty swap of HO-41020. [ticket-warranty-claims-2024#TKT-MS-2024-008:0000:17c899e6c2]
-
-> # Honeywell Technical Service Bulletin 2024-011
-
-Subject: ECM blower module on HON255 platform — firmware update for low-airflow alarm.
-
-Symptom: ECM blower posts low-airflow alarm code 21 on standard 0.5 in. WC static. Customers report unit running but reduced airflow at the registers.
-
-Resolution: Apply firmware update HO-85004 via the OEM service tool (kit ST-FW-200). Update preserves dip-switc… [bulletin-honeywell-tsb-2024-011-ecm-blower-firmware:0000:903113f43b]
-
