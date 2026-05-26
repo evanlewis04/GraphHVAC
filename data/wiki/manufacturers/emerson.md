@@ -2,9 +2,9 @@
 entity_type: manufacturers
 entity_id: Emerson
 slug: emerson
-template_version: 1
+template_version: 2
 template_name: manufacturer.md.j2
-last_built: '2026-05-24T19:51:48+00:00'
+last_built: '2026-05-26T14:04:41+00:00'
 source_chunks: []
 synthesizer: llm
 validation_warnings:

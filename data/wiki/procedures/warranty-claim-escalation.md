@@ -2,9 +2,9 @@
 entity_type: procedures
 entity_id: warranty-claim-escalation
 slug: warranty-claim-escalation
-template_version: 1
+template_version: 2
 template_name: procedure.md.j2
-last_built: '2026-05-24T19:56:25+00:00'
+last_built: '2026-05-26T14:10:26+00:00'
 source_chunks:
 - sop-warranty-claim-escalation:0000:f84fc045a9
 - sop-supplier-bulletin-triage:0000:9620fe3cf5
@@ -23,13 +23,13 @@ synthesizer: llm
 
 # warranty-claim-escalation
 
-## Purpose
+## purpose
 
-Warranty claim escalation defines the path a warranty claim travels from initial counter receipt through OEM resolution, with clear ownership at each tier. The goal is to protect contractor relationships, recover OEM costs where possible, and avoid ad-hoc decisions. Owner: Customer Service [sop-warranty-claim-escalation:0000:f84fc045a9].
+This procedure governs how warranty claims from contractors are triaged, escalated, and resolved across three tiers — counter staff, service ops, and VP Operations. The goal is to protect contractor relationships, manage OEM warranty recovery, and limit unrecoverable cost exposure while maintaining clear accountability at each tier [sop-warranty-claim-escalation:0000:f84fc045a9].
 
 ---
 
-## Steps
+## steps
 
 ### Tier 1 — Counter Staff (Day 0)
 
@@ -40,9 +40,11 @@ Counter staff or phone-line CSR receives the claim and assembles the standard cl
 - Photos of the failed part on installed equipment
 - Service tech name and certification card #
 
-If the SKU is within the OEM's standard warranty window **and** the failure mode matches a known manufacturer TSB, counter staff processes the swap directly. Replacement ships within 24 hours; SKU returns to the manufacturer warranty pool [sop-warranty-claim-escalation:0000:f84fc045a9].
+If the SKU is within the OEM's standard warranty window **and** the failure mode matches a known manufacturer TSB, counter staff processes the swap directly. Replacement ships within 24 hours; SKU routes back to the manufacturer warranty pool [sop-warranty-claim-escalation:0000:f84fc045a9].
 
-TSBs are filed under `data/sources/bulletins/` by Purchasing and forwarded to counter staff upon receipt [sop-supplier-bulletin-triage:0000:9620fe3cf5]. Example on-file TSBs relevant to warranty swaps include the Amana IFC board bulletin (P/N AM-62867, 5-year parts warranty) [bulletin-amana-tsb-2024-010-control-board-replacement:0000:d19a6155e1] and the York IFC board bulletin (P/N YO-66065, 5-year parts warranty) [bulletin-york-tsb-2024-005-control-board-replacement:0000:c6422a1c4b].
+> **Example TSBs that qualify for direct Tier 1 swap:** The [[manufacturers/amana]] IFC control board (P/N AM-62867) for intermittent ignition failure on AMA460 furnaces carries a standard 5-year parts warranty [bulletin-amana-tsb-2024-010-control-board-replacement:0000:d19a6155e1]. Similarly, the [[manufacturers/york]] IFC control board (P/N YO-66065) for YOR386 furnaces carries the same 5-year coverage [bulletin-york-tsb-2024-005-control-board-replacement:0000:c6422a1c4b]. Both are direct-swap eligible at Tier 1 when a matching TSB is on file.
+
+TSBs are routed to counter staff by Purchasing and filed under `data/sources/bulletins/` [sop-supplier-bulletin-triage:0000:9620fe3cf5].
 
 ---
 
@@ -50,12 +52,12 @@ TSBs are filed under `data/sources/bulletins/` by Purchasing and forwarded to co
 
 Escalate to service ops if **any** of the following apply [sop-warranty-claim-escalation:0000:f84fc045a9]:
 
-- SKU is outside the standard OEM warranty window but contractor claims extended-warranty coverage
-- Failure mode is not documented in a manufacturer TSB
-- Customer has had >3 warranty claims for the same SKU in the same quarter
-- Total claim value exceeds $2,500
+- SKU is **outside** the standard OEM warranty window but contractor claims extended-warranty coverage
+- Failure mode is **not** documented in a manufacturer TSB
+- Customer has had **>3** warranty claims for the same SKU in the same quarter
+- Total claim value **>$2,500**
 
-Service ops opens an OEM warranty case, attaches photos and contractor install records, and logs the claim in the warranty log. Resolution SLAs [sop-warranty-claim-escalation:0000:f84fc045a9]:
+Service ops opens a formal OEM warranty case with photos and contractor install records and tracks it in the warranty log. Resolution SLAs [sop-warranty-claim-escalation:0000:f84fc045a9]:
 
 | Outcome | SLA |
 |---|---|
@@ -66,23 +68,23 @@ Service ops opens an OEM warranty case, attaches photos and contractor install r
 
 ### Tier 3 — VP Operations (Day 5+)
 
-Escalate to VP Ops if the OEM denies a claim where the contractor has a strong case — e.g., a TSB existed but was not communicated, or a known production-date defect is involved [sop-warranty-claim-escalation:0000:f84fc045a9].
+Escalate to VP Ops when the OEM denies a claim where the contractor has a strong case — for example, a TSB existed but was not communicated, or a known production-date defect is involved [sop-warranty-claim-escalation:0000:f84fc045a9].
 
-VP Ops chooses one of three paths [sop-warranty-claim-escalation:0000:f84fc045a9]:
+VP Ops selects one of three resolutions [sop-warranty-claim-escalation:0000:f84fc045a9]:
 
 1. **Eat the cost** internally to preserve the contractor relationship
-2. **Push the OEM** via the regional rep, with threat of allocation rebalance
+2. **Push the OEM** via the regional rep; threaten allocation rebalance
 3. **Decline the contractor**
 
-Most denials are absorbed if total exposure is under $5K and the customer's 24-month revenue exceeds $50K [sop-warranty-claim-escalation:0000:f84fc045a9].
+Decision rule: most denials are absorbed internally if total exposure is **<$5K** and the customer's 24-month revenue exceeds **$50K** [sop-warranty-claim-escalation:0000:f84fc045a9].
 
 ---
 
-## Citations
+## citations
 
-| Chunk | Source |
-|---|---|
-| [sop-warranty-claim-escalation:0000:f84fc045a9] | Warranty claim escalation SOP — primary procedure document |
-| [sop-supplier-bulletin-triage:0000:9620fe3cf5] | Supplier bulletin triage SOP — TSB routing and filing |
-| [bulletin-amana-tsb-2024-010-control-board-replacement:0000:d19a6155e1] | Amana TSB 2024-010 — IFC board AM-62867 |
-| [bulletin-york-tsb-2024-005-control-board-replacement:0000:c6422a1c4b] | York TSB 2024-005 — IFC board YO-66065 |
+| Chunk ID | Source | Relevance |
+|---|---|---|
+| [sop-warranty-claim-escalation:0000:f84fc045a9] | Warranty claim escalation SOP | Primary procedure — all three tiers |
+| [sop-supplier-bulletin-triage:0000:9620fe3cf5] | Supplier bulletin triage SOP | TSB routing to counter staff |
+| [bulletin-amana-tsb-2024-010-control-board-replacement:0000:d19a6155e1] | Amana TSB 2024-010 | Example Tier 1 direct-swap TSB |
+| [bulletin-york-tsb-2024-005-control-board-replacement:0000:c6422a1c4b] | York TSB 2024-005 | Example Tier 1 direct-swap TSB |

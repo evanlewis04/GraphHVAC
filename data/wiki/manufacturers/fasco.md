@@ -2,9 +2,9 @@
 entity_type: manufacturers
 entity_id: Fasco
 slug: fasco
-template_version: 1
+template_version: 2
 template_name: manufacturer.md.j2
-last_built: '2026-05-24T19:51:47+00:00'
+last_built: '2026-05-26T14:04:39+00:00'
 source_chunks: []
 synthesizer: llm
 validation_warnings:
@@ -13,14 +13,14 @@ validation_warnings:
 
 # Fasco
 
-## overview
+## Overview
 
 _No source coverage._
 
-## product_categories
+## Product Categories
 
 _No source coverage._
 
-## regulatory_posture
+## Regulatory Posture
 
 _No source coverage._

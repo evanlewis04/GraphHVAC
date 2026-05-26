@@ -2,9 +2,9 @@
 entity_type: procedures
 entity_id: r-410a-retrofit-workflow
 slug: r-410a-retrofit-workflow
-template_version: 1
+template_version: 2
 template_name: procedure.md.j2
-last_built: '2026-05-24T19:56:02+00:00'
+last_built: '2026-05-26T14:09:58+00:00'
 source_chunks:
 - manual-synth-install-residential-condenser:0000:dc2822e656
 - spec-carrier-2025-residential-condensers:0000:730402755b
@@ -19,79 +19,85 @@ source_chunks:
 - email-re-michel-2024-07-30-product-discontinuation-007:0000:473b5fbf7f
 - spec-lennox-2025-condenser-pricebook-excerpt:0000:2675d0b6a1
 synthesizer: llm
+validation_warnings:
+- no_citations_in_body
 ---
 
 # r-410a-retrofit-workflow
 
-## purpose
+## Purpose
 
-This workflow guides HVAC operations leads and contractor customers through replacing R-410A residential split-system equipment as the AIM Act phase-out takes effect. Starting January 1, 2025, new manufacture and import of R-410A residential AC and heat-pump equipment is prohibited under the EPA Technology Transitions Rule (GWP < 700 cutoff) [bulletin-epa-aim-act-summary:0000:2219085edc]. R-410A service refills remain legal, but bulk allowances compress to 60% of baseline through 2028 and 30% starting 2029, driving prices up 20–60% over the transition window [bulletin-r-410a-phase-out-timeline:0000:ef1c9a2973]. The retrofit workflow exists to move customers off R-410A equipment before service costs become unpassable.
+This workflow guides counter staff and field sales through the end-to-end process of replacing an [[refrigerants/r-410a]]-based residential split system with a compliant low-GWP replacement. The driver is the [[regulations/aim-act]] Technology Transitions Rule, which prohibits new manufacture of R-410A residential AC and heat-pump equipment effective January 1, 2025 [chunk_id: bulletin-epa-aim-act-summary:0000:2219085edc]. R-410A service refills remain legal, but allowance compression will push refill pricing 20–60% higher through 2028, making early system replacement the financially sound path for most customers [chunk_id: bulletin-r-410a-phase-out-timeline:0000:ef1c9a2973].
+
+The outreach trigger: contractors who purchased more than $15K of R-410A equipment in the trailing 24 months are the priority conversion targets [chunk_id: sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c].
 
 ---
 
-## steps
+## Steps
 
-### 1. Identify customer exposure
+### 1. Identify the replacement refrigerant platform
 
-Run the R-410A exposure query against order history to flag contractor accounts with >$15K R-410A revenue in the trailing 24 months. Sort by descending exposure and keep the call list around 50 customers per region [sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c].
+Determine whether the replacement system will run [[refrigerants/r-454b]] or [[refrigerants/r-32]]. OEM choice drives the answer:
 
-### 2. Customer outreach
+- **R-454B:** [[manufacturers/carrier]], [[manufacturers/trane]], [[manufacturers/lennox]], [[manufacturers/bryant]], parts of [[manufacturers/rheem]] and [[manufacturers/york]] [chunk_id: bulletin-r-454b-overview:0000:5abf4e6fa7]
+- **R-32:** [[manufacturers/daikin]], [[manufacturers/mitsubishi]], parts of [[manufacturers/goodman]] and [[manufacturers/amana]] [chunk_id: bulletin-r-32-transition-overview:0000:29e90451bd]
 
-Contact targeted contractors with a proactive replacement-quote offer. Key talking points: the 2025-01-01 manufacture cutoff, year-over-year refill price increases (~18% already observed), and the tightening allowance schedule through 2028. Offer two actions: (1) pull SKU history and price R-32 or R-454B equivalents, or (2) pre-buy refill cylinders to lock 2024 pricing [sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c].
+Both replacements carry ASHRAE A2L (mildly flammable) classification, which drives tool and training requirements in all subsequent steps [chunk_id: bulletin-r-454b-overview:0000:5abf4e6fa7][chunk_id: bulletin-r-32-transition-overview:0000:29e90451bd].
 
-### 3. Confirm replacement refrigerant and OEM path
+### 2. Confirm the retrofit scope — full system replacement required
 
-Determine which low-GWP refrigerant applies to the replacement unit. Major OEM splits as of 2024-Q4:
-- **R-454B:** Carrier, Trane, Lennox, Bryant [bulletin-r-454b-overview:0000:5abf4e6fa7]
-- **R-32:** Daikin, Mitsubishi, parts of Goodman/Amana [bulletin-r-32-transition-overview:0000:29e90451bd]
+**R-410A systems cannot be retrofitted in place.** For example, [[manufacturers/trane]]'s 4TWR8 (R-454B) explicitly cannot be retrofitted from a 4TWR7 (R-410A); the required path is full system replacement: condenser + evaporator + line set flush + new TXV [chunk_id: bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761]. Quote the customer accordingly.
 
-**Critical:** R-410A systems cannot be retrofitted in place — the path for any R-410A unit requiring replacement is full system replacement (condenser + evaporator + line set flush + new TXV). There is no drop-in conversion [bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761].
+### 3. Site survey
 
-### 4. Site survey before pulling stock
+Before pulling stock [chunk_id: manual-synth-install-residential-condenser:0000:dc2822e656]:
 
-- Confirm electrical service capacity for the new unit's MCA/MOP rating (most 2.0–5.0 ton residential condensers run 25–60A on 208/230V single-phase) [manual-synth-install-residential-condenser:0000:dc2822e656].
-- For A2L units (R-454B or R-32), confirm room volume at the evaporator location meets UL 60335-2-40 charge limits [manual-synth-install-residential-condenser:0000:dc2822e656].
-- Inspect the existing line set: reuse is permitted only if length is within OEM spec, the line set is free of moisture and acid, and it has been triple-flushed per OEM procedure [manual-synth-install-residential-condenser:0000:dc2822e656].
+- **Electrical:** confirm service capacity for the new unit's MCA/MOP rating (typically 25–60A, 208/230V single-phase for 2.0–5.0 ton residential).
+- **Refrigerant compatibility:** A2L systems (R-454B, R-32) require minimum room volume for the evaporator location per UL 60335-2-40 charge limits.
+- **Line set:** reuse is permitted only if lengths are within OEM spec, the line set is free of moisture and acid, and — for R-454B or R-32 — the line set is triple-flushed per OEM procedure.
 
-### 5. Verify technician tooling for A2L systems
+### 4. Verify A2L tool readiness
 
-Before dispatch, confirm the tech has A2L-rated equipment:
+Contractors must have A2L-rated equipment before any work begins [chunk_id: bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761]:
+
 - A2L-rated leak detector (per UL 60335-2-40 §GG.6.2.4)
-- A2L-rated digital manifold gauge set (required for charge weight verification)
+- A2L-rated digital manifold gauge set (required for charge weight verification; mechanical gauges permitted for pressure checks only)
 - A2L-rated recovery machine with blend-preservation rating
-- Liquid-line charging hose (3/8" SAE) — **mandatory** for R-454B; vapor-charging from a virgin cylinder will fractionate the blend [bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761]
+- Liquid-line charging hose (3/8" SAE) — **mandatory for R-454B**; vapor-charging from a virgin cylinder will fractionate the blend
 
-Mixing R-32 and R-410A in the same system destroys the system; strict bulk inventory separation is required at the counter [bulletin-r-32-transition-overview:0000:29e90451bd].
+The liquid-charging requirement is the single most common service mistake during the transition [chunk_id: bulletin-r-454b-overview:0000:5abf4e6fa7].
 
-### 6. Mechanical installation
+### 5. Mechanical installation
 
-- Pad: level, 4" minimum thickness, 4" minimum clearance from exterior wall. Hurricane straps where required by code.
-- Service clearance: 24" service-side, 12" airflow clearance on all other sides [manual-synth-install-residential-condenser:0000:dc2822e656].
+- Pad: level, 4" minimum thickness, 4" minimum clearance from exterior wall; hurricane straps per local code [chunk_id: manual-synth-install-residential-condenser:0000:dc2822e656].
+- Service clearance: 24" on the service side, 12" airflow clearance on all other sides [chunk_id: manual-synth-install-residential-condenser:0000:dc2822e656].
+- Tie-down per local code (typically two straps) [chunk_id: manual-synth-install-residential-condenser:0000:dc2822e656].
 
-### 7. Pressure test and evacuation
+### 6. Pressure test and evacuation
 
-- Pressure test with **nitrogen** to OEM spec — typically 500–550 psig for R-410A legacy systems; 350–400 psig for R-454B systems. Hold 15 minutes; drop >5 psig fails.
-- Triple evacuate to **500 microns** absolute. Standing vacuum test 10 minutes; drift must not exceed 1,000 microns. Failure indicates remaining moisture or leak [manual-synth-install-residential-condenser:0000:dc2822e656].
+- Pressure test with **nitrogen** to OEM-specified pressure. Typical targets: 500–550 psig for [[refrigerants/r-410a]] legacy systems; 350–400 psig for R-454B systems. Hold 15 minutes; a drop of more than 5 psig is a failure [chunk_id: manual-synth-install-residential-condenser:0000:dc2822e656].
+- Triple evacuate to **500 microns** absolute. Standing vacuum test 10 minutes; drift exceeding 1,000 microns indicates remaining moisture or a leak [chunk_id: manual-synth-install-residential-condenser:0000:dc2822e656].
 
-### 8. Charge by weight
+### 7. Charge by weight
 
-Charge by weight using the OEM nameplate value. Note that R-454B charges differ from equivalent R-410A charges — for example, a 3.0-ton Trane unit requires 7 lb 0 oz R-410A vs. 7 lb 4 oz R-454B [bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761]. R-454B **must** be charged as liquid to prevent fractionation [bulletin-r-454b-overview:0000:5abf4e6fa7].
+Charge by weight per the OEM model-specific spec sheet. Note that R-454B charge weights differ from R-410A even on equivalent-tonnage platforms — for example, on [[manufacturers/trane]]'s 4TWR series, the R-454B charge runs 4–8 oz heavier per ton than the R-410A equivalent [chunk_id: bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761]. Always pull the model-specific IO sheet; do not interpolate from the old unit's nameplate.
 
-### 9. Pre-buy refill inventory for residual R-410A service load
+### 8. Refrigerant supply — stocking and pre-buy
 
-For customers maintaining existing R-410A units through the service window, offer pre-buy contracts capped at 18 months of trailing 24-month R-410A consumption or 200 25-lb cylinders, priced at spot +8%. Storage billing applies after month 2 at $0.85/cylinder/month [sop-refrigerant-pre-buy-guidance:0000:75588b7bfe].
+- R-454B 25-lb cylinders are the standard distributor SKU through 2025; 100-lb returnable cylinders arrive mid-2025 from primary suppliers [chunk_id: bulletin-r-454b-overview:0000:5abf4e6fa7].
+- R-410A service refill pre-buys are available for eligible customers (24-month revenue >$50K, R-410A revenue share >30%), capped at 18 months of trailing consumption or 200 cylinders, priced at spot +8% [chunk_id: sop-refrigerant-pre-buy-guidance:0000:75588b7bfe].
+- Forward buys on R-32 or R-454B are **not** offered; supply is not currently constrained [chunk_id: sop-refrigerant-pre-buy-guidance:0000:75588b7bfe].
+
+### 9. Customer communication
+
+Use the standard outreach script to frame the economics: R-410A refill pricing is already up 18% year-over-year, and the allowance schedule tightens through 2028, making the back-half service costs of any remaining R-410A unit increasingly difficult to pass on [chunk_id: sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c]. Offer replacement quotes cross-referenced against the customer's R-410A purchase history, and pair with a pre-buy option if they have in-service R-410A units they are not yet replacing.
 
 ---
 
-## citations
+## Citations
 
 | Chunk | Source |
 |---|---|
-| [bulletin-epa-aim-act-summary:0000:2219085edc] | AIM Act HFC phase-down — operational summary |
-| [bulletin-r-410a-phase-out-timeline:0000:ef1c9a2973] | R-410A phase-out — operational timeline |
-| [sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c] | R-410A retrofit — customer outreach playbook |
-| [bulletin-r-454b-overview:0000:5abf4e6fa7] | R-454B — replacement refrigerant overview |
-| [bulletin-r-32-transition-overview:0000:29e90451bd] | R-32 — replacement refrigerant overview |
-| [bulletin-trane-tsb-2024-002-r-32-launch:0000:d16e4c2761] | Trane TSB 2024-002: 4TWR8 / R-454B launch |
-| [manual-synth-install-residential-condenser:0000:dc2822e656] | Residential split-system condenser — installation procedure |
-| [sop-refrigerant-pre-buy-guidance:0000:75588b7bfe] | Refrigerant pre-buy guidance |
+| [chunk_id: bulletin-epa-aim-act-summary:0000:2219085edc] | AIM Act HFC phase-down — operational summary |
+| [chunk_id: bulletin-r-410a-phase-out-timeline:0000:ef1c9a2973] | R-410A phase-out — operational timeline |
+| [chunk_id: sop-r-410a-retrofit-customer-outreach:0000:2349bfb54c] | R-410A

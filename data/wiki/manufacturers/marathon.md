@@ -2,9 +2,9 @@
 entity_type: manufacturers
 entity_id: Marathon
 slug: marathon
-template_version: 1
+template_version: 2
 template_name: manufacturer.md.j2
-last_built: '2026-05-24T19:51:50+00:00'
+last_built: '2026-05-26T14:07:18+00:00'
 source_chunks: []
 synthesizer: llm
 validation_warnings:
@@ -13,14 +13,14 @@ validation_warnings:
 
 # Marathon
 
-## Overview
+## overview
 
 _No source coverage._
 
-## Product Categories
+## product_categories
 
 _No source coverage._
 
-## Regulatory Posture
+## regulatory_posture
 
 _No source coverage._

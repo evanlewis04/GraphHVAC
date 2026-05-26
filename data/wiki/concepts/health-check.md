@@ -1,12 +1,12 @@
 ---
 type: concept
 topic: Knowledge health check
-generated_at: 2026-05-24T19:58:36+00:00
+generated_at: 2026-05-25T13:58:00+00:00
 ---
 
 # Knowledge Health Check
 
-_Generated 2026-05-24T19:58:36+00:00_
+_Generated 2026-05-25T13:58:00+00:00_
 
 ## Summary
 - Wiki pages (structurer-built): **32**
@@ -16,7 +16,7 @@ _Generated 2026-05-24T19:58:36+00:00_
 - Thin pages (< 2 source chunks): **13**
 - Dangling wikilinks: **0**
 - Pages with validation warnings: **10**
-- Contradiction findings: **3**
+- Contradiction findings: **0**
 
 ## Coverage by bucket
 
@@ -57,57 +57,6 @@ _Generated 2026-05-24T19:58:36+00:00_
 - `regulations\ahri-210-240.md`: ['no_citations_in_body']
 - `regulations\aim-act.md`: ['no_citations_in_body']
 - `regulations\epa-snap.md`: ['no_citations_in_body']
-
-## LLM contradiction findings
-
-### manufacturers
-I'll compare factual claims across all pages systematically.
-
-**Checking R-410A GWP:**
-- daikin.md: R-410A GWP = 2088
-- No other page states a different GWP for R-410A. ✓
-
-**Checking R-32 GWP:**
-- daikin.md: R-32 GWP = 675
-- No contradiction found. ✓
-
-**Checking R-454B GWP:**
-- bryant.md: R-454B GWP = 466
-- carrier.md: (no GWP stated for R-454B)
-- No contradiction found. ✓
-
-**Checking standard parts warranty:**
-- amana.md: Standard warranty on Amana parts is **5 years**
-- bryant.md: Standard parts warranty is **5 years**
-- No contradiction. ✓
-
-**Checking R-454B adopters:**
-- bryant.md: Lists R-454B primary adopters as Carrier, Trane, Lennox, and Bryant
-- daikin.md: Lists R-454B adopters as Carrier, Trane, and Lennox (no Bryant)
-- carrier.md: (no explicit adopter list)
-
-- **R-454B primary adopters list: bryant.md includes Bryant itself; daikin.md lists only Carrier, Trane, and Lennox, omitting Bryant.**
-
-No other factual contradictions found across the remaining pages (Copeland and Ecobee have no source coverage).
-
----
-
-**Contradictions found:**
-
-- **R-454B primary adopters:** `bryant.md` lists Bryant, Carrier, Trane, and Lennox as primary R-454B adopters for U.S. residential platforms; `daikin.md` lists only Carrier, Trane, and Lennox, omitting Bryant.
-
-### procedures
-**NONE**
-
-The pages cover distinct procedures (R-410A retrofit workflow, supplier consolidation, tariff response, warranty claim escalation) with minimal factual overlap. Where shared facts appear (e.g., EPA AIM Act manufacture cutoff of January 1, 2025; TSB filing location `data/sources/bulletins/`; purchasing inbox review at 10 am and 3 pm), they are stated consistently across pages.
-
-### refrigerants
-I found one factual contradiction:
-
-- **R-454B blend composition (R-1234yf vs. R-454B pages):** `r-1234yf.md` states R-454B is **68.9% R-32 / 31.1% R-1234yf**, while `r-454b.md` contains no explicit composition figures to confirm or deny this — however, this is not a cross-page conflict within the provided text. Reviewing more carefully:
-
-**NONE** — No direct same-fact contradictions are present across the provided pages. The R-410A GWP is consistently cited as ~2088, R-454B GWP as 466, R-32 GWP as 675, both A2L classifications are consistent, the January 1 2025 equipment cutoff is consistent, and the AIM Act allowance tiers (60%/30%/15%) are consistent across all pages that reference them.
-
 
 ## Orphan chunks (not cited)
 

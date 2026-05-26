@@ -57,7 +57,7 @@ from src.retrieval.search import RetrievedChunk, retrieve
 
 load_settings()  # ensure env is hydrated even when no other module triggered it
 
-TEMPLATE_VERSION = 1
+TEMPLATE_VERSION = 2  # v2 adds [[wikilink]] emission for Obsidian graph view
 
 ROOT = Path(__file__).resolve().parents[2]
 CONCEPTS_PATH = Path(__file__).with_name("concepts.yaml")
@@ -188,26 +188,56 @@ def _interpolate_filters(filters: dict[str, Any] | None, instance: dict[str, Any
 
 
 _LLM_SYSTEM_PROMPT = """\
-You write wiki entries for an HVAC parts distributor.
+You write wiki entries for an HVAC parts distributor. The wiki is an
+Obsidian vault — the graph view connects pages via [[wikilinks]].
 
-You will be given an entity (e.g. a refrigerant, regulation, or manufacturer),
-a list of source chunks already retrieved from the corpus, and the required
-sections to cover.
+You will be given:
+  - the entity (e.g. a refrigerant, regulation, manufacturer, or procedure)
+  - source chunks already retrieved from the corpus
+  - the required H2 sections to cover
+  - the catalog of known wikilink targets in this vault
 
 Rules — non-negotiable:
 
-1. Every factual claim in your output MUST be supported by one of the
-   provided chunks and cited inline as [chunk_id] using the EXACT chunk_id
-   string from the source list. You may cite multiple chunks: [c1][c2].
-2. Never invent chunk_ids. If you don't have a chunk to support a claim,
-   omit the claim.
-3. Cover each required section as an H2 heading. If a section has no
-   supporting chunks, write "_No source coverage._" under it — do not
-   fabricate content.
-4. Output ONLY the markdown body — no frontmatter, no opening commentary.
-   The first line should be a single H1 with the entity title.
-5. Be concise. The wiki reader is an HVAC operations lead, not a student.
+1. Every factual claim MUST be supported by one of the provided chunks
+   and cited inline as [chunk_id] using the EXACT chunk_id string. You
+   may stack citations: [chunk_a][chunk_b].
+2. Never invent chunk_ids. If no chunk supports a claim, omit it.
+3. Whenever you mention another entity that has its own wiki page (any
+   target listed in KNOWN WIKILINKS), wrap it as [[bucket/slug]] so
+   Obsidian's graph view connects the pages. Place wikilinks INSIDE
+   the prose, separate from chunk_id citations. Example:
+   "R-454B is the primary replacement chosen by [[manufacturers/Carrier]]
+   and [[manufacturers/Trane]] for 2025+ residential lines [chunk_x]."
+4. NEVER invent wikilinks. Only use targets from the KNOWN WIKILINKS
+   list verbatim. A dangling [[link]] is worse than no link at all.
+5. Cover each required section as an H2 heading. If a section has no
+   supporting chunks, write "_No source coverage._" under it.
+6. Output ONLY the markdown body — no frontmatter, no opening commentary.
+   First line is a single H1 with the entity title.
+7. Be concise. The reader is an HVAC operations lead, not a student.
 """
+
+
+def _known_wikilinks(self_entity_type: str, self_entity_id: str) -> list[str]:
+    """List every [[bucket/slug]] target the LLM is allowed to link to.
+
+    Covers the structurer-managed entity types (refrigerants, regulations,
+    manufacturers, procedures). The page being built is excluded so it
+    doesn't self-link.
+    """
+    concepts = _load_concepts()
+    out: list[str] = []
+    for entity_type in sorted(NEW_ENTITY_TYPES):
+        concept = concepts.get(entity_type)
+        if not concept:
+            continue
+        wiki_dir = concept.get("wiki_dir", entity_type)
+        for inst in _enumerate_instances(concept):
+            if entity_type == self_entity_type and str(inst["value"]) == str(self_entity_id):
+                continue
+            out.append(f"[[{wiki_dir}/{inst['slug']}]]")
+    return out
 
 
 def _build_llm_user_prompt(
@@ -224,13 +254,18 @@ def _build_llm_user_prompt(
         )
     chunks_text = "\n".join(chunk_blocks) if chunk_blocks else "(no chunks retrieved)"
     required = ", ".join(concept.get("required_fields") or [])
+    entity_type = concept.get("wiki_dir", "?")
+    wikilinks = _known_wikilinks(entity_type, instance["value"])
+    wikilinks_text = "\n".join(wikilinks) if wikilinks else "(none)"
     return (
-        f"ENTITY TYPE: {concept.get('wiki_dir', '?')}\n"
+        f"ENTITY TYPE: {entity_type}\n"
         f"ENTITY ID: {instance['value']}\n"
         f"ENTITY NAME: {instance.get('name', instance['value'])}\n"
         f"REQUIRED SECTIONS: {required}\n"
+        f"\nKNOWN WIKILINKS (use these verbatim; do not invent any):\n{wikilinks_text}\n"
         f"\nSOURCE CHUNKS:\n{chunks_text}\n"
-        f"\nWrite the wiki page now. Cite using EXACT chunk_id strings in [brackets]."
+        f"\nWrite the wiki page now. Use [chunk_id] for source citations and "
+        f"[[bucket/slug]] wikilinks for cross-entity references."
     )
 
 

@@ -56,9 +56,9 @@ refrigerants:
 regulations:
   source_query: static
   source_static: [AIM-Act, EPA-SNAP, AHRI-210-240]
-  retrieve_query: "{value}"
+  retrieve_query: "{value} regulation phase-out compliance"
   retrieve_k: 10
-  filters: {source_type: bulletin}
+  filters: {bucket: bulletins}
   wiki_dir: regulations
   template: regulation.md.j2  # Phase 5: new template
   refresh: on_source_change
