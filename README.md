@@ -6,6 +6,11 @@ supplier emails, internal SOPs, service tickets, ERP exports — and turns
 them into a structured, citation-grounded knowledge base that a business
 owner can query in natural language.
 
+Built for the operating lead at a PE-backed HVAC distribution rollup — the
+kind of person who needs to make weekly decisions about parts distribution,
+supplier consolidation, refrigerant exposure, and customer concentration
+across a multi-warehouse, multi-acquisition platform.
+
 End-to-end portfolio piece: ingestion → hybrid retrieval → LLM-driven
 structured wiki → agentic loop with tools → citation-grounded answers →
 admin UI → measurable evals.
