@@ -259,7 +259,7 @@
     <input type="checkbox" class="test-check">
     <div style="flex:1">
       <div class="test-title">Open the wiki in Obsidian + screenshot the graph view</div>
-      <div class="test-meta"><span class="tag t-todo">todo</span><span class="tag t-quick">~15 min</span><span>Validates the Obsidian story end-to-end</span></div>
+      <div class="test-meta"><span class="tag t-done">done</span><span>graph loads, color-grouped, screenshot in docs/obsidian-graph.png</span></div>
     </div>
   </div>
   <div class="test-body">
@@ -268,8 +268,8 @@
     <div><span class="label">Bonus:</span> screenshot the graph view (especially the refrigerants/regulations cluster) and drop it into the README. Closes the "Demo screenshot" followup item.</div>
   </div>
   <div class="test-result">
-    <select class="test-status"><option value="">—</option><option value="pass">pass</option><option value="fail">fail</option></select>
-    <textarea class="test-notes" placeholder="Screenshot path, observations…"></textarea>
+    <select class="test-status"><option value="">—</option><option value="pass" selected>pass</option><option value="fail">fail</option></select>
+    <textarea class="test-notes">Vault opens cleanly. Added 9 color groups by bucket to graph.json (committed in obsidian-defaults). Filtered to the knowledge layer (refrigerants/regulations/manufacturers/procedures/concepts/suppliers), enabled labels, spread via repel force. Knowledge cluster is densely interlinked (r-410a -> aim-act -> carrier -> retrofit-workflow all visible). Screenshot saved to docs/obsidian-graph.png and wired into README Demo section.</textarea>
   </div>
 </div>
 

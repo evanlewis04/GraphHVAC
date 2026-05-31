@@ -8,58 +8,52 @@
   "collapse-color-groups": false,
   "colorGroups": [
     {
-      "query": "path:skus/",
-      "color": {
-        "a": 1,
-        "rgb": 4620980
-      }
+      "query": "path:refrigerants",
+      "color": { "a": 1, "rgb": 4521983 }
     },
     {
-      "query": "path:customers/",
-      "color": {
-        "a": 1,
-        "rgb": 5025616
-      }
+      "query": "path:regulations",
+      "color": { "a": 1, "rgb": 16737843 }
     },
     {
-      "query": "path:suppliers/",
-      "color": {
-        "a": 1,
-        "rgb": 16750592
-      }
+      "query": "path:manufacturers",
+      "color": { "a": 1, "rgb": 16755200 }
     },
     {
-      "query": "path:warehouses/",
-      "color": {
-        "a": 1,
-        "rgb": 12216520
-      }
+      "query": "path:procedures",
+      "color": { "a": 1, "rgb": 5635925 }
     },
     {
-      "query": "path:refrigerants/",
-      "color": {
-        "a": 1,
-        "rgb": 15684432
-      }
+      "query": "path:concepts",
+      "color": { "a": 1, "rgb": 15277667 }
     },
     {
-      "query": "path:concepts/",
-      "color": {
-        "a": 1,
-        "rgb": 2541274
-      }
+      "query": "path:suppliers",
+      "color": { "a": 1, "rgb": 16772650 }
+    },
+    {
+      "query": "path:customers",
+      "color": { "a": 1, "rgb": 11119017 }
+    },
+    {
+      "query": "path:warehouses",
+      "color": { "a": 1, "rgb": 16746496 }
+    },
+    {
+      "query": "path:skus",
+      "color": { "a": 1, "rgb": 4737096 }
     }
   ],
   "collapse-display": false,
   "showArrow": false,
-  "textFadeMultiplier": -3,
-  "nodeSizeMultiplier": 1,
-  "lineSizeMultiplier": 0.5,
+  "textFadeMultiplier": -0.3,
+  "nodeSizeMultiplier": 1.1,
+  "lineSizeMultiplier": 1,
   "collapse-forces": false,
-  "centerStrength": 0.4,
+  "centerStrength": 0.3,
   "repelStrength": 12,
   "linkStrength": 0.6,
-  "linkDistance": 220,
-  "scale": 0.034359563996956013,
-  "close": true
+  "linkDistance": 90,
+  "scale": 1,
+  "close": false
 }

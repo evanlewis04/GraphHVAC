@@ -83,7 +83,18 @@ Beyond the aggregate metrics, two qualitative checks against the live agent:
 
 ## Demo
 
-> _30-second demo GIF lives here (see [`test-checklist.html`](test-checklist.html))._
+**The knowledge graph the system builds.** Messy source documents
+(manufacturer bulletins, regulatory filings, supplier emails, SOPs) become
+an interconnected, navigable wiki — rendered here in Obsidian. The dense
+right-hand cluster is the LLM-structured knowledge layer: refrigerants
+(cyan) ↔ manufacturers (orange) ↔ regulations (red) ↔ procedures (green),
+all cross-linked with citations back to source. The left starburst is a
+concept page fanning out to every supplier it references.
+
+![Obsidian graph view of the generated wiki](docs/obsidian-graph.png)
+
+> _A 30-second chat demo GIF is the one remaining polish item — see
+> [`test-checklist.html`](test-checklist.html)._
 
 Or clone + run + open `http://127.0.0.1:8000` — the full UI is below the
 fold in Quick start.
