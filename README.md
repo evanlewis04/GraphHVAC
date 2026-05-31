@@ -93,8 +93,12 @@ concept page fanning out to every supplier it references.
 
 ![Obsidian graph view of the generated wiki](docs/obsidian-graph.png)
 
-> _A 30-second chat demo GIF is the one remaining polish item — see
-> [`test-checklist.html`](test-checklist.html)._
+**The agent answering a hybrid question end to end.** Asking about R-410A
+phase-out exposure: the agent streams its tool calls (retrieve, search_wiki,
+several SQL queries), synthesizes a regulatory-timeline answer with inline
+`[c1]` `[c2]` citations, and expands the raw source document on click.
+
+![Graph agent answering with streaming tool calls and citations](docs/demo.gif)
 
 Or clone + run + open `http://127.0.0.1:8000` — the full UI is below the
 fold in Quick start.
