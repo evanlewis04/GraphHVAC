@@ -1,21 +1,21 @@
 ---
 type: concept
 topic: Knowledge health check
-generated_at: 2026-05-25T13:58:00+00:00
+generated_at: 2026-05-26T14:54:18+00:00
 ---
 
 # Knowledge Health Check
 
-_Generated 2026-05-25T13:58:00+00:00_
+_Generated 2026-05-26T14:54:18+00:00_
 
 ## Summary
 - Wiki pages (structurer-built): **32**
 - Chunks in retrieval: **117**
 - Chunks cited by at least one wiki page: **85**
 - Orphan chunks (not cited anywhere): **32**
-- Thin pages (< 2 source chunks): **13**
+- Thin pages (< 2 source chunks): **10**
 - Dangling wikilinks: **0**
-- Pages with validation warnings: **10**
+- Pages with validation warnings: **8**
 - Contradiction findings: **0**
 
 ## Coverage by bucket
@@ -41,9 +41,6 @@ _Generated 2026-05-25T13:58:00+00:00_
 - **manufacturers/White-Rodgers** (0 chunks) — `manufacturers\white-rodgers.md`
 - **refrigerants/R-1234yf** (1 chunks) — `refrigerants\r-1234yf.md`
 - **refrigerants/R-22** (1 chunks) — `refrigerants\r-22.md`
-- **regulations/AHRI-210-240** (0 chunks) — `regulations\ahri-210-240.md`
-- **regulations/AIM-Act** (0 chunks) — `regulations\aim-act.md`
-- **regulations/EPA-SNAP** (0 chunks) — `regulations\epa-snap.md`
 
 ## Validation warnings
 
@@ -54,9 +51,7 @@ _Generated 2026-05-25T13:58:00+00:00_
 - `manufacturers\ge.md`: ['no_citations_in_body']
 - `manufacturers\marathon.md`: ['no_citations_in_body']
 - `manufacturers\white-rodgers.md`: ['no_citations_in_body']
-- `regulations\ahri-210-240.md`: ['no_citations_in_body']
-- `regulations\aim-act.md`: ['no_citations_in_body']
-- `regulations\epa-snap.md`: ['no_citations_in_body']
+- `procedures\r-410a-retrofit-workflow.md`: ['no_citations_in_body']
 
 ## Orphan chunks (not cited)
 
