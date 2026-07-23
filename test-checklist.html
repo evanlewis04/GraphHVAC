@@ -278,7 +278,7 @@
     <input type="checkbox" class="test-check">
     <div style="flex:1">
       <div class="test-title">Ingest the 3 real EPA/DOE anchor PDFs</div>
-      <div class="test-meta"><span class="tag t-todo">todo</span><span class="tag t-stretch">~1 hour</span><span>Validates the PDF loader on real-world docs</span></div>
+      <div class="test-meta"><span class="tag t-done">done</span><span>all 3 anchor URLs dead, replaced &amp; verified · 270 chunks indexed · retrieve() hits real anchor</span></div>
     </div>
   </div>
   <div class="test-body">
@@ -290,8 +290,8 @@
     <div><span class="label">Caveat:</span> if any URL has 404'd, swap to a different public EPA/DOE PDF and update the manifest.</div>
   </div>
   <div class="test-result">
-    <select class="test-status"><option value="">—</option><option value="pass">pass</option><option value="fail">fail</option></select>
-    <textarea class="test-notes" placeholder="Which URLs worked, chunk counts, sample retrieve result…"></textarea>
+    <select class="test-status"><option value="">—</option><option value="pass" selected>pass</option><option value="fail">fail</option></select>
+    <textarea class="test-notes">All 3 original fetch URLs dead (epa.gov AIM Act 404 · epa.gov SNAP Rule 23 404 · energy.gov DOE CAC rule 302→served .xlsx despite .pdf ext). Replaced all 3 in manifest.yaml with verified direct-link PDFs (HEAD-checked 200 + application/pdf): epa.gov technology-transitions-final-rule-fact-sheet-2023.pdf (380KB) · epa.gov fact_sheet_snap_final_rule_23_final_4-23-21_508.pdf (245KB) · govinfo.gov FR-2017-01-06/pdf/2016-29992.pdf (655KB, official DOE central-AC rule text via Federal Register). fetch_anchors.py: all 3 downloaded, verified %PDF- header. ingest.py: 86 sources → 270 chunks (anchors contributed 11 + 1 + 141 chunks). retrieve("AIM Act", k=5): anchor-epa-aim-act-final-rule chunks ranked #3 and #5, alongside (not instead of) the synthetic bulletin-epa-aim-act-summary — confirms real PDF is indexed and retrievable. Mode: BM25-only (no VOYAGE_API_KEY in this environment); ANTHROPIC_API_KEY not needed for this path.</textarea>
   </div>
 </div>
 
@@ -300,7 +300,7 @@
     <input type="checkbox" class="test-check">
     <div style="flex:1">
       <div class="test-title">End-to-end stale-rebuild test</div>
-      <div class="test-meta"><span class="tag t-todo">todo</span><span class="tag t-stretch">~20 min</span><span>Validates the freshness pipeline end-to-end</span></div>
+      <div class="test-meta"><span class="tag t-done">done</span><span>4 pages flagged stale → rebuilt → 0 stale · repo restored to pre-test state</span></div>
     </div>
   </div>
   <div class="test-body">
@@ -313,8 +313,8 @@
     <div><span class="label">Passes if:</span> <code>scan_stale()</code> returns the wiki pages that cited the old chunk_id (typically 6-8 manufacturer pages); rebuild produces new pages with the new chunk_id; freshness reports 0 stale after.</div>
   </div>
   <div class="test-result">
-    <select class="test-status"><option value="">—</option><option value="pass">pass</option><option value="fail">fail</option></select>
-    <textarea class="test-notes" placeholder="Stale count before/after rebuild…"></textarea>
+    <select class="test-status"><option value="">—</option><option value="pass" selected>pass</option><option value="fail">fail</option></select>
+    <textarea class="test-notes">Baseline scan_stale() = 0 before edit. Appended test line to tariff-response-playbook.md, ingest.py --only sop-tariff-response-playbook → 1 chunk replaced (new chunk_id). scan_stale() correctly flagged 4 manufacturer pages citing the old chunk_id: Daikin, Goodman, Rheem, York (reason: chunk_removed). build_wiki.py --rebuild-stale rebuilt all 4 in 4.5s; each cites the new chunk_id (verified in daikin.md front matter). scan_stale() → 0 stale after rebuild. Note: rebuilt pages used deterministic synthesis (placeholder ANTHROPIC_API_KEY in .env.example → 401, graceful fallback confirmed per src/structure/builder.py) — mechanically correct (right chunk_ids, right pages flagged) but lower-quality prose than the original LLM-authored pages, so after verifying pass criteria the 4 pages were restored via git checkout rather than left in deterministic form. Test edit reverted, source re-ingested, rebuild-stale re-run — scan_stale() = 0, repo returned to pre-test state (git diff clean). Also found and fixed a fresh-checkout gap: data/staging.duckdb (gitignored) didn't exist, so manufacturers/skus/suppliers/customers concepts couldn't enumerate instances via SQL and rebuild-stale silently no-opped (0 built, all skipped) until scripts/generate_synthetic_data.py + a load_csvs() pass populated it — needed before this test (or run_full_pipeline.py) works on any fresh clone.</textarea>
   </div>
 </div>
 

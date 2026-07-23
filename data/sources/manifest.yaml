@@ -797,7 +797,7 @@ sources:
   path: bulletins/anchor-epa-aim-act-final-rule.pdf
   type: pdf
   bucket: bulletins
-  title: EPA AIM Act Final Rule on HFC Phase-down
+  title: EPA AIM Act Technology Transitions Final Rule — Fact Sheet (2023)
   issuer: EPA
   refrigerants:
   - R-410A
@@ -807,12 +807,12 @@ sources:
   regulations:
   - AIM-Act
   license: reference-only
-  fetch: https://www.epa.gov/system/files/documents/2021-09/aim-act-final-rule.pdf
+  fetch: https://www.epa.gov/system/files/documents/2023-10/technology-transitions-final-rule-fact-sheet-2023.pdf
 - source_id: anchor-epa-snap-rule-23-summary
   path: bulletins/anchor-epa-snap-rule-23-summary.pdf
   type: pdf
   bucket: bulletins
-  title: EPA SNAP Rule 23 (Refrigerant Alternatives)
+  title: EPA SNAP Rule 23 (Refrigerant Alternatives) — Fact Sheet
   issuer: EPA
   refrigerants:
   - R-410A
@@ -821,12 +821,12 @@ sources:
   regulations:
   - EPA-SNAP
   license: reference-only
-  fetch: https://www.epa.gov/snap/snap-final-rule-23
+  fetch: https://www.epa.gov/sites/default/files/2021-04/documents/fact_sheet_snap_final_rule_23_final_4-23-21_508.pdf
 - source_id: anchor-doe-residential-cac-rule
   path: bulletins/anchor-doe-residential-cac-rule.pdf
   type: pdf
   bucket: bulletins
-  title: "DOE Energy Conservation Standards \u2014 Residential Central AC"
+  title: "DOE Energy Conservation Standards \u2014 Residential Central AC (Federal Register, 2017)"
   issuer: DOE
   license: reference-only
-  fetch: https://www.energy.gov/eere/buildings/articles/residential-central-air-conditioners-and-heat-pumps
+  fetch: https://www.govinfo.gov/content/pkg/FR-2017-01-06/pdf/2016-29992.pdf
