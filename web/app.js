@@ -787,6 +787,52 @@
         briefsDrawer.setAttribute("aria-hidden", "true");
     };
 
+    const generateBriefButtonHtml = (label) =>
+        `<div class="wf-actions"><button class="wf-run" id="generate-brief-btn">${label}</button></div>`;
+
+    const bindGenerateBriefBtn = () => {
+        const btn = document.getElementById("generate-brief-btn");
+        if (!btn) return;
+        btn.addEventListener("click", async () => {
+            btn.disabled = true;
+            btn.textContent = "Generating… usually under a minute";
+            try {
+                const res = await fetch("/briefs/generate", { method: "POST" });
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.detail || `HTTP ${res.status}`);
+                }
+                renderBrief(data);
+                const listRes = await fetch("/briefs");
+                renderOtherBriefsList(await listRes.json());
+            } catch (err) {
+                briefsBody.insertAdjacentHTML(
+                    "beforeend",
+                    `<p class="brief-empty">Couldn't generate brief: ${escapeHTML(err.message)}</p>`
+                );
+                btn.disabled = false;
+                btn.textContent = "Generate today's brief";
+            }
+        });
+    };
+
+    const renderOtherBriefsList = (briefs) => {
+        if (!Array.isArray(briefs) || briefs.length <= 1) return;
+        const list = document.createElement("ul");
+        list.className = "brief-list";
+        list.style.marginTop = "24px";
+        briefs.slice(1).forEach((b) => {
+            const li = document.createElement("li");
+            li.innerHTML = `<span>${b.date}</span><button data-date="${b.date}">View</button>`;
+            li.querySelector("button").addEventListener("click", async () => {
+                const r = await fetch(`/briefs/${b.date}`);
+                renderBrief(await r.json());
+            });
+            list.appendChild(li);
+        });
+        briefsBody.appendChild(list);
+    };
+
     const openBriefs = async () => {
         briefsTitle.textContent = "Daily brief";
         briefsBody.innerHTML = "<p class=\"brief-rendered\">Loading…</p>";
@@ -798,12 +844,10 @@
             const briefs = await res.json();
             if (!Array.isArray(briefs) || briefs.length === 0) {
                 briefsBody.innerHTML = `
-                    <p class="brief-empty">
-                        No briefs yet. Generate one with:
-                        <br><br>
-                        <code>python scripts/generate_brief.py</code>
-                    </p>
+                    <p class="brief-empty">No briefs yet.</p>
+                    ${generateBriefButtonHtml("Generate today's brief")}
                 `;
+                bindGenerateBriefBtn();
                 return;
             }
             // Show the most recent brief by default; list the rest below.
@@ -811,22 +855,7 @@
             const r = await fetch(`/briefs/${latest.date}`);
             const data = await r.json();
             renderBrief(data);
-
-            if (briefs.length > 1) {
-                const list = document.createElement("ul");
-                list.className = "brief-list";
-                list.style.marginTop = "24px";
-                briefs.slice(1).forEach((b) => {
-                    const li = document.createElement("li");
-                    li.innerHTML = `<span>${b.date}</span><button data-date="${b.date}">View</button>`;
-                    li.querySelector("button").addEventListener("click", async () => {
-                        const r = await fetch(`/briefs/${b.date}`);
-                        renderBrief(await r.json());
-                    });
-                    list.appendChild(li);
-                });
-                briefsBody.appendChild(list);
-            }
+            renderOtherBriefsList(briefs);
         } catch (err) {
             briefsBody.innerHTML = `<p class="brief-empty">Couldn't load briefs: ${err.message}</p>`;
         }
@@ -840,7 +869,11 @@
         const fm = frontmatter
             ? `<div class="frontmatter">${escapeHTML(frontmatter)}</div>` : "";
         briefsTitle.textContent = `Brief — ${data.date}`;
-        briefsBody.innerHTML = `<div class="brief-rendered">${fm}${renderMarkdown(body)}</div>`;
+        briefsBody.innerHTML = `
+            ${generateBriefButtonHtml("Generate today's brief")}
+            <div class="brief-rendered">${fm}${renderMarkdown(body)}</div>
+        `;
+        bindGenerateBriefBtn();
     };
 
     openBriefsBtn.addEventListener("click", openBriefs);
