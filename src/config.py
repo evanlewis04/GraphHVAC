@@ -36,7 +36,7 @@ def load_settings() -> Settings:
     data_dir = _path("GRAPH_DATA_DIR", "./data")
     return Settings(
         anthropic_api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
-        agent_model=os.environ.get("GRAPH_AGENT_MODEL", "claude-opus-4-7"),
+        agent_model=os.environ.get("GRAPH_AGENT_MODEL", "claude-sonnet-5"),
         compiler_model=os.environ.get("GRAPH_COMPILER_MODEL", "claude-haiku-4-5"),
         data_dir=data_dir,
         wiki_dir=_path("GRAPH_WIKI_DIR", str(data_dir / "wiki")),
