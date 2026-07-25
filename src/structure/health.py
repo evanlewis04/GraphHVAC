@@ -30,6 +30,7 @@ from typing import Any
 
 import lancedb
 
+from src.config import load_settings
 from src.retrieval.index import DEFAULT_LANCEDB_PATH, TABLE_NAME
 from src.structure.builder import (
     WIKI_DIR,
@@ -206,7 +207,7 @@ def _llm_find_contradictions(
         by_type.setdefault(fm.get("entity_type", "?"), []).append((path, fm))
 
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-    model = os.environ.get("GRAPH_COMPILER_MODEL", "claude-sonnet-4-6")
+    model = load_settings().compiler_model
     findings: list[dict[str, Any]] = []
     for entity_type, group in by_type.items():
         sample = group[:sample_n]

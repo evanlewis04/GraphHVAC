@@ -31,7 +31,7 @@ def _build_enricher(enrich_sku_limit: int):
     cache = NarrativeCache(settings.data_dir / "narrative_cache.sqlite")
 
     def enricher(sku: dict, candidates: list[dict]) -> Narrative | None:
-        return enrich_sku(sku, candidates, cache, client, settings.compiler_model)
+        return enrich_sku(sku, candidates, cache, client, settings.sku_enrich_model)
 
     limit = None if enrich_sku_limit < 0 else enrich_sku_limit
     return enricher, limit

@@ -18,6 +18,7 @@ class Settings:
     anthropic_api_key: str
     agent_model: str
     compiler_model: str
+    sku_enrich_model: str
     data_dir: Path
     wiki_dir: Path
     duckdb_path: Path
@@ -37,7 +38,8 @@ def load_settings() -> Settings:
     return Settings(
         anthropic_api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
         agent_model=os.environ.get("GRAPH_AGENT_MODEL", "claude-sonnet-5"),
-        compiler_model=os.environ.get("GRAPH_COMPILER_MODEL", "claude-haiku-4-5"),
+        compiler_model=os.environ.get("GRAPH_COMPILER_MODEL", "claude-sonnet-5"),
+        sku_enrich_model=os.environ.get("GRAPH_SKU_ENRICH_MODEL", "claude-haiku-4-5"),
         data_dir=data_dir,
         wiki_dir=_path("GRAPH_WIKI_DIR", str(data_dir / "wiki")),
         duckdb_path=_path("GRAPH_DUCKDB_PATH", str(data_dir / "staging.duckdb")),
