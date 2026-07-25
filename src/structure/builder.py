@@ -52,7 +52,7 @@ from typing import Any
 import duckdb
 import yaml
 
-from src.config import load_settings  # noqa: F401 — triggers .env load
+from src.config import load_settings
 from src.retrieval.search import RetrievedChunk, retrieve
 
 load_settings()  # ensure env is hydrated even when no other module triggered it
@@ -300,7 +300,7 @@ def _synthesize_llm(
         ))
 
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
-    model = os.environ.get("GRAPH_COMPILER_MODEL", "claude-sonnet-4-6")
+    model = load_settings().compiler_model
     try:
         resp = client.messages.create(
             model=model,
