@@ -14,12 +14,17 @@ from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from src.api import admin, audit, briefs, chat, workflows
+from src.api.security import BasicAuthMiddleware, RateLimitMiddleware
 
 WEB_DIR = Path(__file__).resolve().parents[2] / "web"
 
 
 def create_app() -> FastAPI:
     app = FastAPI(title="Graph MVP", version="0.1.0")
+    # Added last so it wraps outermost — Basic Auth is checked before the
+    # rate limiter, so unauthenticated requests never consume a rate-limit slot.
+    app.add_middleware(RateLimitMiddleware)
+    app.add_middleware(BasicAuthMiddleware)
     app.include_router(chat.router)
     app.include_router(audit.router)
     app.include_router(briefs.router)

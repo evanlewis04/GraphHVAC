@@ -341,10 +341,10 @@
 
 <div class="test" data-id="hosted-demo">
   <div class="test-head">
-    <input type="checkbox" class="test-check">
+    <input type="checkbox" class="test-check" checked>
     <div style="flex:1">
       <div class="test-title">Hosted demo (Fly.io / Modal / Render)</div>
-      <div class="test-meta"><span class="tag t-todo">todo</span><span class="tag t-stretch">~half day</span><span>Lets reviewers click "try it" instead of cloning</span></div>
+      <div class="test-meta"><span class="tag t-done">done</span><span>graph-hvac-demo.fly.dev · Basic Auth + 30 req/hr/IP rate limit · HVAC framing</span></div>
     </div>
   </div>
   <div class="test-body">
@@ -353,8 +353,8 @@
     <div><span class="label">Bonus:</span> add the URL to the resume + LinkedIn.</div>
   </div>
   <div class="test-result">
-    <select class="test-status"><option value="">—</option><option value="pass">pass</option><option value="fail">fail</option></select>
-    <textarea class="test-notes" placeholder="Deployment URL, monthly cost, auth approach…"></textarea>
+    <select class="test-status"><option value="">—</option><option value="pass" selected>pass</option><option value="fail">fail</option></select>
+    <textarea class="test-notes">Deployed to https://graph-hvac-demo.fly.dev/ (single Dockerized FastAPI process, python:3.11-slim, pre-built synthetic data/ baked in read-only — no live re-ingestion). Fly config: shared-cpu-1x/1GB, auto_stop_machines=stop + min_machines_running=0 (scale-to-zero between demo clicks, so idle cost is ~$0 compute). Gated by HTTP Basic Auth on the whole app (incl. /admin/*) via src/api/security.py, plus an in-memory 30 req/hour/IP cap on the 5 LLM-calling routes (/chat, /chat/stream, /workflows/{slug}/run, /workflows/{slug}/stream, /briefs/generate) — the actual Anthropic/Voyage cost surface. Verified live: 401 with no/wrong creds, 200 with correct creds on / and /admin/sources, a real /chat query returned a cited answer (R-410A inventory + AIM Act regulatory risk, 4 iterations, 6 citations), and the daily-brief workflow completed end-to-end. Framing: HVAC only, per elew's confirmation — Invited/club-portfolio mapping stays a narration layer (docs/MAPPING.md) presented alongside the link, not baked into the live UI. Credentials delivered to elew via DM, not written here or in the repo.</textarea>
   </div>
 </div>
 
