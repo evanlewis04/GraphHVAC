@@ -19,11 +19,14 @@ Examples:
     python scripts/run_evals.py --mode agent
     python scripts/run_evals.py --golden tests/eval/golden.jsonl --k 10
     python scripts/run_evals.py --run-id 2026-05-19-bm25-only
+    python scripts/run_evals.py --mode agent --qids q05,q07,q12,q16,q17,q19
+    python scripts/run_evals.py --mode agent --qids q17 --model claude-haiku-4-5
 """
 
 from __future__ import annotations
 
 import argparse
+import os
 from pathlib import Path
 
 from src.eval.runner import run_eval
@@ -38,6 +41,12 @@ def main() -> None:
     parser.add_argument("--mode", choices=["retrieval", "agent"], default="retrieval")
     parser.add_argument("--k", type=int, default=10,
                         help="Top-k chunks per query for retrieval scoring.")
+    parser.add_argument("--qids", default=None,
+                        help="Comma-separated qids to run instead of the full golden set "
+                             "(e.g. for a cheap, comparable slice across models).")
+    parser.add_argument("--model", default=None,
+                        help="Override GRAPH_AGENT_MODEL for this run only (--mode agent). "
+                             "Does not touch .env.")
     parser.add_argument("--run-id", default=None,
                         help="Override the auto-generated run id (timestamp + mode).")
     parser.add_argument("--quiet", action="store_true")
@@ -45,6 +54,18 @@ def main() -> None:
 
     if not args.golden.exists():
         raise SystemExit(f"golden set not found: {args.golden}")
+
+    qids = [q.strip() for q in args.qids.split(",")] if args.qids else None
+
+    if args.model:
+        if args.mode != "agent":
+            raise SystemExit("--model only applies to --mode agent")
+        # src.config caches Settings via lru_cache, and its module-level
+        # load_dotenv(override=True) already ran on import — so setting the
+        # env var alone is silently ignored unless the cache is cleared too.
+        os.environ["GRAPH_AGENT_MODEL"] = args.model
+        from src.config import load_settings
+        load_settings.cache_clear()
 
     def _on_progress(score):
         if args.quiet:
@@ -58,7 +79,7 @@ def main() -> None:
         print(f"        top retrieved: {retrieved}")
 
     jsonl_path, summary = run_eval(
-        args.golden, mode=args.mode, k=args.k,
+        args.golden, mode=args.mode, k=args.k, qids=qids,
         run_id=args.run_id, on_progress=_on_progress,
     )
 

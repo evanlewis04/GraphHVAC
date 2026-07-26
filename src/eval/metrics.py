@@ -51,8 +51,11 @@ class PerQuestionScore:
     citation_precision: float | None = None
     citation_recall: float | None = None
     latency_ms: int | None = None
+    model: str | None = None
     input_tokens: int | None = None
     output_tokens: int | None = None
+    cache_read_input_tokens: int | None = None
+    cache_creation_input_tokens: int | None = None
     error: str | None = None
 
 
@@ -74,19 +77,44 @@ class MetricsSummary:
     by_qid: list[dict] = field(default_factory=list)
 
 
-# --- Token pricing (Sonnet 4.6 list, USD per 1M tokens). Cheap approximation
-# — used only to put a $/query number in the eval summary, not for billing.
-_PRICE_IN_PER_M = 3.00
-_PRICE_OUT_PER_M = 15.00
+# --- Token pricing (USD per 1M tokens, list price as of 2026-07). Cheap
+# approximation — used only to put a $/query number in the eval summary, not
+# for billing. Keyed by GRAPH_AGENT_MODEL value so cost is correct regardless
+# of which model actually ran.
+MODEL_PRICES: dict[str, tuple[float, float]] = {
+    # model_id -> (input $/1M, output $/1M)
+    "claude-opus-4-8": (5.00, 25.00),
+    "claude-opus-4-7": (5.00, 25.00),
+    "claude-opus-4-6": (5.00, 25.00),
+    "claude-sonnet-5": (2.00, 10.00),  # intro pricing through 2026-08-31; standard is 3.00/15.00
+    "claude-sonnet-4-6": (3.00, 15.00),
+    "claude-haiku-4-5": (1.00, 5.00),
+}
+
+# Prompt-cache pricing is a multiplier on the base input price: writes cost
+# a premium (5-minute TTL, the only TTL this agent uses — see loop.py's
+# `cache_control`), reads are heavily discounted.
+CACHE_WRITE_MULTIPLIER = 1.25
+CACHE_READ_MULTIPLIER = 0.1
 
 
-def _cost(input_tokens: int | None, output_tokens: int | None) -> float | None:
-    if input_tokens is None or output_tokens is None:
+def _cost(
+    model: str | None,
+    input_tokens: int | None,
+    output_tokens: int | None,
+    cache_read_input_tokens: int | None = None,
+    cache_creation_input_tokens: int | None = None,
+) -> float | None:
+    if model is None or input_tokens is None or output_tokens is None:
         return None
-    return (
-        input_tokens * _PRICE_IN_PER_M / 1_000_000
-        + output_tokens * _PRICE_OUT_PER_M / 1_000_000
-    )
+    prices = MODEL_PRICES.get(model)
+    if prices is None:
+        return None
+    price_in, price_out = prices
+    cost = input_tokens * price_in / 1_000_000 + output_tokens * price_out / 1_000_000
+    cost += (cache_read_input_tokens or 0) * price_in * CACHE_READ_MULTIPLIER / 1_000_000
+    cost += (cache_creation_input_tokens or 0) * price_in * CACHE_WRITE_MULTIPLIER / 1_000_000
+    return cost
 
 
 def score_question(
@@ -96,8 +124,11 @@ def score_question(
     retrieved_source_ids: list[str],
     cited_source_ids: list[str] | None = None,
     latency_ms: int | None = None,
+    model: str | None = None,
     input_tokens: int | None = None,
     output_tokens: int | None = None,
+    cache_read_input_tokens: int | None = None,
+    cache_creation_input_tokens: int | None = None,
     error: str | None = None,
 ) -> PerQuestionScore:
     """Score one question."""
@@ -139,8 +170,11 @@ def score_question(
         citation_precision=cite_p,
         citation_recall=cite_r,
         latency_ms=latency_ms,
+        model=model,
         input_tokens=input_tokens,
         output_tokens=output_tokens,
+        cache_read_input_tokens=cache_read_input_tokens,
+        cache_creation_input_tokens=cache_creation_input_tokens,
         error=error,
     )
 
@@ -178,7 +212,13 @@ def aggregate(scores: list[PerQuestionScore]) -> MetricsSummary:
     avg_out = sum(out_tokens) / len(out_tokens) if out_tokens else None
 
     costs = [
-        c for c in (_cost(s.input_tokens, s.output_tokens) for s in scores)
+        c for c in (
+            _cost(
+                s.model, s.input_tokens, s.output_tokens,
+                s.cache_read_input_tokens, s.cache_creation_input_tokens,
+            )
+            for s in scores
+        )
         if c is not None
     ]
     avg_cost = sum(costs) / len(costs) if costs else None
@@ -237,8 +277,11 @@ def score_run(results_path: Path, golden_path: Path) -> MetricsSummary:
                 retrieved_source_ids=row.get("retrieved_source_ids", []),
                 cited_source_ids=row.get("cited_source_ids"),
                 latency_ms=row.get("latency_ms"),
+                model=row.get("model"),
                 input_tokens=row.get("input_tokens"),
                 output_tokens=row.get("output_tokens"),
+                cache_read_input_tokens=row.get("cache_read_input_tokens"),
+                cache_creation_input_tokens=row.get("cache_creation_input_tokens"),
                 error=row.get("error"),
             ))
     return aggregate(scores)
