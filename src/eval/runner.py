@@ -122,9 +122,12 @@ def _run_agent(q: EvalQuestion) -> tuple[PerQuestionScore, dict]:
         )
     latency_ms = int((time.perf_counter() - t0) * 1000)
 
-    # Pull retrieved + cited chunks from the trace.
+    # Pull retrieved + cited chunks, plus model/token usage, from the trace.
     cited_source_ids = [c.source_id for c in resp.citations]
     retrieved_source_ids = _retrieved_from_trace(resp.trace_id)
+    model, input_tokens, output_tokens, cache_read_input_tokens, cache_creation_input_tokens = (
+        _usage_from_trace(resp.trace_id)
+    )
     score = score_question(
         qid=q.qid,
         question=q.question,
@@ -132,6 +135,11 @@ def _run_agent(q: EvalQuestion) -> tuple[PerQuestionScore, dict]:
         retrieved_source_ids=retrieved_source_ids,
         cited_source_ids=cited_source_ids,
         latency_ms=latency_ms,
+        model=model,
+        input_tokens=input_tokens,
+        output_tokens=output_tokens,
+        cache_read_input_tokens=cache_read_input_tokens,
+        cache_creation_input_tokens=cache_creation_input_tokens,
     )
     row = {
         "qid": q.qid,
@@ -143,6 +151,11 @@ def _run_agent(q: EvalQuestion) -> tuple[PerQuestionScore, dict]:
         "cited_source_ids": cited_source_ids,
         "citations": [asdict(c) for c in resp.citations],
         "latency_ms": latency_ms,
+        "model": model,
+        "input_tokens": input_tokens,
+        "output_tokens": output_tokens,
+        "cache_read_input_tokens": cache_read_input_tokens,
+        "cache_creation_input_tokens": cache_creation_input_tokens,
         "mode": "agent",
     }
     return score, row
@@ -166,6 +179,28 @@ def _retrieved_from_trace(trace_id: str) -> list[str]:
     return out
 
 
+def _usage_from_trace(trace_id: str) -> tuple[str | None, int, int, int, int]:
+    """Sum input/output/cache tokens across model calls in the audit log,
+    and pull the model name logged at the start of the run."""
+    from src.audit.logger import fetch_trace
+    model: str | None = None
+    input_tokens = 0
+    output_tokens = 0
+    cache_read_input_tokens = 0
+    cache_creation_input_tokens = 0
+    for ev in fetch_trace(trace_id):
+        payload = ev.get("payload", {})
+        if ev["kind"] == "user_question":
+            model = payload.get("model")
+        elif ev["kind"] == "model_response":
+            usage = payload.get("usage", {})
+            input_tokens += usage.get("input_tokens", 0) or 0
+            output_tokens += usage.get("output_tokens", 0) or 0
+            cache_read_input_tokens += usage.get("cache_read_input_tokens", 0) or 0
+            cache_creation_input_tokens += usage.get("cache_creation_input_tokens", 0) or 0
+    return model, input_tokens, output_tokens, cache_read_input_tokens, cache_creation_input_tokens
+
+
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
@@ -176,10 +211,14 @@ def run_eval(
     *,
     mode: str = "retrieval",
     k: int = 10,
+    qids: list[str] | None = None,
     run_id: str | None = None,
     on_progress=None,
 ) -> tuple[Path, MetricsSummary]:
     """Run the agent over every question in the golden set.
+
+    Pass ``qids`` to run only a fixed subset (e.g. for a cheap, comparable
+    slice across models) instead of the full golden set.
 
     Returns (per-question JSONL path, aggregate ``MetricsSummary``).
     """
@@ -192,6 +231,12 @@ def run_eval(
     summary_path = EVALS_DIR / f"{run_id}.summary.json"
 
     questions = read_golden(golden_path)
+    if qids:
+        wanted = set(qids)
+        questions = [q for q in questions if q.qid in wanted]
+        missing = wanted - {q.qid for q in questions}
+        if missing:
+            raise ValueError(f"qids not found in golden set: {sorted(missing)}")
     scores: list[PerQuestionScore] = []
 
     with jsonl_path.open("w", encoding="utf-8") as f:
