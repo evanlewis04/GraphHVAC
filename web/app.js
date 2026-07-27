@@ -879,6 +879,36 @@
     openBriefsBtn.addEventListener("click", openBriefs);
     briefsClose.addEventListener("click", closeBriefs);
 
+    /* ---- Pitch drawer ---- */
+    const pitchDrawer = document.getElementById("pitch-panel");
+    const pitchBody = document.getElementById("pitch-body");
+    const pitchClose = document.getElementById("pitch-close");
+    const openPitchBtn = document.getElementById("open-pitch");
+
+    const closePitch = () => {
+        pitchDrawer.classList.remove("open");
+        drawerScrim.classList.remove("visible");
+        pitchDrawer.setAttribute("aria-hidden", "true");
+    };
+
+    const openPitch = async () => {
+        pitchBody.innerHTML = "<p class=\"brief-rendered\">Loading…</p>";
+        pitchDrawer.classList.add("open");
+        drawerScrim.classList.add("visible");
+        pitchDrawer.setAttribute("aria-hidden", "false");
+        try {
+            const res = await fetch("/pitch-brief.md");
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const text = await res.text();
+            pitchBody.innerHTML = `<div class="brief-rendered">${renderMarkdown(text)}</div>`;
+        } catch (err) {
+            pitchBody.innerHTML = `<p class="brief-empty">Couldn't load pitch brief: ${escapeHTML(err.message)}</p>`;
+        }
+    };
+
+    openPitchBtn.addEventListener("click", openPitch);
+    pitchClose.addEventListener("click", closePitch);
+
     /* ---- Sources drawer ---- */
     const closeDrawer = () => {
         drawer.classList.remove("open");
@@ -892,6 +922,7 @@
         if (briefsDrawer.classList.contains("open")) closeBriefs();
         if (workflowsDrawer.classList.contains("open")) closeWorkflows();
         if (adminDrawer.classList.contains("open")) closeAdmin();
+        if (pitchDrawer.classList.contains("open")) closePitch();
     };
 
     drawerClose.addEventListener("click", closeDrawer);

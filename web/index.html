@@ -18,6 +18,7 @@
             <div class="topbar-actions">
                 <button id="open-workflows" type="button" class="topbar-btn">Workflows</button>
                 <button id="open-briefs" type="button" class="topbar-btn">Daily brief</button>
+                <button id="open-pitch" type="button" class="topbar-btn">Pitch</button>
                 <button id="open-admin" type="button" class="topbar-btn">Admin</button>
                 <div class="status">
                     <span class="status-dot"></span>
@@ -142,6 +143,22 @@
             </button>
         </div>
         <div id="briefs-body" class="sources-body"></div>
+    </aside>
+
+    <aside id="pitch-panel" class="sources-panel" aria-hidden="true">
+        <div class="sources-header">
+            <div>
+                <p class="sources-eyebrow">Investor pitch</p>
+                <h2 id="pitch-title" class="sources-title">Pitch</h2>
+            </div>
+            <button id="pitch-close" class="sources-close" aria-label="Close pitch">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div id="pitch-body" class="sources-body"></div>
     </aside>
 
     <aside id="sources-panel" class="sources-panel" aria-hidden="true">
