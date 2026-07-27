@@ -43,16 +43,6 @@ makes points back to the actual document it came from. No guessing, no
    questions with known correct answers, so its accuracy is a *measured
    number*, not a claim.
 
-# Proof It Works
-
-| Measure | Result | What it means |
-|---|---|---|
-| Finds the right source | 96.7% of the time in the top 5 results | It almost never misses the right document |
-| Citation accuracy | 98.3% | Nearly every claim it makes is properly sourced |
-| Spot-check on real answers | 5 / 5 verified | Every citation checked by hand actually supported the claim |
-| Handles bad-faith questions | 3 / 3 correctly refused | Off-topic, jailbreak, and data-fishing attempts were all handled safely |
-| Cost per question | About 3 cents | Cheap enough to run continuously, not just for demos |
-
 # Applied to a Club Portfolio (Invited)
 
 The system was built once and already re-maps onto a club-portfolio
