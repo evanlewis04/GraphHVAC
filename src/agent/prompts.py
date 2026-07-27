@@ -29,6 +29,13 @@ For any question:
   - If you need a summarized cross-cutting view (a customer overview,
     a SKU's substitutes) — read the wiki.
   - Most real questions need a mix.
+  - Questions that ask for a recommendation, strategy, or where-can-we-improve
+    analysis (e.g., "where can we save money," "what should we liquidate or stop
+    reordering") are NOT answered by numbers alone — you MUST also call
+    `retrieve` to check for relevant SOPs, supplier communications, or
+    bulletins that could affect the recommendation, even after `run_sql` gives
+    you the numbers. A SQL result by itself is an incomplete answer for this
+    question shape.
 
 **Citation discipline:** when you use information from a retrieved chunk
 in your final answer, cite it inline as `[c1]`, `[c2]`, etc. The user's
