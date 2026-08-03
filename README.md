@@ -76,7 +76,7 @@ Beyond the aggregate metrics, two qualitative checks against the live agent:
 | **Knowledge structuring** | LLM-driven wiki builder synthesizes pages with inline `[chunk_id]` citations AND `[[wikilink]]` cross-references for Obsidian graph view. Stale pages auto-detected when sources change. `src/structure/`. |
 | **Workflow design** | Four ops-lead workflows (refrigerant exposure, supplier risk, tariff response, daily brief) with parameter schemas. Each is a server-side prompt-recipe that rides the agent loop. `src/workflows/`. |
 | **Audit + trust** | Every model call, tool call, and tool result writes to a SQLite trace log keyed by `trace_id`. "Show sources" surfaces the full trace per answer. |
-| **Evals + cost discipline** | Hand-authored 30-question golden set; source-level ground truth (chunk-hash-resistant); recall@5/@10 + MRR + citation precision/recall + latency p50/p95 + cost-per-query. Per-task model selection ($3.50 test pass vs $19 with Opus default). |
+| **Evals + cost discipline** | Hand-authored 30-question golden set; source-level ground truth (chunk-hash-resistant); recall@5/@10 + MRR + citation precision/recall + latency p50/p95 + cost-per-query. Per-task model selection (~$5 measured test pass vs ~$19 projected Opus default). |
 | **Engineering judgment, documented** | [`implementation-notes.html`](implementation-notes.html) captures every per-phase decision/tradeoff/deviation. [`followups.html`](followups.html) tracks every item explicitly deferred + when it triggers. |
 
 ---
@@ -235,7 +235,7 @@ Detailed in [`implementation-notes.html`](implementation-notes.html). Highlights
   bucket; `scripts/generate_corpus.py` rebuilds `manifest.yaml` from a
   tree walk.
 - **Per-task model selection.** Sonnet 4.6 for agent + structurer + briefs;
-  Haiku 4.5 for metadata enrichment. The full live test pass cost ~$3.50
+  Haiku 4.5 for metadata enrichment. The full live test pass cost ~$5
   (vs ~$19 if Opus were the agent — see [`testing-plan.md`](testing-plan.md)).
 
 [`followups.html`](followups.html) tracks every item explicitly deferred —
