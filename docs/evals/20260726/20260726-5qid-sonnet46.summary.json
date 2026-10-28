@@ -1,0 +1,197 @@
+{
+  "run_id": "20260726-5qid-sonnet46",
+  "mode": "agent",
+  "k": 10,
+  "generated_at": "2026-07-26T19:53:01+00:00",
+  "n_questions": 5,
+  "recall_at_5": 0.6,
+  "recall_at_10": 1.0,
+  "mrr": 0.5285714285714286,
+  "citation_precision": 0.6952380952380952,
+  "citation_recall": 1.0,
+  "claim_coverage": null,
+  "unsupported_claims_total": null,
+  "latency_p50_ms": 24097,
+  "latency_p95_ms": 65844,
+  "avg_input_tokens": 13044.6,
+  "avg_output_tokens": 1437.6,
+  "avg_cost_usd": 0.06384704999999999,
+  "by_qid": [
+    {
+      "qid": "q05",
+      "question": "Are R-410A service refills still legal after 2025-01-01?",
+      "expected_source_ids": [
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-410a-phase-out-timeline"
+      ],
+      "retrieved_source_ids": [
+        "bulletin-r-410a-phase-out-timeline",
+        "sop-seasonal-stocking-plan",
+        "bulletin-r-32-transition-overview",
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-454b-overview"
+      ],
+      "cited_source_ids": [
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-410a-phase-out-timeline"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 22097,
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4589,
+      "output_tokens": 775,
+      "cache_read_input_tokens": 3230,
+      "cache_creation_input_tokens": 1615,
+      "error": null
+    },
+    {
+      "qid": "q07",
+      "question": "Which OEMs chose R-454B versus R-32 for their 2025 residential lineup?",
+      "expected_source_ids": [
+        "bulletin-r-32-transition-overview",
+        "bulletin-r-454b-overview"
+      ],
+      "retrieved_source_ids": [
+        "sop-r-410a-retrofit-customer-outreach",
+        "bulletin-trane-tsb-2024-002-r-32-launch",
+        "spec-carrier-2025-residential-condensers",
+        "bulletin-epa-aim-act-summary",
+        "manual-synth-install-residential-condenser",
+        "bulletin-r-32-transition-overview",
+        "spec-trane-2024-commercial-r-32",
+        "spec-carrier-2025-residential-condensers",
+        "bulletin-r-454b-overview",
+        "sop-r-410a-retrofit-customer-outreach"
+      ],
+      "cited_source_ids": [
+        "bulletin-r-454b-overview",
+        "spec-carrier-2025-residential-condensers",
+        "bulletin-trane-tsb-2024-002-r-32-launch",
+        "spec-lennox-2025-condenser-pricebook-excerpt",
+        "bulletin-r-32-transition-overview",
+        "bulletin-epa-aim-act-summary"
+      ],
+      "recall_at_5": 0.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 0.16666666666666666,
+      "citation_precision": 0.3333333333333333,
+      "citation_recall": 1.0,
+      "latency_ms": 27796,
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 9490,
+      "output_tokens": 1182,
+      "cache_read_input_tokens": 4845,
+      "cache_creation_input_tokens": 0,
+      "error": null
+    },
+    {
+      "qid": "q16",
+      "question": "What is Carrier's 2025-03 tariff pass-through magnitude and effective date?",
+      "expected_source_ids": [
+        "email-carrier-tariff-passthrough-2025-03"
+      ],
+      "retrieved_source_ids": [
+        "bulletin-r-32-transition-overview",
+        "bulletin-r-454b-overview",
+        "bulletin-epa-aim-act-summary",
+        "bulletin-r-410a-phase-out-timeline",
+        "bulletin-carrier-tsb-2024-007-fan-motor",
+        "email-lennox-partsplus-2024-05-18-delivery-delay-006",
+        "email-carrier-tariff-passthrough-2025-03",
+        "email-goodin-company-2024-09-16-delivery-delay-025",
+        "email-carrier-enterprise-2024-12-12-delivery-delay-001",
+        "email-munch-s-supply-2025-05-11-delivery-delay-021"
+      ],
+      "cited_source_ids": [
+        "email-carrier-tariff-passthrough-2025-03"
+      ],
+      "recall_at_5": 0.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 0.14285714285714285,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 24097,
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 8753,
+      "output_tokens": 887,
+      "cache_read_input_tokens": 8075,
+      "cache_creation_input_tokens": 0,
+      "error": null
+    },
+    {
+      "qid": "q17",
+      "question": "Which Carrier model series are affected by the Section 301 tariff pass-through?",
+      "expected_source_ids": [
+        "email-carrier-tariff-passthrough-2025-03"
+      ],
+      "retrieved_source_ids": [
+        "sop-r-410a-retrofit-customer-outreach",
+        "bulletin-r-410a-phase-out-timeline",
+        "email-carrier-tariff-passthrough-2025-03",
+        "bulletin-carrier-tsb-2024-007-fan-motor",
+        "ticket-contractor-notes-2024-q3"
+      ],
+      "cited_source_ids": [
+        "email-carrier-tariff-passthrough-2025-03"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 0.3333333333333333,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 15951,
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 4765,
+      "output_tokens": 668,
+      "cache_read_input_tokens": 4845,
+      "cache_creation_input_tokens": 0,
+      "error": null
+    },
+    {
+      "qid": "q19",
+      "question": "What categories carry allocation risk when we consolidate suppliers post-acquisition?",
+      "expected_source_ids": [
+        "sop-supplier-consolidation-post-mna"
+      ],
+      "retrieved_source_ids": [
+        "sop-supplier-consolidation-post-mna",
+        "anchor-doe-residential-cac-rule",
+        "anchor-doe-residential-cac-rule",
+        "bulletin-york-tsb-2024-002-capacitor-batch-recall",
+        "email-trane-supply-2024-02-15-allocation-notice-003",
+        "email-lennox-2025-q1-allocations",
+        "email-coastal-hvac-supply-2024-01-10-allocation-notice-026",
+        "email-munch-s-supply-2025-05-11-delivery-delay-021",
+        "sop-tariff-response-playbook",
+        "sop-supplier-consolidation-post-mna",
+        "sop-warranty-claim-escalation",
+        "sop-customer-concentration-review"
+      ],
+      "cited_source_ids": [
+        "sop-supplier-consolidation-post-mna",
+        "email-munch-s-supply-2025-05-11-delivery-delay-021",
+        "email-coastal-hvac-supply-2024-01-10-allocation-notice-026",
+        "bulletin-york-tsb-2024-002-capacitor-batch-recall",
+        "email-trane-supply-2024-02-15-allocation-notice-003",
+        "email-lennox-2025-q1-allocations",
+        "sop-tariff-response-playbook"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 1.0,
+      "citation_precision": 0.14285714285714285,
+      "citation_recall": 1.0,
+      "latency_ms": 75356,
+      "model": "claude-sonnet-4-6",
+      "input_tokens": 37626,
+      "output_tokens": 3676,
+      "cache_read_input_tokens": 11305,
+      "cache_creation_input_tokens": 0,
+      "error": null
+    }
+  ]
+}

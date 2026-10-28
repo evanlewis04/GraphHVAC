@@ -156,7 +156,7 @@ def test_sku_page_includes_llm_narrative(isolated_pipeline):
 
     md_files = sorted((wiki_dir / "skus").glob("*.md"))
     assert len(md_files) > 100  # all SKUs written
-    enriched = [p for p in md_files if "FAKE-LLM-DESC" in p.read_text()]
+    enriched = [p for p in md_files if "FAKE-LLM-DESC" in p.read_text(encoding="utf-8")]
     assert len(enriched) == 10  # only first 10 enriched, rest fall back
 
     sample = enriched[0].read_text(encoding="utf-8")

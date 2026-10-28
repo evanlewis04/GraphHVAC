@@ -1,0 +1,137 @@
+{
+  "run_id": "20260726-haiku-4qid",
+  "mode": "agent",
+  "k": 10,
+  "generated_at": "2026-07-26T19:33:51+00:00",
+  "n_questions": 4,
+  "recall_at_5": 0.75,
+  "recall_at_10": 0.75,
+  "mrr": 0.2583333333333333,
+  "citation_precision": 1.0,
+  "citation_recall": 1.0,
+  "claim_coverage": null,
+  "unsupported_claims_total": null,
+  "latency_p50_ms": 9255,
+  "latency_p95_ms": 32155,
+  "avg_input_tokens": 19597.75,
+  "avg_output_tokens": 1103.0,
+  "avg_cost_usd": 0.02511275,
+  "by_qid": [
+    {
+      "qid": "q12",
+      "question": "How do we triage incoming supplier bulletins and tag them for action?",
+      "expected_source_ids": [
+        "sop-supplier-bulletin-triage"
+      ],
+      "retrieved_source_ids": [
+        "anchor-doe-residential-cac-rule",
+        "sop-supplier-bulletin-triage",
+        "bulletin-trane-tsb-2024-002-r-32-launch",
+        "sop-tariff-response-playbook",
+        "anchor-doe-residential-cac-rule"
+      ],
+      "cited_source_ids": [
+        "sop-supplier-bulletin-triage"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 0.5,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 11355,
+      "model": "claude-haiku-4-5",
+      "input_tokens": 9935,
+      "output_tokens": 796,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "error": null
+    },
+    {
+      "qid": "q16",
+      "question": "What is Carrier's 2025-03 tariff pass-through magnitude and effective date?",
+      "expected_source_ids": [
+        "email-carrier-tariff-passthrough-2025-03"
+      ],
+      "retrieved_source_ids": [
+        "sop-tariff-response-playbook",
+        "bulletin-r-410a-phase-out-timeline",
+        "email-goodin-company-2024-08-26-product-discontinuation-023",
+        "bulletin-r-454b-overview",
+        "email-carrier-tariff-passthrough-2025-03"
+      ],
+      "cited_source_ids": [
+        "email-carrier-tariff-passthrough-2025-03"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 0.2,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 6913,
+      "model": "claude-haiku-4-5",
+      "input_tokens": 10096,
+      "output_tokens": 427,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "error": null
+    },
+    {
+      "qid": "q17",
+      "question": "Which Carrier model series are affected by the Section 301 tariff pass-through?",
+      "expected_source_ids": [
+        "email-carrier-tariff-passthrough-2025-03"
+      ],
+      "retrieved_source_ids": [
+        "sop-tariff-response-playbook",
+        "anchor-doe-residential-cac-rule",
+        "anchor-doe-residential-cac-rule",
+        "sop-return-and-rma-policy",
+        "anchor-doe-residential-cac-rule"
+      ],
+      "cited_source_ids": [
+        "email-carrier-tariff-passthrough-2025-03"
+      ],
+      "recall_at_5": 0.0,
+      "recall_at_10": 0.0,
+      "reciprocal_rank": 0.0,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 7156,
+      "model": "claude-haiku-4-5",
+      "input_tokens": 10472,
+      "output_tokens": 455,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "error": null
+    },
+    {
+      "qid": "q19",
+      "question": "What categories carry allocation risk when we consolidate suppliers post-acquisition?",
+      "expected_source_ids": [
+        "sop-supplier-consolidation-post-mna"
+      ],
+      "retrieved_source_ids": [
+        "sop-tariff-response-playbook",
+        "sop-supplier-bulletin-triage",
+        "sop-supplier-consolidation-post-mna",
+        "sop-supplier-rebate-tracking",
+        "sop-credit-hold-procedure"
+      ],
+      "cited_source_ids": [
+        "sop-supplier-consolidation-post-mna"
+      ],
+      "recall_at_5": 1.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 0.3333333333333333,
+      "citation_precision": 1.0,
+      "citation_recall": 1.0,
+      "latency_ms": 35826,
+      "model": "claude-haiku-4-5",
+      "input_tokens": 47888,
+      "output_tokens": 2734,
+      "cache_read_input_tokens": 0,
+      "cache_creation_input_tokens": 0,
+      "error": null
+    }
+  ]
+}

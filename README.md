@@ -76,7 +76,7 @@ Beyond the aggregate metrics, two qualitative checks against the live agent:
 | **Knowledge structuring** | LLM-driven wiki builder synthesizes pages with inline `[chunk_id]` citations AND `[[wikilink]]` cross-references for Obsidian graph view. Stale pages auto-detected when sources change. `src/structure/`. |
 | **Workflow design** | Four ops-lead workflows (refrigerant exposure, supplier risk, tariff response, daily brief) with parameter schemas. Each is a server-side prompt-recipe that rides the agent loop. `src/workflows/`. |
 | **Audit + trust** | Every model call, tool call, and tool result writes to a SQLite trace log keyed by `trace_id`. "Show sources" surfaces the full trace per answer. |
-| **Evals + cost discipline** | Hand-authored 30-question golden set; source-level ground truth (chunk-hash-resistant); recall@5/@10 + MRR + citation precision/recall + latency p50/p95 + cost-per-query. Per-task model selection ($3.50 test pass vs $19 with Opus default). |
+| **Evals + cost discipline** | Hand-authored 30-question golden set; source-level ground truth (chunk-hash-resistant); recall@5/@10 + MRR + citation precision/recall + latency p50/p95 + cost-per-query. Per-task model selection (~$5 measured test pass vs ~$19 projected Opus default). |
 | **Engineering judgment, documented** | [`implementation-notes.html`](implementation-notes.html) captures every per-phase decision/tradeoff/deviation. [`followups.html`](followups.html) tracks every item explicitly deferred + when it triggers. |
 
 ---
@@ -165,11 +165,14 @@ chunk-level citations), **wiki** (LLM-built structured knowledge), **SQL**
 
 ## Quick start
 
+Run from the repository root with Python 3.11 or newer. For Windows commands,
+configuration details, and the handoff inventory, see [the handoff guide](docs/HANDOFF.md).
+
 ```bash
 # 1. Install
 python -m venv .venv && source .venv/bin/activate
-pip install -e .
-# Optional: pip install -e .[voyage]   # enables hybrid retrieval
+pip install -e ".[dev]"
+# Optional: pip install -e ".[dev,voyage]"   # enables hybrid retrieval
 
 # 2. Configure
 cp .env.example .env
@@ -177,11 +180,12 @@ cp .env.example .env
 # without it, the vector half of retrieval degrades to deterministic
 # hash pseudo-vectors and BM25 carries the search.
 
-# 3. Generate the synthetic source corpus + manifest
-python scripts/generate_corpus.py
+# 3. Rebuild operational data used by SQL tools and the templated wiki
+python scripts/generate_synthetic_data.py
+python scripts/run_full_pipeline.py
 
-# 4. (Optional) Fetch real public regulatory PDFs as anchor inputs
-python scripts/fetch_anchors.py
+# 4. Use the committed source corpus, manifest, and three anchor PDFs.
+# No corpus regeneration or downloads are needed for a fresh clone.
 
 # 5. Ingest: chunks → embeddings → LanceDB + BM25
 python scripts/ingest.py
@@ -189,17 +193,19 @@ python scripts/ingest.py
 # 6. Build the structured wiki (refrigerants, regulations, manufacturers,
 #    procedures — 32 pages by default; existing skus/suppliers/customers
 #    are template-rendered separately)
-python scripts/build_wiki.py --health
+python scripts/build_wiki.py --no-llm --health
+# Remove --no-llm to opt into paid LLM synthesis.
 
 # 7. Run the eval suite
 python scripts/run_evals.py
+python -m pytest -q
 
 # 8. Start the UI
 uvicorn src.api.main:app --reload
 # open http://127.0.0.1:8000
 ```
 
-The UI has four top-bar entry points:
+The UI has five top-bar entry points:
 
 - **Chat** (main surface) — natural-language Q&A with streaming tool calls,
   inline `[cN]` badges, hover popovers, a per-message Citations panel,
@@ -212,6 +218,7 @@ The UI has four top-bar entry points:
 - **Admin** — Ingest (corpus browser, 86 sources / 117 chunks),
   Knowledge health (orphans, thin pages, coverage by bucket, optional LLM
   contradiction findings), Evals (latest run summary with per-run history).
+- **Pitch** — the investor brief served from `web/pitch-brief.md`.
 
 ---
 
@@ -235,7 +242,7 @@ Detailed in [`implementation-notes.html`](implementation-notes.html). Highlights
   bucket; `scripts/generate_corpus.py` rebuilds `manifest.yaml` from a
   tree walk.
 - **Per-task model selection.** Sonnet 4.6 for agent + structurer + briefs;
-  Haiku 4.5 for metadata enrichment. The full live test pass cost ~$3.50
+  Haiku 4.5 for metadata enrichment. The full live test pass cost ~$5
   (vs ~$19 if Opus were the agent — see [`testing-plan.md`](testing-plan.md)).
 
 [`followups.html`](followups.html) tracks every item explicitly deferred —
