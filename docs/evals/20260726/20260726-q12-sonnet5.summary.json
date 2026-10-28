@@ -1,0 +1,53 @@
+{
+  "run_id": "20260726-q12-sonnet5",
+  "mode": "agent",
+  "k": 10,
+  "generated_at": "2026-07-26T19:34:51+00:00",
+  "n_questions": 1,
+  "recall_at_5": 0.0,
+  "recall_at_10": 1.0,
+  "mrr": 0.16666666666666666,
+  "citation_precision": 0.3333333333333333,
+  "citation_recall": 1.0,
+  "claim_coverage": null,
+  "unsupported_claims_total": null,
+  "latency_p50_ms": 19747,
+  "latency_p95_ms": 19747,
+  "avg_input_tokens": 6857.0,
+  "avg_output_tokens": 1596.0,
+  "avg_cost_usd": 0.0362425,
+  "by_qid": [
+    {
+      "qid": "q12",
+      "question": "How do we triage incoming supplier bulletins and tag them for action?",
+      "expected_source_ids": [
+        "sop-supplier-bulletin-triage"
+      ],
+      "retrieved_source_ids": [
+        "manual-synth-install-residential-condenser",
+        "email-baker-distributing-2024-11-14-allocation-notice-000",
+        "anchor-doe-residential-cac-rule",
+        "bulletin-heil-tsb-2024-009-thermostat-wifi-reconnect",
+        "anchor-doe-residential",
+        "sop-supplier-bulletin-triage"
+      ],
+      "cited_source_ids": [
+        "sop-supplier-bulletin-triage",
+        "email-baker-distributing-2024-11-14-allocation-notice-000",
+        "email-lennox-partsplus-2024-05-18-delivery-delay-006"
+      ],
+      "recall_at_5": 0.0,
+      "recall_at_10": 1.0,
+      "reciprocal_rank": 0.16666666666666666,
+      "citation_precision": 0.3333333333333333,
+      "citation_recall": 1.0,
+      "latency_ms": 19747,
+      "model": "claude-sonnet-5",
+      "input_tokens": 6857,
+      "output_tokens": 1596,
+      "cache_read_input_tokens": 4530,
+      "cache_creation_input_tokens": 2265,
+      "error": null
+    }
+  ]
+}

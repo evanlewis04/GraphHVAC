@@ -165,11 +165,14 @@ chunk-level citations), **wiki** (LLM-built structured knowledge), **SQL**
 
 ## Quick start
 
+Run from the repository root with Python 3.11 or newer. For Windows commands,
+configuration details, and the handoff inventory, see [the handoff guide](docs/HANDOFF.md).
+
 ```bash
 # 1. Install
 python -m venv .venv && source .venv/bin/activate
-pip install -e .
-# Optional: pip install -e .[voyage]   # enables hybrid retrieval
+pip install -e ".[dev]"
+# Optional: pip install -e ".[dev,voyage]"   # enables hybrid retrieval
 
 # 2. Configure
 cp .env.example .env
@@ -177,11 +180,12 @@ cp .env.example .env
 # without it, the vector half of retrieval degrades to deterministic
 # hash pseudo-vectors and BM25 carries the search.
 
-# 3. Generate the synthetic source corpus + manifest
-python scripts/generate_corpus.py
+# 3. Rebuild operational data used by SQL tools and the templated wiki
+python scripts/generate_synthetic_data.py
+python scripts/run_full_pipeline.py
 
-# 4. (Optional) Fetch real public regulatory PDFs as anchor inputs
-python scripts/fetch_anchors.py
+# 4. Use the committed source corpus, manifest, and three anchor PDFs.
+# No corpus regeneration or downloads are needed for a fresh clone.
 
 # 5. Ingest: chunks → embeddings → LanceDB + BM25
 python scripts/ingest.py
@@ -189,17 +193,19 @@ python scripts/ingest.py
 # 6. Build the structured wiki (refrigerants, regulations, manufacturers,
 #    procedures — 32 pages by default; existing skus/suppliers/customers
 #    are template-rendered separately)
-python scripts/build_wiki.py --health
+python scripts/build_wiki.py --no-llm --health
+# Remove --no-llm to opt into paid LLM synthesis.
 
 # 7. Run the eval suite
 python scripts/run_evals.py
+python -m pytest -q
 
 # 8. Start the UI
 uvicorn src.api.main:app --reload
 # open http://127.0.0.1:8000
 ```
 
-The UI has four top-bar entry points:
+The UI has five top-bar entry points:
 
 - **Chat** (main surface) — natural-language Q&A with streaming tool calls,
   inline `[cN]` badges, hover popovers, a per-message Citations panel,
@@ -212,6 +218,7 @@ The UI has four top-bar entry points:
 - **Admin** — Ingest (corpus browser, 86 sources / 117 chunks),
   Knowledge health (orphans, thin pages, coverage by bucket, optional LLM
   contradiction findings), Evals (latest run summary with per-run history).
+- **Pitch** — the investor brief served from `web/pitch-brief.md`.
 
 ---
 
